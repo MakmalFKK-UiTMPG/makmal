@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muat Turun Borang & SOP Makmal FKK</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 1100px; margin: auto; background-color: #f9f9f9; }
+        
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        h2 { color: #2c3e50; margin: 0; }
+        
+        .back-btn { display: inline-block; color: #2980b9; text-decoration: none; font-weight: bold; font-size: 15px; }
+        .back-btn:hover { text-decoration: underline; }
+        
+        .btn-logout { background: #e74c3c; color: white; border: none; padding: 8px 14px; border-radius: 5px; cursor: pointer; font-size: 13px; font-weight: bold; }
+        .btn-logout:hover { background: #c0392b; }
+
+        .drive-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-top: 10px; }
+        .drive-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
+        
+        .btn-drive { background-color: #4285f4; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-drive:hover { background-color: #3367d6; }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER + NAVIGASI -->
+    <div class="header-top">
+        <a href="makmal.html" class="back-btn">⬅️ Kembali ke Senarai Makmal</a>
+        <button id="logout-btn" class="btn-logout">🚪 Log Keluar</button>
+    </div>
+
+    <h2>📁 Muat Turun Borang & Dokumen Makmal</h2>
+
+    <!-- CONTAINER GOOGLE DRIVE -->
+    <div class="drive-card">
+        <div class="drive-header">
+            <h3 style="margin: 0; color: #2c3e50;">Muat Turun Borang Rasmi & SOP</h3>
+            
+            <!-- BUTANG BUKA GOOGLE DRIVE SEBENAR (https://drive.google.com/drive/folders/1YHAUMxJpxHr4RZXV-PiJrfF0mP4PJelZ?usp=drive_link) -->
+            <a href="PAUTAN_FOLDER_GOOGLE_DRIVE_ANDA" target="_blank" class="btn-drive">
+                📂 Buka Folder Google Drive
+            </a>
+        </div>
+        
+        <!-- PAPARAN IFRAME FOLDER GOOGLE DRIVE (1YHAUMxJpxHr4RZXV-PiJrfF0mP4PJelZ) -->
+        <iframe 
+            src="https://drive.google.com/embeddedfolderview?id=ID_FOLDER_GOOGLE_DRIVE_ANDA#list" 
+            width="100%" 
+            height="600px" 
+            style="border: 1px solid #ccc; border-radius: 6px; display: block;">
+        </iframe>
+    </div>
+
+    <!-- SKRIP FIREBASE (KESELAMATAN & LOG KELUAR) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDDC9PLSCOzna4caIsrfPSvfR3A_FczKDc",
+            authDomain: "sistem-makmal-fkkuitmpg.firebaseapp.com",
+            projectId: "sistem-makmal-fkkuitmpg",
+            storageBucket: "sistem-makmal-fkkuitmpg.firebasestorage.app",
+            messagingSenderId: "291806336887",
+            appId: "1:291806336887:web:a0d4fca1866459ead03372"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // KAWALAN KESELAMATAN: Tendang jika belum log masuk
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const email = user.email;
+                if (!email.endsWith('@uitm.edu.my') && !email.endsWith('@student.uitm.edu.my')) {
+                    signOut(auth);
+                    window.location.href = "index.html";
+                }
+            } else {
+                window.location.href = "index.html";
+            }
+        });
+
+        // FUNGSI LOG KELUAR
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            signOut(auth).then(() => {
+                window.location.href = "index.html";
+            }).catch((error) => {
+                alert("Ralat semasa log keluar: " + error.message);
+            });
+        });
+    </script>
+</body>
+</html>
