@@ -6,7 +6,7 @@
     <title>Muat Turun Borang & SOP Makmal FKK</title>
     <style>
         body { font-family: Arial, sans-serif; padding: 20px; max-width: 1100px; margin: auto; background-color: #f9f9f9; }
-        
+
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         h2 { color: #2c3e50; margin: 0; }
         
@@ -21,6 +21,23 @@
         
         .btn-drive { background-color: #4285f4; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; }
         .btn-drive:hover { background-color: #3367d6; }
+
+        /* BEKAS KHAS UNTUK MENYEMBUNYIKAN KOLUM LAST MODIFIED (CROP KANAN) */
+        .iframe-crop-wrapper {
+            width: 100%;
+            overflow: hidden;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background: white;
+        }
+
+        .iframe-crop-wrapper iframe {
+            width: 130%; /* Besarkan iframe ke kanan */
+            height: 600px;
+            border: none;
+            margin-right: -30%; /* Sorokkan 30% bahagian kanan ke luar skrin */
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -38,24 +55,18 @@
         <div class="drive-header">
             <h3 style="margin: 0; color: #2c3e50;">Muat Turun Borang Rasmi & SOP</h3>
             
-          <!-- BUTANG BUKA GOOGLE DRIVE SEBENAR -->
-<a href="https://drive.google.com/drive/folders/1YHAUMxJpxHr4RZXV-PiJrfF0mP4PJelZ" target="_blank" class="btn-drive">
-    📂 Buka Folder Google Drive
-</a>
-
-<!-- PAPARAN IFRAME FOLDER GOOGLE DRIVE -->
-<iframe 
-    src="https://drive.google.com/embeddedfolderview?id=1YHAUMxJpxHr4RZXV-PiJrfF0mP4PJelZ#list" 
-    width="100%" 
-    height="600px" 
-    style="border: 1px solid #ccc; border-radius: 6px; display: block;">
-    <div style="width: 100%; overflow: hidden; border-radius: 6px; border: 1px solid #ccc;">
-</iframe>
-            src="https://drive.google.com/embeddedfolderview?id=ID_FOLDER_GOOGLE_DRIVE_ANDA#list" 
-            width="120%" 
-            height="600px" 
-          style="border: none; margin-right: -20%;">
-        </iframe>
+            <!-- BUTANG BUKA GOOGLE DRIVE SEBENAR -->
+            <a href="https://drive.google.com/drive/folders/1YHAUMxJpxHr4RZXV-PiJrfF0mP4PJelZ" target="_blank" class="btn-drive">
+                📂 Buka Folder Google Drive
+            </a>
+        </div>
+        
+        <!-- PAPARAN IFRAME DENGAN HELAH CROP (MENYOROKKAN LAST MODIFIED) -->
+        <div class="iframe-crop-wrapper">
+            <iframe 
+                src="https://drive.google.com/embeddedfolderview?id=1YHAUMxJpxHr4RZXV-PiJrfF0mP4PJelZ#list">
+            </iframe>
+        </div>
     </div>
 
     <!-- SKRIP FIREBASE (KESELAMATAN & LOG KELUAR) -->
