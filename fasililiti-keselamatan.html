@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fasiliti Keselamatan Makmal FKK</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 1100px; margin: auto; background-color: #f8f9fa; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .back-btn { color: #2980b9; text-decoration: none; font-weight: bold; font-size: 14px; }
+        
+        .title-box { text-align: center; margin-bottom: 25px; }
+        .title-box h2 { color: #c0392b; margin-bottom: 5px; }
+        .title-box p { color: #7f8c8d; margin: 0; font-size: 14px; }
+
+        .search-container { margin-bottom: 25px; text-align: center; }
+        .search-input { width: 100%; max-width: 550px; padding: 12px 20px; border: 2px solid #c0392b; border-radius: 25px; font-size: 15px; outline: none; }
+
+        .lab-section { background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 25px; overflow: hidden; border: 1px solid #e2e8f0; }
+        .lab-header { background-color: #c0392b; color: white; padding: 12px 20px; font-size: 16px; font-weight: bold; }
+
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px 15px; text-align: left; font-size: 13px; border-bottom: 1px solid #eee; }
+        th { background-color: #f1f5f9; color: #334155; font-size: 12px; text-transform: uppercase; }
+        tr:hover { background-color: #f8fafc; }
+
+        .badge { font-weight: bold; padding: 4px 10px; border-radius: 12px; font-size: 11px; display: inline-block; }
+        .badge-good { background: #d4edda; color: #155724; }
+        .badge-inspection { background: #fff3cd; color: #856404; }
+        .badge-faulty { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+
+    <div class="header-top">
+        <a href="makmal.html" class="back-btn">⬅️ Kembali ke Senarai Makmal</a>
+        <a href="bahan-radas.html" class="back-btn" style="color: #16a085;">🧪 Permohonan Bahan & Radas</a>
+    </div>
+
+    <div class="title-box">
+        <h2>🛡️ Senarai & Status Fasiliti Keselamatan Makmal FKK</h2>
+        <p>Direktori Peralatan Kecemasan & Keselamatan (Dikemaskini: Sep 2026)</p>
+    </div>
+
+    <div class="search-container">
+        <input type="text" id="carianInput" class="search-input" onkeyup="cariFasiliti()" placeholder="🔍 Cari nama fasiliti, lokasi, atau status...">
+    </div>
+
+    <div class="lab-section">
+        <div class="lab-header">📋 Log Induk Peralatan Keselamatan & Bantuan Kecemasan</div>
+        <table>
+            <thead>
+                <tr>
+                    <th width="40">Bil</th>
+                    <th>Fasiliti Keselamatan</th>
+                    <th>Lokasi Utama</th>
+                    <th width="100">Anggaran Kuantiti</th>
+                    <th width="150">Status Semasa</th>
+                    <th width="140">PIC / Catatan</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="item-row">
+                    <td>1</td>
+                    <td><b>Penyiram Kecemasan (Emergency Shower)</b></td>
+                    <td>Aras 1, 2 & 3 (Berdekatan Makmal Kimia/Pilot Plant)</td>
+                    <td>8 Unit</td>
+                    <td><span class="badge badge-good">Baik / Berfungsi</span></td>
+                    <td>Staf Makmal Aras</td>
+                </tr>
+                <tr class="item-row">
+                    <td>2</td>
+                    <td><b>Pencuci Mata Kecemasan (Eyewash Station)</b></td>
+                    <td>Di Setiap Makmal Wet / Basah</td>
+                    <td>12 Unit</td>
+                    <td><span class="badge badge-good">Baik / Berfungsi</span></td>
+                    <td>Staf Makmal Aras</td>
+                </tr>
+                <tr class="item-row">
+                    <td>3</td>
+                    <td><b>Ebuk Wasap (Fume Hood)</b></td>
+                    <td>Makmal Kimia 1, Kimia 2, Analitikal & Environment</td>
+                    <td>10 Unit</td>
+                    <td><span class="badge badge-good">Baik / Berfungsi</span></td>
+                    <td>Nurhaslina / Redzuan</td>
+                </tr>
+                <tr class="item-row">
+                    <td>4</td>
+                    <td><b>Alat Pemadam Api (Fire Extinguisher)</b></td>
+                    <td>Koridor Laluan & Dalam Setiap Makmal (Aras 1-4)</td>
+                    <td>24 Unit</td>
+                    <td><span class="badge badge-good">Baik / Bertauliah</span></td>
+                    <td>Pegawai Keselamatan</td>
+                </tr>
+                <tr class="item-row">
+                    <td>5</td>
+                    <td><b>Kit Pertolongan Cemas (First Aid Kit)</b></td>
+                    <td>Bilik Pegawai Makmal & Kaunter Utama Aras 1-4</td>
+                    <td>6 Unit</td>
+                    <td><span class="badge badge-inspection">Perlu Semakan Stok</span></td>
+                    <td>Semua PIC Makmal</td>
+                </tr>
+                <tr class="item-row">
+                    <td>6</td>
+                    <td><b>Kit Tumpahan Kimia (Chemical Spill Kit)</b></td>
+                    <td>Makmal Kimia 1, Analitikal & Store Bahan Kimia</td>
+                    <td>3 Unit</td>
+                    <td><span class="badge badge-good">Lengkap</span></td>
+                    <td>Mohd Redzuan</td>
+                </tr>
+                <tr class="item-row">
+                    <td>7</td>
+                    <td><b>Kabinet Bahan Berekstraksi (Flammable Cabinet)</b></td>
+                    <td>Store Kimia Utama & Makmal Analitikal</td>
+                    <td>4 Unit</td>
+                    <td><span class="badge badge-good">Berkunci / Safe</span></td>
+                    <td>Mohd Redzuan</td>
+                </tr>
+                <tr class="item-row">
+                    <td>8</td>
+                    <td><b>Selimut Api (Fire Blanket)</b></td>
+                    <td>Makmal Kimia 1, Kimia 2 & Process Control</td>
+                    <td>6 Unit</td>
+                    <td><span class="badge badge-good">Baik</span></td>
+                    <td>Staf Makmal Aras</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function cariFasiliti() {
+            let input = document.getElementById('carianInput').value.toLowerCase();
+            let rows = document.querySelectorAll('.item-row');
+
+            rows.forEach(row => {
+                let text = row.innerText.toLowerCase();
+                if (text.includes(input)) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        }
+    </script>
+</body>
+</html>
