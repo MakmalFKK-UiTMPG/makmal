@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borang Permohonan Bahan Kimia, Alat Radas & Peralatan</title>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: auto; background-color: #f9f9f9; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .back-btn { color: #2980b9; text-decoration: none; font-weight: bold; }
+        .btn-logout { background: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+
+        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        h2 { color: #2c3e50; margin-top: 0; }
+        h3 { color: #16a085; border-bottom: 2px solid #16a085; padding-bottom: 5px; margin-top: 25px; font-size: 16px; }
+
+        .form-group { margin-bottom: 12px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; color: #34495e; }
+        input[type="text"], select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 13px; }
+        th { background-color: #f2f2f2; }
+        
+        .btn-add { background: #27ae60; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-top: 8px; font-weight: bold; }
+        .btn-del { background: #c0392b; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 11px; }
+
+        .akujanji-box { background: #eef9f6; border-left: 4px solid #16a085; padding: 12px; margin-top: 20px; font-size: 13px; }
+        
+        .btn-submit { background: #2980b9; color: white; border: none; padding: 12px; width: 100%; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 20px; }
+        .btn-submit:hover { background: #1f6391; }
+    </style>
+</head>
+<body>
+
+    <div class="header-top">
+        <a href="makmal.html" class="back-btn">⬅️ Kembali ke Senarai Makmal</a>
+        <button id="logout-btn" class="btn-logout">🚪 Log Keluar</button>
+    </div>
+
+    <div class="card">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <p style="margin:0; font-size:12px; font-weight:bold; color:#7f8c8d;">PPM-FKK 01/ARBKPM (Ver.02)</p>
+            <h2>PERMOHONAN ALAT RADAS / BAHAN KIMIA / PERALATAN MAKMAL</h2>
+        </div>
+
+        <form id="formPermohonan">
+            <h3>A. MAKLUMAT PEMOHON</h3>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Nama Pemohon *</label>
+                    <input type="text" id="namaPemohon" required placeholder="Nama Penuh">
+                </div>
+                <div class="form-group">
+                    <label>No. ID (Pelajar / Staf) *</label>
+                    <input type="text" id="noId" required placeholder="Contoh: 2023123456">
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Semester / Sesi / Tahun</label>
+                    <input type="text" id="semesterSesi" placeholder="Contoh: Sem 5 / 2026">
+                </div>
+                <div class="form-group">
+                    <label>Tujuan Penggunaan *</label>
+                    <select id="tujuan" required>
+                        <option value="Projek Tahun Akhir">Projek Tahun Akhir (FYP)</option>
+                        <option value="Pengajaran / Amali">Pengajaran / Amali</option>
+                        <option value="Lain-lain">Lain-lain</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Tajuk Projek / Amali</label>
+                    <input type="text" id="tajukProjek" placeholder="Tajuk Projek">
+                </div>
+                <div class="form-group">
+                    <label>Nama Penyelia Projek</label>
+                    <input type="text" id="namaPenyelia" placeholder="Nama Pensyarah Penyelia">
+                </div>
+            </div>
+
+            <label style="margin-top:10px;">Ahli Kumpulan (Jika ada):</label>
+            <table id="jadualAhli">
+                <thead>
+                    <tr><th>Nama Ahli</th><th>No. ID</th><th>Tindakan</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <button type="button" class="btn-add" onclick="tambahBarisAhli()">+ Tambah Ahli</button>
+
+            <h3>B. BUTIRAN PENGGUNAAN ALAT RADAS</h3>
+            <table id="jadualRadas">
+                <thead>
+                    <tr><th>Alat Radas (Nama & Saiz)</th><th width="120">Kuantiti (unit)</th><th width="70">Padam</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <button type="button" class="btn-add" onclick="tambahBarisRadas()">+ Tambah Alat Radas</button>
+
+            <h3>C. BUTIRAN PENGGUNAAN PERALATAN MAKMAL</h3>
+            <table id="jadualPeralatan">
+                <thead>
+                    <tr><th>Peralatan (Nama, Saiz, No. Siri)</th><th width="120">Kuantiti (unit)</th><th width="70">Padam</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <button type="button" class="btn-add" onclick="tambahBarisPeralatan()">+ Tambah Peralatan</button>
+
+            <h3>D. BUTIRAN PENGGUNAAN BAHAN KIMIA / PAKAI BUANG</h3>
+            <table id="jadualBahan">
+                <thead>
+                    <tr><th>Nama Bahan Kimia / Pakai Buang</th><th width="150">Kuantiti (g / ml / unit)</th><th width="70">Padam</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <button type="button" class="btn-add" onclick="tambahBarisBahan()">+ Tambah Bahan Kimia</button>
+
+            <h3>E. PENGAKUAN PEMOHON</h3>
+            <div class="akujanji-box">
+                <label style="font-weight:normal; cursor:pointer;">
+                    <input type="checkbox" id="akujanji" required> 
+                    Saya bersetuju bertanggungjawab menjaga keselamatan/kebersihan peralatan, menyimpan semula di tempat asal, dan membuang sisa bahan kimia mengikut prosedur yang betul.
+                </label>
+            </div>
+
+            <button type="submit" class="btn-submit">🚀 Hantar Permohonan Digital</button>
+        </form>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDDC9PLSCOzna4caIsrfPSvfR3A_FczKDc",
+            authDomain: "sistem-makmal-fkkuitmpg.firebaseapp.com",
+            projectId: "sistem-makmal-fkkuitmpg",
+            storageBucket: "sistem-makmal-fkkuitmpg.firebasestorage.app",
+            messagingSenderId: "291806336887",
+            appId: "1:291806336887:web:a0d4fca1866459ead03372"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                if (!user.email.endsWith('@uitm.edu.my') && !user.email.endsWith('@student.uitm.edu.my')) {
+                    signOut(auth);
+                    window.location.href = "index.html";
+                }
+            } else {
+                window.location.href = "index.html";
+            }
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            signOut(auth).then(() => window.location.href = "index.html");
+        });
+    </script>
+
+    <script>
+        const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        function tambahBarisAhli() {
+            const tbody = document.getElementById('jadualAhli').querySelector('tbody');
+            const row = tbody.insertRow();
+            row.innerHTML = `<td><input type="text" class="ahli-nama" placeholder="Nama Ahli"></td><td><input type="text" class="ahli-id" placeholder="No. ID"></td><td><button type="button" class="btn-del" onclick="this.closest('tr').remove()">Padam</button></td>`;
+        }
+
+        function tambahBarisRadas() {
+            const tbody = document.getElementById('jadualRadas').querySelector('tbody');
+            const row = tbody.insertRow();
+            row.innerHTML = `<td><input type="text" class="radas-nama" placeholder="Contoh: Beaker 250ml"></td><td><input type="text" class="radas-kuantiti" placeholder="1"></td><td><button type="button" class="btn-del" onclick="this.closest('tr').remove()">Padam</button></td>`;
+        }
+
+        function tambahBarisPeralatan() {
+            const tbody = document.getElementById('jadualPeralatan').querySelector('tbody');
+            const row = tbody.insertRow();
+            row.innerHTML = `<td><input type="text" class="alat-nama" placeholder="Contoh: Hotplate Magnetic Stirrer"></td><td><input type="text" class="alat-kuantiti" placeholder="1"></td><td><button type="button" class="btn-del" onclick="this.closest('tr').remove()">Padam</button></td>`;
+        }
+
+        function tambahBarisBahan() {
+            const tbody = document.getElementById('jadualBahan').querySelector('tbody');
+            const row = tbody.insertRow();
+            row.innerHTML = `<td><input type="text" class="bahan-nama" placeholder="Contoh: Ethanol 95%"></td><td><input type="text" class="bahan-kuantiti" placeholder="500 ml"></td><td><button type="button" class="btn-del" onclick="this.closest('tr').remove()">Padam</button></td>`;
+        }
+
+        window.onload = function() {
+            tambahBarisRadas();
+            tambahBarisPeralatan();
+            tambahBarisBahan();
+        };
+
+        document.getElementById('formPermohonan').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const ahliList = [];
+            document.querySelectorAll('#jadualAhli tbody tr').forEach(r => {
+                const nama = r.querySelector('.ahli-nama').value;
+                const id = r.querySelector('.ahli-id').value;
+                if(nama) ahliList.push({ nama, id });
+            });
+
+            const radasList = [];
+            document.querySelectorAll('#jadualRadas tbody tr').forEach(r => {
+                const nama = r.querySelector('.radas-nama').value;
+                const kuantiti = r.querySelector('.radas-kuantiti').value;
+                if(nama) radasList.push({ nama, kuantiti });
+            });
+
+            const peralatanList = [];
+            document.querySelectorAll('#jadualPeralatan tbody tr').forEach(r => {
+                const nama = r.querySelector('.alat-nama').value;
+                const kuantiti = r.querySelector('.alat-kuantiti').value;
+                if(nama) peralatanList.push({ nama, kuantiti });
+            });
+
+            const bahanList = [];
+            document.querySelectorAll('#jadualBahan tbody tr').forEach(r => {
+                const nama = r.querySelector('.bahan-nama').value;
+                const kuantiti = r.querySelector('.bahan-kuantiti').value;
+                if(nama) bahanList.push({ nama, kuantiti });
+            });
+
+            const payload = {
+                nama_pemohon: document.getElementById('namaPemohon').value,
+                no_id: document.getElementById('noId').value,
+                semester_sesi: document.getElementById('semesterSesi').value,
+                tujuan: document.getElementById('tujuan').value,
+                tajuk_projek: document.getElementById('tajukProjek').value,
+                nama_penyelia: document.getElementById('namaPenyelia').value,
+                ahli_kumpulan: ahliList,
+                senarai_radas: radasList,
+                senarai_peralatan: peralatanList,
+                senarai_bahan_kimia: bahanList
+            };
+
+            const { data, error } = await supabaseClient.from('permohonan_bahan_radas').insert([payload]);
+
+            if (error) {
+                alert("❌ Gagal menghantar permohonan: " + error.message);
+            } else {
+                alert("✅ Permohonan anda telah berjaya dihantar untuk kelulusan Pegawai Makmal!");
+                window.location.href = "makmal.html";
+            }
+        });
+    </script>
+</body>
+</html>
