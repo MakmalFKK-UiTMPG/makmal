@@ -3,51 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Admin - Kelulusan & Sejarah Tempahan</title>
+    <title>Panel Admin - Pengurusan Tempahan & Permohonan Makmal</title>
     
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; max-width: 1100px; margin: auto; background-color: #f9f9f9; }
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 1200px; margin: auto; background-color: #f9f9f9; }
         
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         h2 { color: #2c3e50; margin: 0; }
         
         .back-btn { display: inline-block; color: #2980b9; text-decoration: none; font-weight: bold; font-size: 15px; }
-        .back-btn:hover { text-decoration: underline; }
-        
         .btn-logout { background: #e74c3c; color: white; border: none; padding: 8px 14px; border-radius: 5px; cursor: pointer; font-size: 13px; font-weight: bold; }
-        .btn-logout:hover { background: #c0392b; }
 
-        /* KAD RINGKASAN DATA */
+        /* TAB NAVIGATION */
+        .tab-container { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #ccc; }
+        .tab-btn { padding: 10px 20px; font-weight: bold; border: none; background: #e0e0e0; cursor: pointer; border-radius: 5px 5px 0 0; }
+        .tab-btn.active { background: #2c3e50; color: white; }
+
+        /* KAD RINGKASAN */
         .summary-container { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
         .summary-card { flex: 1; min-width: 180px; background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); border-left: 4px solid #2980b9; text-align: center; }
         .summary-card h4 { margin: 0 0 5px 0; color: #7f8c8d; font-size: 13px; }
         .summary-card p { margin: 0; font-size: 22px; font-weight: bold; color: #2c3e50; }
 
-        /* KOTAK CARIAN ADMIN */
-        .search-card { background: white; padding: 15px 20px; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); margin-bottom: 20px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-        .search-card input { flex: 1; min-width: 200px; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
-        .search-card button { background-color: #2980b9; color: white; border: none; padding: 10px 18px; font-weight: bold; border-radius: 4px; cursor: pointer; }
-        .search-card button:hover { background-color: #1c5980; }
-
         table { border-collapse: collapse; width: 100%; margin-top: 10px; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; font-size: 14px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; font-size: 13px; }
         th { background-color: #2c3e50; color: white; }
 
         .status-menunggu { color: #d35400; font-weight: bold; }
         .status-lulus { color: #27ae60; font-weight: bold; }
         .status-tolak { color: #c0392b; font-weight: bold; }
 
-        .btn-lulus { background-color: #27ae60; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; }
-        .btn-tolak { background-color: #c0392b; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; margin-left: 5px; }
-        .btn-padam { background-color: #e74c3c; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; margin-left: 5px; }
-        
-        .btn-lulus:hover { background-color: #219150; }
-        .btn-tolak:hover { background-color: #a93226; }
-        .btn-padam:hover { background-color: #922b21; }
+        .btn-lulus { background-color: #27ae60; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        .btn-tolak { background-color: #c0392b; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-weight: bold; margin-left: 3px; }
+        .btn-detail { background-color: #2980b9; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-weight: bold; margin-left: 3px; }
+        .btn-padam { background-color: #7f8c8d; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-weight: bold; margin-left: 3px; }
 
-        .phone-link { color: #2980b9; font-weight: bold; text-decoration: none; }
-        .phone-link:hover { text-decoration: underline; }
+        /* MODAL POPUP DETAIL */
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
+        .modal-content { background-color: white; margin: 5% auto; padding: 20px; border-radius: 8px; width: 80%; max-width: 700px; max-height: 80vh; overflow-y: auto; }
+        .close-modal { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -57,51 +52,55 @@
         <button id="logout-btn" class="btn-logout">🚪 Log Keluar</button>
     </div>
 
-    <h2>⚙️ Panel Admin: Kelulusan & Sejarah Rekod Tempahan</h2>
-    <p>Gunakan panel ini untuk menyemak sejarah tempahan pengguna, meluluskan, menolak, atau memadam rekod tempahan.</p>
+    <h2>⚙️ Panel Admin & Pegawai Makmal</h2>
+    <p>Uruskan kelulusan tempahan peralatan dan permohonan bahan kimia/radas di sini.</p>
 
-    <!-- KAD RINGKASAN DATA -->
-    <div class="summary-container">
-        <div class="summary-card">
-            <h4>JUMLAH KESELURUHAN TEMPAHAN</h4>
-            <p id="totalTempahan">0</p>
+    <!-- MENU TAB -->
+    <div class="tab-container">
+        <button class="tab-btn active" onclick="tukarTab('tempahan')">📅 Tempahan Slot Peralatan</button>
+        <button class="tab-btn" onclick="tukarTab('bahan')">🧪 Permohonan Bahan Kimia & Radas</button>
+    </div>
+
+    <!-- SEKSYEN 1: TEMPAHAN SLOT -->
+    <div id="sekSyenTempahan">
+        <div class="summary-container">
+            <div class="summary-card"><h4>JUMLAH TEMPAHAN</h4><p id="totalTempahan">0</p></div>
+            <div class="summary-card" style="border-left-color: #27ae60;"><h4>LULUS</h4><p id="totalLulus">0</p></div>
+            <div class="summary-card" style="border-left-color: #d35400;"><h4>MENUNGGU</h4><p id="totalMenunggu">0</p></div>
         </div>
-        <div class="summary-card" style="border-left-color: #27ae60;">
-            <h4>LULUS</h4>
-            <p id="totalLulus">0</p>
-        </div>
-        <div class="summary-card" style="border-left-color: #d35400;">
-            <h4>MENUNGGU KELULUSAN</h4>
-            <p id="totalMenunggu">0</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Pemohon</th><th>No. Tel</th><th>Peralatan</th><th>Tarikh</th><th>Masa</th><th>Status</th><th>Tindakan</th>
+                </tr>
+            </thead>
+            <tbody id="isiJadualTempahan"><tr><td colspan="7" style="text-align:center;">Memuatkan...</td></tr></tbody>
+        </table>
+    </div>
+
+    <!-- SEKSYEN 2: PERMOHONAN BAHAN KIMIA & RADAS -->
+    <div id="sekSyenBahan" style="display:none;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Tarikh Pohon</th><th>Nama Pemohon</th><th>No. ID</th><th>Tujuan</th><th>Penyelia</th><th>Status</th><th>Tindakan</th>
+                </tr>
+            </thead>
+            <tbody id="isiJadualBahan"><tr><td colspan="7" style="text-align:center;">Memuatkan...</td></tr></tbody>
+        </table>
+    </div>
+
+    <!-- MODAL POPUP PERINCIAN BAHAN/RADAS -->
+    <div id="modalDetail" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="tutupModal()">&times;</span>
+            <h3 style="color:#2c3e50; border-bottom:2px solid #16a085; padding-bottom:5px;">📋 Perincian Permohonan Bahan & Radas</h3>
+            <div id="isiModal"></div>
         </div>
     </div>
 
-    <!-- KOTAK CARIAN REKOD PENGGUNA -->
-    <div class="search-card">
-        <label>🔍 <strong>Cari Rekod Pengguna:</strong></label>
-        <input type="text" id="carianInput" placeholder="Taip nama pemohon, no. telefon, atau peralatan..." onkeyup="tapisRekod()">
-        <button onclick="binaSemulaJadual(semuaDataTempahan)">Reset Carian</button>
-    </div>
-
-    <table id="jadualAdmin">
-        <thead>
-            <tr>
-                <th>Nama Pemohon</th>
-                <th>No. Telefon</th>
-                <th>Peralatan</th>
-                <th>Tarikh Guna</th>
-                <th>Masa</th>
-                <th>Tujuan</th>
-                <th>Status Semasa</th>
-                <th>Tindakan Admin</th>
-            </tr>
-        </thead>
-        <tbody id="isiJadual">
-            <tr><td colspan="8" style="text-align:center;">Memuatkan data...</td></tr>
-        </tbody>
-    </table>
-
-    <!-- SKRIP FIREBASE (KESELAMATAN & LOG KELUAR) -->
+    <!-- FIREBASE AUTH -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -118,11 +117,9 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // KAWALAN KESELAMATAN: Tendang pengguna jika belum log masuk
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                const email = user.email;
-                if (!email.endsWith('@uitm.edu.my') && !email.endsWith('@student.uitm.edu.my')) {
+                if (!user.email.endsWith('@uitm.edu.my') && !user.email.endsWith('@student.uitm.edu.my')) {
                     signOut(auth);
                     window.location.href = "index.html";
                 }
@@ -131,24 +128,15 @@
             }
         });
 
-        // FUNGSI LOG KELUAR
         document.getElementById('logout-btn').addEventListener('click', () => {
-            signOut(auth).then(() => {
-                window.location.href = "index.html";
-            }).catch((error) => {
-                alert("Ralat semasa log keluar: " + error.message);
-            });
+            signOut(auth).then(() => window.location.href = "index.html");
         });
     </script>
 
-    <!-- SKRIP KATA LALUAN & DATA SUPABASE -->
     <script>
-        // KAWALAN KESELAMATAN KATA LALUAN ADMIN
-        const KATA_LALUAN_ADMIN = "FKK@20160901"; // Tukar kata laluan admin anda di sini
-        const inputLaluan = prompt("🔒 KAWALAN ADMIN:\nSila masukkan kata laluan untuk mengakses panel ini:");
-
-        if (inputLaluan !== KATA_LALUAN_ADMIN) {
-            alert("❌ Kata laluan salah! Anda tidak mempunyai kebenaran untuk mengakses laman ini.");
+        const KATA_LALUAN_ADMIN = "admin123";
+        if (prompt("🔒 KAWALAN ADMIN:\nSila masukkan kata laluan:") !== KATA_LALUAN_ADMIN) {
+            alert("❌ Kata laluan salah!");
             window.location.href = "makmal.html";
         }
 
@@ -156,159 +144,127 @@
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
         const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        let semuaDataTempahan = [];
+        let dataBahanGlobal = [];
 
         document.addEventListener("DOMContentLoaded", function() {
-            dapatkanData();
+            dapatkanTempahan();
+            dapatkanBahanRadas();
         });
 
-        // 1. DAPATKAN DATA TEMPAHAN (TERMASUK TARIKH LEPAS)
-        async function dapatkanData() {
-            const tbody = document.getElementById('isiJadual');
-            
-            try {
-                const { data, error } = await supabaseClient
-                    .from('tempahan_peralatan')
-                    .select('*')
-                    .order('tarikh_guna', { ascending: false }); // Susun mengikut tarikh terkini ke lepas
-
-                if (error) {
-                    alert("Ralat Supabase: " + error.message);
-                    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:red;">Ralat mengambil data dari database.</td></tr>';
-                    return;
-                }
-
-                if (!data || data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Tiada rekod tempahan ditemui.</td></tr>';
-                    kemaskiniKadRingkasan([]);
-                    return;
-                }
-
-                semuaDataTempahan = data;
-                kemaskiniKadRingkasan(data);
-                binaSemulaJadual(data);
-
-            } catch (err) {
-                alert("Ralat sistem: " + err.message);
+        function tukarTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            if (tab === 'tempahan') {
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                document.getElementById('sekSyenTempahan').style.display = 'block';
+                document.getElementById('sekSyenBahan').style.display = 'none';
+            } else {
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.getElementById('sekSyenTempahan').style.display = 'none';
+                document.getElementById('sekSyenBahan').style.display = 'block';
             }
         }
 
-        // 2. PAPARKAN DATA DALAM JADUAL
-        function binaSemulaJadual(dataList) {
-            const tbody = document.getElementById('isiJadual');
+        // 1. DATA TEMPAHAN SLOT
+        async function dapatkanTempahan() {
+            const { data } = await supabaseClient.from('tempahan_peralatan').select('*').order('id', { ascending: false });
+            const tbody = document.getElementById('isiJadualTempahan');
             tbody.innerHTML = '';
 
-            if (dataList.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Tiada rekod tempahan sepadan dengan carian.</td></tr>';
-                return;
-            }
+            if(data) {
+                document.getElementById('totalTempahan').innerText = data.length;
+                document.getElementById('totalLulus').innerText = data.filter(r => r.status === 'Lulus').length;
+                document.getElementById('totalMenunggu').innerText = data.filter(r => (r.status === 'Menunggu' || !r.status)).length;
 
-            dataList.forEach(rekod => {
-                const row = tbody.insertRow();
-                
-                let statusSemasa = rekod.status || 'Menunggu';
-                let statusClass = 'status-menunggu';
-                if (statusSemasa === 'Lulus') statusClass = 'status-lulus';
-                if (statusSemasa === 'Ditolak') statusClass = 'status-tolak';
-
-                const namaPemohon = rekod.nama_pemohon || rekod['Name: nama_pemohon'] || '-';
-                const noTelefon = rekod.no_telefon || rekod.no_tel || rekod.phone || '-';
-                const namaPeralatan = rekod.nama_peralatan || '-';
-                const tarikhGuna = rekod.tarikh_guna || '-';
-                const masaDisplay = (rekod.masa_mula && rekod.masa_tamat) ? `${rekod.masa_mula} - ${rekod.masa_tamat}` : '-';
-                const tujuan = rekod.tujuan || '-';
-
-                row.insertCell(0).innerText = namaPemohon;
-                
-                const cellPhone = row.insertCell(1);
-                if (noTelefon !== '-' && noTelefon !== '' && noTelefon !== null) {
-                    cellPhone.innerHTML = `<a href="tel:${noTelefon}" class="phone-link">📞 ${noTelefon}</a>`;
-                } else {
-                    cellPhone.innerText = '-';
-                }
-
-                row.insertCell(2).innerText = namaPeralatan;
-                row.insertCell(3).innerText = tarikhGuna;
-                row.insertCell(4).innerText = masaDisplay;
-                row.insertCell(5).innerText = tujuan;
-                
-                const cellStatus = row.insertCell(6);
-                cellStatus.innerHTML = `<span class="${statusClass}">${statusSemasa}</span>`;
-
-                const cellTindakan = row.insertCell(7);
-                
-                const btnLulus = document.createElement('button');
-                btnLulus.className = 'btn-lulus';
-                btnLulus.innerText = 'Lulus';
-                btnLulus.onclick = function() { tukarStatus(rekod.id, 'Lulus'); };
-
-                const btnTolak = document.createElement('button');
-                btnTolak.className = 'btn-tolak';
-                btnTolak.innerText = 'Tolak';
-                btnTolak.onclick = function() { tukarStatus(rekod.id, 'Ditolak'); };
-
-                const btnPadam = document.createElement('button');
-                btnPadam.className = 'btn-padam';
-                btnPadam.innerText = '🗑️ Padam';
-                btnPadam.onclick = function() { padamRekod(rekod.id, namaPemohon); };
-
-                cellTindakan.appendChild(btnLulus);
-                cellTindakan.appendChild(btnTolak);
-                cellTindakan.appendChild(btnPadam);
-            });
-        }
-
-        // 3. FUNGSI TAPIS / CARI REKOD PENGGUNA
-        function tapisRekod() {
-            const kataKunci = document.getElementById('carianInput').value.toLowerCase();
-            const hasilTapis = semuaDataTempahan.filter(rekod => {
-                const nama = (rekod.nama_pemohon || '').toLowerCase();
-                const tel = (rekod.no_telefon || '').toLowerCase();
-                const alat = (rekod.nama_peralatan || '').toLowerCase();
-                const tarikh = (rekod.tarikh_guna || '').toLowerCase();
-                return nama.includes(kataKunci) || tel.includes(kataKunci) || alat.includes(kataKunci) || tarikh.includes(kataKunci);
-            });
-            binaSemulaJadual(hasilTapis);
-        }
-
-        // 4. KEMASKINI RINGKASAN DATA (ANALYTICS)
-        function kemaskiniKadRingkasan(data) {
-            document.getElementById('totalTempahan').innerText = data.length;
-            document.getElementById('totalLulus').innerText = data.filter(r => r.status === 'Lulus').length;
-            document.getElementById('totalMenunggu').innerText = data.filter(r => (r.status === 'Menunggu' || !r.status)).length;
-        }
-
-        // 5. FUNGSI TUKAR STATUS
-        async function tukarStatus(id, statusBaru) {
-            const { error } = await supabaseClient
-                .from('tempahan_peralatan')
-                .update({ status: statusBaru })
-                .eq('id', id);
-
-            if (error) {
-                alert('Gagal kemaskini: ' + error.message);
-            } else {
-                alert(`Status berjaya ditukar kepada: ${statusBaru}`);
-                dapatkanData();
+                data.forEach(r => {
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td>${r.nama_pemohon || '-'}</td>
+                        <td>${r.no_telefon || '-'}</td>
+                        <td>${r.nama_peralatan || '-'}</td>
+                        <td>${r.tarikh_guna || '-'}</td>
+                        <td>${r.masa_mula || ''} - ${r.masa_tamat || ''}</td>
+                        <td><span class="status-${(r.status||'menunggu').toLowerCase()}">${r.status||'Menunggu'}</span></td>
+                        <td>
+                            <button class="btn-lulus" onclick="tukarStatus('tempahan_peralatan', ${r.id}, 'Lulus')">Lulus</button>
+                            <button class="btn-tolak" onclick="tukarStatus('tempahan_peralatan', ${r.id}, 'Ditolak')">Tolak</button>
+                            <button class="btn-padam" onclick="padamRekod('tempahan_peralatan', ${r.id})">🗑️</button>
+                        </td>
+                    `;
+                });
             }
         }
 
-        // 6. FUNGSI PADAM REKOD
-        async function padamRekod(id, nama) {
-            const sahkan = confirm(`Adakah anda pasti ingin memadam rekod tempahan oleh "${nama}"? Data ini akan dipadam secara kekal dari database.`);
-            
-            if (sahkan) {
-                const { error } = await supabaseClient
-                    .from('tempahan_peralatan')
-                    .delete()
-                    .eq('id', id);
+        // 2. DATA PERMOHONAN BAHAN & RADAS
+        async function dapatkanBahanRadas() {
+            const { data } = await supabaseClient.from('permohonan_bahan_radas').select('*').order('id', { ascending: false });
+            const tbody = document.getElementById('isiJadualBahan');
+            tbody.innerHTML = '';
+            dataBahanGlobal = data || [];
 
-                if (error) {
-                    alert('Gagal memadam rekod: ' + error.message);
-                } else {
-                    alert('✅ Rekod berjaya dipadam secara kekal!');
-                    dapatkanData();
-                }
+            if(data) {
+                data.forEach(r => {
+                    const tarikh = new Date(r.created_at).toLocaleDateString('ms-MY');
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td>${tarikh}</td>
+                        <td>${r.nama_pemohon}</td>
+                        <td>${r.no_id}</td>
+                        <td>${r.tujuan}</td>
+                        <td>${r.nama_penyelia || '-'}</td>
+                        <td><span class="status-${(r.status||'menunggu').toLowerCase()}">${r.status||'Menunggu'}</span></td>
+                        <td>
+                            <button class="btn-detail" onclick="paparkanDetail(${r.id})">🔍 Lihat</button>
+                            <button class="btn-lulus" onclick="tukarStatus('permohonan_bahan_radas', ${r.id}, 'Lulus')">Lulus</button>
+                            <button class="btn-tolak" onclick="tukarStatus('permohonan_bahan_radas', ${r.id}, 'Ditolak')">Tolak</button>
+                            <button class="btn-padam" onclick="padamRekod('permohonan_bahan_radas', ${r.id})">🗑️</button>
+                        </td>
+                    `;
+                });
+            }
+        }
+
+        // FUNGSI LIHAT DETAIL POPUP
+        function paparkanDetail(id) {
+            const rekod = dataBahanGlobal.find(r => r.id === id);
+            if (!rekod) return;
+
+            let html = `
+                <p><strong>Nama Pemohon:</strong> ${rekod.nama_pemohon} (${rekod.no_id})</p>
+                <p><strong>Semester/Sesi:</strong> ${rekod.semester_sesi || '-'}</p>
+                <p><strong>Tajuk Projek:</strong> ${rekod.tajuk_projek || '-'}</p>
+                <p><strong>Penyelia:</strong> ${rekod.nama_penyelia || '-'}</p>
+                
+                <h4>👥 Ahli Kumpulan:</h4>
+                <ul>${(rekod.ahli_kumpulan || []).map(a => `<li>${a.nama} (${a.id})</li>`).join('') || 'Tiada'}</ul>
+
+                <h4>🧪 Bahan Kimia Dipohon:</h4>
+                <ul>${(rekod.senarai_bahan_kimia || []).map(b => `<li><strong>${b.nama}</strong> - ${b.kuantiti}</li>`).join('') || 'Tiada'}</ul>
+
+                <h4>🔬 Alat Radas Dipohon:</h4>
+                <ul>${(rekod.senarai_radas || []).map(r => `<li><strong>${r.nama}</strong> - ${r.kuantiti} unit</li>`).join('') || 'Tiada'}</ul>
+
+                <h4>⚙️ Peralatan Makmal Dipohon:</h4>
+                <ul>${(rekod.senarai_peralatan || []).map(p => `<li><strong>${p.nama}</strong> - ${p.kuantiti} unit</li>`).join('') || 'Tiada'}</ul>
+            `;
+
+            document.getElementById('isiModal').innerHTML = html;
+            document.getElementById('modalDetail').style.display = 'block';
+        }
+
+        function tutupModal() { document.getElementById('modalDetail').style.display = 'none'; }
+
+        async function tukarStatus(jadual, id, status) {
+            await supabaseClient.from(jadual).update({ status: status }).eq('id', id);
+            alert(`Status berjaya ditukar kepada: ${status}`);
+            dapatkanTempahan();
+            dapatkanBahanRadas();
+        }
+
+        async function padamRekod(jadual, id) {
+            if(confirm("Pasti mahu memadam rekod ini secara kekal?")) {
+                await supabaseClient.from(jadual).delete().eq('id', id);
+                dapatkanTempahan();
+                dapatkanBahanRadas();
             }
         }
     </script>
