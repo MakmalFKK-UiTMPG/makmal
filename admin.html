@@ -34,14 +34,14 @@
         .status-lulus { color: #27ae60; font-weight: bold; }
         .status-tolak { color: #c0392b; font-weight: bold; }
 
-        .btn-lulus { background-color: #27ae60; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-weight: bold; }
-        .btn-tolak { background-color: #c0392b; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-weight: bold; margin-left: 3px; }
+        .btn-lulus { background-color: #27ae60; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        .btn-tolak { background-color: #c0392b; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; margin-left: 3px; }
         .btn-detail { background-color: #2980b9; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-weight: bold; margin-left: 3px; }
         .btn-padam { background-color: #7f8c8d; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-weight: bold; margin-left: 3px; }
 
         /* MODAL POPUP DETAIL */
         .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
-        .modal-content { background-color: white; margin: 5% auto; padding: 20px; border-radius: 8px; width: 80%; max-width: 700px; max-height: 80vh; overflow-y: auto; }
+        .modal-content { background-color: white; margin: 3% auto; padding: 20px; border-radius: 8px; width: 85%; max-width: 750px; max-height: 85vh; overflow-y: auto; }
         .close-modal { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
@@ -95,7 +95,7 @@
     <div id="modalDetail" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="tutupModal()">&times;</span>
-            <h3 style="color:#2c3e50; border-bottom:2px solid #16a085; padding-bottom:5px;">📋 Perincian Permohonan Bahan & Radas</h3>
+            <h3 style="color:#2c3e50; border-bottom:2px solid #16a085; padding-bottom:5px; margin-top:0;">📋 Perincian Permohonan Bahan & Radas</h3>
             <div id="isiModal"></div>
         </div>
     </div>
@@ -213,9 +213,7 @@
                         <td>${r.nama_penyelia || '-'}</td>
                         <td><span class="status-${(r.status||'menunggu').toLowerCase()}">${r.status||'Menunggu'}</span></td>
                         <td>
-                            <button class="btn-detail" onclick="paparkanDetail(${r.id})">🔍 Lihat</button>
-                            <button class="btn-lulus" onclick="tukarStatus('permohonan_bahan_radas', ${r.id}, 'Lulus')">Lulus</button>
-                            <button class="btn-tolak" onclick="tukarStatus('permohonan_bahan_radas', ${r.id}, 'Ditolak')">Tolak</button>
+                            <button class="btn-detail" onclick="paparkanDetail(${r.id})">🔍 Lihat / Semak</button>
                             <button class="btn-padam" onclick="padamRekod('permohonan_bahan_radas', ${r.id})">🗑️</button>
                         </td>
                     `;
@@ -223,28 +221,42 @@
             }
         }
 
-        // FUNGSI LIHAT DETAIL POPUP
+        // FUNGSI POPUP PERINCIAN & KELULUSAN SEPARA
         function paparkanDetail(id) {
             const rekod = dataBahanGlobal.find(r => r.id === id);
             if (!rekod) return;
 
             let html = `
-                <p><strong>Nama Pemohon:</strong> ${rekod.nama_pemohon} (${rekod.no_id})</p>
-                <p><strong>Semester/Sesi:</strong> ${rekod.semester_sesi || '-'}</p>
-                <p><strong>Tajuk Projek:</strong> ${rekod.tajuk_projek || '-'}</p>
-                <p><strong>Penyelia:</strong> ${rekod.nama_penyelia || '-'}</p>
+                <div style="background:#f8f9fa; padding:12px; border-radius:6px; margin-bottom:15px; font-size:13px;">
+                    <p style="margin:3px 0;"><strong>Nama Pemohon:</strong> ${rekod.nama_pemohon} (${rekod.no_id})</p>
+                    <p style="margin:3px 0;"><strong>Semester/Sesi:</strong> ${rekod.semester_sesi || '-'}</p>
+                    <p style="margin:3px 0;"><strong>Tujuan:</strong> ${rekod.tujuan} | <strong>Penyelia:</strong> ${rekod.nama_penyelia || '-'}</p>
+                    <p style="margin:3px 0;"><strong>Tajuk Projek:</strong> ${rekod.tajuk_projek || '-'}</p>
+                </div>
+
+                <h4 style="margin:10px 0 5px 0; color:#2c3e50;">👥 Ahli Kumpulan:</h4>
+                <ul style="margin-top:0; font-size:13px;">${(rekod.ahli_kumpulan || []).map(a => `<li>${a.nama} (${a.id})</li>`).join('') || 'Tiada'}</ul>
+
+                <h4 style="margin:10px 0 5px 0; color:#16a085;">🧪 Bahan Kimia Dipohon:</h4>
+                <ul style="margin-top:0; font-size:13px;">${(rekod.senarai_bahan_kimia || []).map(b => `<li><strong>${b.nama}</strong> - ${b.kuantiti}</li>`).join('') || 'Tiada'}</ul>
+
+                <h4 style="margin:10px 0 5px 0; color:#16a085;">🔬 Alat Radas Dipohon:</h4>
+                <ul style="margin-top:0; font-size:13px;">${(rekod.senarai_radas || []).map(r => `<li><strong>${r.nama}</strong> - ${r.kuantiti} unit</li>`).join('') || 'Tiada'}</ul>
+
+                <h4 style="margin:10px 0 5px 0; color:#16a085;">⚙️ Peralatan Makmal Dipohon:</h4>
+                <ul style="margin-top:0; font-size:13px;">${(rekod.senarai_peralatan || []).map(p => `<li><strong>${p.nama}</strong> - ${p.kuantiti} unit</li>`).join('') || 'Tiada'}</ul>
+
+                <hr style="border:none; border-top:1px solid #ddd; margin:15px 0;">
                 
-                <h4>👥 Ahli Kumpulan:</h4>
-                <ul>${(rekod.ahli_kumpulan || []).map(a => `<li>${a.nama} (${a.id})</li>`).join('') || 'Tiada'}</ul>
+                <label style="display:block; font-weight:bold; margin-bottom:5px; color:#2c3e50; font-size:13px;">
+                    ✏️ Catatan Admin / Pelulusan Separa:
+                </label>
+                <textarea id="catatanAdminInput" style="width:97%; height:70px; padding:8px; border:1px solid #ccc; border-radius:4px; font-family:Arial;" placeholder="Contoh: Diluluskan untuk Beaker sahaja. Ethanol tidak diluluskan kerana stok terhad.">${rekod.catatan_admin || ''}</textarea>
 
-                <h4>🧪 Bahan Kimia Dipohon:</h4>
-                <ul>${(rekod.senarai_bahan_kimia || []).map(b => `<li><strong>${b.nama}</strong> - ${b.kuantiti}</li>`).join('') || 'Tiada'}</ul>
-
-                <h4>🔬 Alat Radas Dipohon:</h4>
-                <ul>${(rekod.senarai_radas || []).map(r => `<li><strong>${r.nama}</strong> - ${r.kuantiti} unit</li>`).join('') || 'Tiada'}</ul>
-
-                <h4>⚙️ Peralatan Makmal Dipohon:</h4>
-                <ul>${(rekod.senarai_peralatan || []).map(p => `<li><strong>${p.nama}</strong> - ${p.kuantiti} unit</li>`).join('') || 'Tiada'}</ul>
+                <div style="margin-top:15px; display:flex; gap:10px; justify-content:flex-end;">
+                    <button class="btn-lulus" onclick="simpanKeputusan(${rekod.id}, 'Lulus')">✅ Luluskan Permohonan</button>
+                    <button class="btn-tolak" onclick="simpanKeputusan(${rekod.id}, 'Ditolak')">❌ Tolak Permohonan</button>
+                </div>
             `;
 
             document.getElementById('isiModal').innerHTML = html;
@@ -252,6 +264,24 @@
         }
 
         function tutupModal() { document.getElementById('modalDetail').style.display = 'none'; }
+
+        // SIMPAN KEPUTUSAN BERSAMA CATATAN ADMIN
+        async function simpanKeputusan(id, status) {
+            const catatan = document.getElementById('catatanAdminInput').value;
+            
+            const { error } = await supabaseClient
+                .from('permohonan_bahan_radas')
+                .update({ status: status, catatan_admin: catatan })
+                .eq('id', id);
+
+            if (error) {
+                alert("❌ Ralat semasa menyimpan: " + error.message);
+            } else {
+                alert(`✅ Berjaya! Permohonan telah dikemas kini kepada status '${status}'.`);
+                tutupModal();
+                dapatkanBahanRadas();
+            }
+        }
 
         async function tukarStatus(jadual, id, status) {
             await supabaseClient.from(jadual).update({ status: status }).eq('id', id);
