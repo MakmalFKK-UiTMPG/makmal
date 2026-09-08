@@ -6,34 +6,44 @@
     <title>Semakan Status Permohonan Bahan & Radas</title>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: auto; background-color: #f9f9f9; }
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 1000px; margin: auto; background-color: #f9f9f9; }
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .back-btn { color: #2980b9; text-decoration: none; font-weight: bold; }
+        .back-btn { color: #2980b9; text-decoration: none; font-weight: bold; font-size: 14px; }
+        .back-btn:hover { text-decoration: underline; }
+        
         .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
-        .search-box { display: flex; gap: 10px; margin-bottom: 20px; }
-        input[type="text"] { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
-        .btn-search { background: #16a085; color: white; border: none; padding: 10px 20px; font-weight: bold; border-radius: 4px; cursor: pointer; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; font-size: 13px; }
+        
+        .search-box { display: flex; gap: 10px; margin: 20px 0; }
+        input[type="text"] { flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; }
+        .btn-search { background: #16a085; color: white; border: none; padding: 12px 24px; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 15px; }
+        .btn-search:hover { background: #117a65; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; font-size: 13px; vertical-align: top; }
         th { background: #2c3e50; color: white; }
-        .status-menunggu { color: #d35400; font-weight: bold; }
-        .status-lulus { color: #27ae60; font-weight: bold; }
-        .status-tolak { color: #c0392b; font-weight: bold; }
+        
+        .status-menunggu { color: #d35400; font-weight: bold; background: #fef5e7; padding: 4px 8px; border-radius: 4px; display: inline-block; }
+        .status-lulus { color: #27ae60; font-weight: bold; background: #eafaf1; padding: 4px 8px; border-radius: 4px; display: inline-block; }
+        .status-tolak { color: #c0392b; font-weight: bold; background: #fdedec; padding: 4px 8px; border-radius: 4px; display: inline-block; }
+        
+        .catatan-box { background: #eef9f6; border-left: 4px solid #16a085; padding: 8px 12px; font-size: 13px; color: #2c3e50; margin-top: 5px; border-radius: 0 4px 4px 0; }
+        .item-list { font-size: 12px; color: #555; margin: 3px 0 0 15px; padding: 0; }
     </style>
 </head>
 <body>
 
     <div class="header-top">
-        <a href="makmal.html" class="back-btn">⬅️ Kembali ke Senarai Makmal</a>
+        <a href="bahan-radas.html" class="back-btn">⬅️ Kembali ke Borang Permohonan</a>
+        <a href="makmal.html" class="back-btn" style="color: #7f8c8d;">🏠 Menu Utama Makmal</a>
     </div>
 
     <div class="card">
-        <h2>🔍 Semakan Status Permohonan Bahan & Radas</h2>
-        <p>Masukkan No. ID (Pelajar / Staf) anda untuk menyemak keputusan permohonan:</p>
+        <h2 style="color:#2c3e50; margin-top:0;">🔍 Semakan Status Permohonan Bahan & Radas</h2>
+        <p style="color:#7f8c8d; font-size:14px;">Masukkan No. ID (Pelajar / Staf) anda untuk melihat keputusan permohonan dan catatan rasmi Pegawai Makmal:</p>
 
         <div class="search-box">
-            <input type="text" id="noIdCarian" placeholder="Contoh: 2023123456">
-            <button class="btn-search" onclick="semakStatus()">Cari Rekod</button>
+            <input type="text" id="noIdCarian" placeholder="Masukkan No. ID (Contoh: 2023123456)">
+            <button class="btn-search" onclick="semakStatus()">🔍 Cari Permohonan</button>
         </div>
 
         <div id="hasilKeputusan"></div>
@@ -46,7 +56,14 @@
 
         async function semakStatus() {
             const noId = document.getElementById('noIdCarian').value.trim();
-            if (!noId) { alert("Sila masukkan No. ID anda."); return; }
+            const divHasil = document.getElementById('hasilKeputusan');
+
+            if (!noId) {
+                alert("Sila masukkan No. ID anda.");
+                return;
+            }
+
+            divHasil.innerHTML = '<p style="color:#7f8c8d;">🔄 Sedang mencari rekod...</p>';
 
             const { data, error } = await supabaseClient
                 .from('permohonan_bahan_radas')
@@ -54,10 +71,13 @@
                 .eq('no_id', noId)
                 .order('id', { ascending: false });
 
-            const divHasil = document.getElementById('hasilKeputusan');
+            if (error) {
+                divHasil.innerHTML = `<p style="color:red;">❌ Ralat carian: ${error.message}</p>`;
+                return;
+            }
 
-            if (error || !data || data.length === 0) {
-                divHasil.innerHTML = '<p style="color:red; font-weight:bold;">❌ Tiada rekod permohonan dijumpai untuk No. ID ini.</p>';
+            if (!data || data.length === 0) {
+                divHasil.innerHTML = '<p style="color:#c0392b; font-weight:bold; background:#fdedec; padding:10px; border-radius:5px;">❌ Tiada rekod permohonan dijumpai untuk No. ID ini.</p>';
                 return;
             }
 
@@ -65,11 +85,11 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Tarikh Mohon</th>
-                            <th>Tujuan</th>
-                            <th>Penyelia</th>
-                            <th>Status</th>
-                            <th>Catatan Admin / Kelulusan Item</th>
+                            <th width="110">Tarikh Pohon</th>
+                            <th>Maklumat Permohonan</th>
+                            <th>Ringkasan Item Dipohon</th>
+                            <th width="110">Status</th>
+                            <th width="250">Catatan Admin / Kelulusan Separa</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -77,13 +97,38 @@
 
             data.forEach(r => {
                 const tarikh = new Date(r.created_at).toLocaleDateString('ms-MY');
+                const statusTxt = r.status || 'Menunggu';
+                
+                let statusClass = 'status-menunggu';
+                if (statusTxt.toLowerCase().includes('lulus')) statusClass = 'status-lulus';
+                if (statusTxt.toLowerCase().includes('tolak')) statusClass = 'status-tolak';
+
+                // Ringkasan item
+                const bahanCount = (r.senarai_bahan_kimia || []).length;
+                const radasCount = (r.senarai_radas || []).length;
+                const alatCount = (r.senarai_peralatan || []).length;
+
                 html += `
                     <tr>
                         <td>${tarikh}</td>
-                        <td>${r.tujuan}</td>
-                        <td>${r.nama_penyelia || '-'}</td>
-                        <td><span class="status-${(r.status||'menunggu').toLowerCase()}">${r.status||'Menunggu'}</span></td>
-                        <td>${r.catatan_admin || '<i>Tiada catatan</i>'}</td>
+                        <td>
+                            <strong>${r.nama_pemohon}</strong><br>
+                            <small style="color:#7f8c8d;">Tujuan: ${r.tujuan}</small><br>
+                            <small style="color:#7f8c8d;">Penyelia: ${r.nama_penyelia || '-'}</small>
+                        </td>
+                        <td>
+                            <ul class="item-list">
+                                ${bahanCount ? `<li>🧪 Bahan Kimia: ${bahanCount} item</li>` : ''}
+                                ${radasCount ? `<li>🔬 Alat Radas: ${radasCount} item</li>` : ''}
+                                ${alatCount ? `<li>⚙️ Peralatan: ${alatCount} item</li>` : ''}
+                            </ul>
+                        </td>
+                        <td><span class="${statusClass}">${statusTxt}</span></td>
+                        <td>
+                            ${r.catatan_admin 
+                                ? `<div class="catatan-box"><strong>Catatan:</strong><br>${r.catatan_admin}</div>` 
+                                : '<i style="color:#95a5a6; font-size:12px;">Belum ada catatan dari admin</i>'}
+                        </td>
                     </tr>
                 `;
             });
