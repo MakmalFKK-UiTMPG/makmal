@@ -8,9 +8,15 @@
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: Arial, sans-serif; padding: 20px; max-width: 1100px; margin: auto; background-color: #f9f9f9; }
-        h2, h3 { color: #2c3e50; text-align: center; }
-        .back-btn { display: inline-block; margin-bottom: 15px; color: #2980b9; text-decoration: none; font-weight: bold; }
         
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        h2, h3 { color: #2c3e50; margin-top: 0; }
+        .back-btn { display: inline-block; color: #2980b9; text-decoration: none; font-weight: bold; font-size: 15px; }
+        .back-btn:hover { text-decoration: underline; }
+        
+        .btn-logout { background: #e74c3c; color: white; border: none; padding: 8px 14px; border-radius: 5px; cursor: pointer; font-size: 13px; font-weight: bold; }
+        .btn-logout:hover { background: #c0392b; }
+
         .form-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 25px; }
         .input-group { margin-bottom: 15px; }
         .input-group label { display: block; font-weight: bold; margin-bottom: 5px; }
@@ -30,8 +36,8 @@
         .slot-available:hover { background-color: #d4efdf; border: 1px solid #27ae60; }
         .slot-booked { background-color: #fce8e6; color: #c0392b; font-weight: bold; cursor: not-allowed; border-radius: 4px; font-size: 11px; padding: 8px 4px; }
 
-        button { background-color: #2980b9; color: white; border: none; padding: 12px 15px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 10px; }
-        button:hover { background-color: #3498db; }
+        .btn-submit { background-color: #2980b9; color: white; border: none; padding: 12px 15px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 10px; }
+        .btn-submit:hover { background-color: #3498db; }
         
         table.status-table { border-collapse: collapse; width: 100%; margin-top: 20px; background: white; }
         table.status-table th, table.status-table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
@@ -44,8 +50,12 @@
 </head>
 <body>
 
-    <a href="./makmal.html" class="back-btn">⬅️ Kembali ke Senarai Makmal</a>
-    <h2>📋 Borang & Jadual Tempahan Peralatan</h2>
+    <div class="header-top">
+        <a href="makmal.html" class="back-btn">⬅️ Kembali ke Senarai Makmal</a>
+        <button id="logout-btn" class="btn-logout">🚪 Log Keluar</button>
+    </div>
+
+    <h2 style="text-align: center;">📋 Borang & Jadual Tempahan Peralatan</h2>
 
     <form id="formTempahan">
         <div class="form-card">
@@ -57,7 +67,7 @@
                 <input type="text" id="nama_pemohon" required placeholder="Contoh: Ahmad Bin Ali">
             </div>
 
-            <!-- 2. NOMBOR TELEFON (Hanya untuk rujukan Admin) -->
+            <!-- 2. NOMBOR TELEFON -->
             <div class="input-group">
                 <label>Nombor Telefon:</label>
                 <input type="tel" id="no_telefon" required placeholder="Contoh: 012-3456789">
@@ -125,11 +135,11 @@
                 <input type="text" id="masa_tamat" required readonly style="background-color: #eef2f5; font-weight: bold;" placeholder="Pilih dari jadual">
             </div>
 
-            <button type="submit">Hantar Tempahan</button>
+            <button type="submit" class="btn-submit">Hantar Tempahan</button>
         </div>
     </form>
 
-    <!-- JADUAL AWAM PELAJAR (TANPA NOMBOR TELEFON) -->
+    <!-- JADUAL AWAM PELAJAR -->
     <h3>Status Tempahan Semasa</h3>
     <table class="status-table">
         <thead>
@@ -146,6 +156,47 @@
         </tbody>
     </table>
 
+    <!-- SKRIP FIREBASE (KESELAMATAN & LOG KELUAR) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDDC9PLSCOzna4caIsrfPSvfR3A_FczKDc",
+            authDomain: "sistem-makmal-fkkuitmpg.firebaseapp.com",
+            projectId: "sistem-makmal-fkkuitmpg",
+            storageBucket: "sistem-makmal-fkkuitmpg.firebasestorage.app",
+            messagingSenderId: "291806336887",
+            appId: "1:291806336887:web:a0d4fca1866459ead03372"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // KAWALAN KESELAMATAN: Tendang pengguna jika belum log masuk
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const email = user.email;
+                if (!email.endsWith('@uitm.edu.my') && !email.endsWith('@student.uitm.edu.my')) {
+                    signOut(auth);
+                    window.location.href = "index.html";
+                }
+            } else {
+                window.location.href = "index.html";
+            }
+        });
+
+        // FUNGSI LOG KELUAR
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            signOut(auth).then(() => {
+                window.location.href = "index.html";
+            }).catch((error) => {
+                alert("Ralat semasa log keluar: " + error.message);
+            });
+        });
+    </script>
+
+    <!-- SKRIP SUPABASE (FUNGSI TEMPAHAN) -->
     <script>
         const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
