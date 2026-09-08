@@ -6,7 +6,7 @@
     <title>Senarai Makmal Fakulti Kejuruteraan Kimia UiTM Pasir Gudang</title>
     
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: auto; background-color: #f8f9fa; }
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 1000px; margin: auto; background-color: #f8f9fa; }
         
         .header-top {
             display: flex;
@@ -56,7 +56,7 @@
 
         .lab-grid { 
             display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
             gap: 15px; 
             padding: 20px; 
         }
@@ -87,36 +87,35 @@
             color: #2980b9;
         }
 
-        /* NAVIGASI BUTANG BAWAH */
+        /* NAVIGASI BUTANG BAWAH (SERAGAM & SIMETRI) */
         .nav-container { 
-            display: flex; 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
             gap: 15px; 
             margin-top: 30px; 
-            justify-content: center; 
-            flex-wrap: wrap;
         }
 
         .btn-nav { 
-            flex: 1; 
-            min-width: 220px;
-            max-width: 280px; 
-            text-align: center; 
-            padding: 14px 16px; 
-            background-color: #2980b9; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            height: 60px; /* MENETAPKAN KETINGGIAN SERAGAM DENGAN TEPAT */
+            padding: 10px 15px; 
             color: white; 
             text-decoration: none; 
             font-weight: bold; 
             font-size: 14px;
-            border-radius: 6px; 
+            border-radius: 8px; 
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: background 0.2s, transform 0.1s;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-sizing: border-box;
         }
 
-        .btn-nav:hover { background-color: #1c5980; transform: translateY(-2px); }
-        .btn-inventori { background-color: #27ae60; }
-        .btn-inventori:hover { background-color: #1e8449; }
-        .btn-admin { background-color: #34495e; }
-        .btn-admin:hover { background-color: #1f2d3d; }
+        .btn-nav:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
     </style>
 </head>
 <body>
@@ -215,14 +214,14 @@
         </div>
     </div>
 
-    <!-- BUTANG NAVIGASI UTAMA (SERAGAM 6 BUTTON) -->
+    <!-- BUTANG NAVIGASI UTAMA (SERAGAM 6 BUTTON DENGAN WARNA BERBEZA) -->
     <div class="nav-container">
-        <a href="senarai-peralatan.html" class="btn-nav" style="background-color: #34495e;">🔬 Senarai Peralatan Makmal</a>
-        <a href="inventori.html" class="btn-nav btn-inventori">🧪 Inventori Bahan Kimia</a>
-        <a href="tempahan.html" class="btn-nav">📋 Borang Tempahan Peralatan</a>
+        <a href="senarai-peralatan.html" class="btn-nav" style="background-color: #d35400;">🔬 Senarai Peralatan Makmal</a>
+        <a href="inventori.html" class="btn-nav" style="background-color: #27ae60;">🧪 Inventori Bahan Kimia</a>
+        <a href="tempahan.html" class="btn-nav" style="background-color: #2980b9;">📋 Borang Tempahan Peralatan</a>
         <a href="bahan-radas.html" class="btn-nav" style="background-color: #16a085;">🧪 Permohonan Bahan & Radas (Online)</a>
         <a href="borang.html" class="btn-nav" style="background-color: #8e44ad;">📁 Muat Turun Borang</a>
-        <a href="admin.html" class="btn-nav btn-admin">⚙️ Panel Admin</a>
+        <a href="admin.html" class="btn-nav" style="background-color: #34495e;">⚙️ Panel Admin</a>
     </div>
 
     <!-- SKRIP FIREBASE (KESELAMATAN & LOG KELUAR) -->
