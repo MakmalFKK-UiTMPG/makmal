@@ -27,7 +27,10 @@
         .status-tolak { color: #c0392b; font-weight: bold; background: #fdedec; padding: 4px 8px; border-radius: 4px; display: inline-block; }
         
         .catatan-box { background: #eef9f6; border-left: 4px solid #16a085; padding: 8px 12px; font-size: 13px; color: #2c3e50; margin-top: 5px; border-radius: 0 4px 4px 0; }
-        .item-list { font-size: 12px; color: #555; margin: 3px 0 0 15px; padding: 0; }
+        
+        .item-group { margin-bottom: 8px; }
+        .item-title { font-weight: bold; color: #2c3e50; font-size: 12px; margin-bottom: 2px; }
+        .item-list { font-size: 12px; color: #444; margin: 0 0 5px 15px; padding: 0; }
     </style>
 </head>
 <body>
@@ -39,7 +42,7 @@
 
     <div class="card">
         <h2 style="color:#2c3e50; margin-top:0;">🔍 Semakan Status Permohonan Bahan & Radas</h2>
-        <p style="color:#7f8c8d; font-size:14px;">Masukkan No. ID (Pelajar / Staf) anda untuk melihat keputusan permohonan dan catatan rasmi Pegawai Makmal:</p>
+        <p style="color:#7f8c8d; font-size:14px;">Masukkan No. ID (Pelajar / Staf) anda untuk melihat keseluruhan perincian permohonan dan catatan Pegawai Makmal:</p>
 
         <div class="search-box">
             <input type="text" id="noIdCarian" placeholder="Masukkan No. ID (Contoh: 2023123456)">
@@ -85,11 +88,11 @@
                 <table>
                     <thead>
                         <tr>
-                            <th width="110">Tarikh Pohon</th>
-                            <th>Maklumat Permohonan</th>
-                            <th>Ringkasan Item Dipohon</th>
-                            <th width="110">Status</th>
-                            <th width="250">Catatan Admin / Kelulusan Separa</th>
+                            <th width="100">Tarikh</th>
+                            <th width="200">Pemohon & Projek</th>
+                            <th>Senarai Keseluruhan Item Dipohon</th>
+                            <th width="100">Status</th>
+                            <th width="220">Catatan Admin / Kelulusan Separa</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -103,30 +106,56 @@
                 if (statusTxt.toLowerCase().includes('lulus')) statusClass = 'status-lulus';
                 if (statusTxt.toLowerCase().includes('tolak')) statusClass = 'status-tolak';
 
-                // Ringkasan item
-                const bahanCount = (r.senarai_bahan_kimia || []).length;
-                const radasCount = (r.senarai_radas || []).length;
-                const alatCount = (r.senarai_peralatan || []).length;
+                // Bina Senarai Penuh Bahan Kimia
+                let bahanHTML = '';
+                if (r.senarai_bahan_kimia && r.senarai_bahan_kimia.length > 0) {
+                    bahanHTML = `<div class="item-group"><div class="item-title">🧪 Bahan Kimia:</div><ul class="item-list">` +
+                        r.senarai_bahan_kimia.map(b => `<li><strong>${b.nama}</strong> (${b.kuantiti})</li>`).join('') +
+                        `</ul></div>`;
+                }
+
+                // Bina Senarai Penuh Alat Radas
+                let radasHTML = '';
+                if (r.senarai_radas && r.senarai_radas.length > 0) {
+                    radasHTML = `<div class="item-group"><div class="item-title">🔬 Alat Radas:</div><ul class="item-list">` +
+                        r.senarai_radas.map(rad => `<li><strong>${rad.nama}</strong> (${rad.kuantiti} unit)</li>`).join('') +
+                        `</ul></div>`;
+                }
+
+                // Bina Senarai Penuh Peralatan
+                let peralatanHTML = '';
+                if (r.senarai_peralatan && r.senarai_peralatan.length > 0) {
+                    peralatanHTML = `<div class="item-group"><div class="item-title">⚙️ Peralatan Makmal:</div><ul class="item-list">` +
+                        r.senarai_peralatan.map(p => `<li><strong>${p.nama}</strong> (${p.kuantiti} unit)</li>`).join('') +
+                        `</ul></div>`;
+                }
+
+                // Ahli Kumpulan
+                let ahliHTML = '';
+                if (r.ahli_kumpulan && r.ahli_kumpulan.length > 0) {
+                    ahliHTML = `<br><small style="color:#555;"><b>Ahli:</b> ${r.ahli_kumpulan.map(a => a.nama).join(', ')}</small>`;
+                }
 
                 html += `
                     <tr>
                         <td>${tarikh}</td>
                         <td>
                             <strong>${r.nama_pemohon}</strong><br>
+                            <small style="color:#7f8c8d;">ID: ${r.no_id}</small><br>
                             <small style="color:#7f8c8d;">Tujuan: ${r.tujuan}</small><br>
                             <small style="color:#7f8c8d;">Penyelia: ${r.nama_penyelia || '-'}</small>
+                            ${ahliHTML}
                         </td>
                         <td>
-                            <ul class="item-list">
-                                ${bahanCount ? `<li>🧪 Bahan Kimia: ${bahanCount} item</li>` : ''}
-                                ${radasCount ? `<li>🔬 Alat Radas: ${radasCount} item</li>` : ''}
-                                ${alatCount ? `<li>⚙️ Peralatan: ${alatCount} item</li>` : ''}
-                            </ul>
+                            ${bahanHTML}
+                            ${radasHTML}
+                            ${peralatanHTML}
+                            ${(!bahanHTML && !radasHTML && !peralatanHTML) ? '<i>Tiada item direkodkan</i>' : ''}
                         </td>
                         <td><span class="${statusClass}">${statusTxt}</span></td>
                         <td>
                             ${r.catatan_admin 
-                                ? `<div class="catatan-box"><strong>Catatan:</strong><br>${r.catatan_admin}</div>` 
+                                ? `<div class="catatan-box"><strong>Catatan Pegawai:</strong><br>${r.catatan_admin}</div>` 
                                 : '<i style="color:#95a5a6; font-size:12px;">Belum ada catatan dari admin</i>'}
                         </td>
                     </tr>
