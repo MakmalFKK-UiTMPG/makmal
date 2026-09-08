@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Senarai Peralatan Makmal FKK</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; max-width: 1200px; margin: auto; background-color: #f8f9fa; }
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 1100px; margin: auto; background-color: #f8f9fa; }
         
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .back-btn { color: #2980b9; text-decoration: none; font-weight: bold; font-size: 14px; }
@@ -19,20 +19,18 @@
         .search-container { margin-bottom: 25px; text-align: center; }
         .search-input { width: 100%; max-width: 550px; padding: 12px 20px; border: 2px solid #16a085; border-radius: 25px; font-size: 15px; outline: none; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
 
-        /* GRID KAD PERALATAN */
-        .equipment-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; }
+        /* SEKSYEN MAKMAL */
+        .lab-section { background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 25px; overflow: hidden; border: 1px solid #e2e8f0; }
+        .lab-header { background-color: #2c3e50; color: white; padding: 12px 20px; font-size: 16px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .lab-update { font-size: 12px; font-weight: normal; opacity: 0.8; }
 
-        .card { background: white; border-radius: 8px; box-shadow: 0 3px 10px rgba(0,0,0,0.06); padding: 16px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s; }
-        .card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        /* JADUAL SENARAI ALAT */
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px 15px; text-align: left; font-size: 13px; border-bottom: 1px solid #eee; }
+        th { background-color: #f1f5f9; color: #334155; font-size: 12px; text-transform: uppercase; }
+        tr:hover { background-color: #f8fafc; }
 
-        .card-lab { font-size: 11px; font-weight: bold; color: #16a085; text-transform: uppercase; letter-spacing: 0.5px; background: #eef9f6; padding: 4px 8px; border-radius: 4px; display: inline-block; margin-bottom: 8px; width: fit-content; }
-        .card-title { font-size: 15px; font-weight: bold; color: #2c3e50; margin: 0 0 6px 0; line-height: 1.3; }
-        .card-model { font-size: 12px; color: #7f8c8d; margin-bottom: 12px; }
-
-        .card-details { font-size: 12px; color: #444; border-top: 1px solid #f1f1f1; padding-top: 10px; margin-top: 5px; }
-        .card-details p { margin: 3px 0; }
-
-        /* STATUS BADGES */
+        /* BADGE STATUS */
         .badge { font-weight: bold; padding: 3px 8px; border-radius: 12px; font-size: 11px; display: inline-block; }
         .badge-available { background: #d4edda; color: #155724; }
         .badge-maintenance { background: #fff3cd; color: #856404; }
@@ -48,468 +46,218 @@
 
     <div class="title-box">
         <h2>🔬 Senarai Peralatan & Instrumen Makmal FKK</h2>
-        <p>Direktori lengkap peralatan bagi Makmal Kimia, Analitikal, Bioprocess & Environment</p>
+        <p>Direktori lengkap mengikut makmal (Dikemaskini: April 2026)</p>
     </div>
 
     <!-- CARIAN -->
     <div class="search-container">
-        <input type="text" id="carianInput" class="search-input" onkeyup="cariPeralatan()" placeholder="🔍 Cari nama peralatan, jenama, makmal, atau staf...">
+        <input type="text" id="carianInput" class="search-input" onkeyup="cariPeralatan()" placeholder="🔍 Cari nama peralatan, jenama, model, atau pegawai...">
     </div>
 
-    <!-- GRID UTAMA PERALATAN -->
-    <div class="equipment-grid" id="senaraiKad">
-
-        <!-- MAKMAL KIMIA 1 -->
-        <div class="card" data-search="Laboratory Oven MEMMERT UN110 Makmal Kimia 1 Mohd Redzuan">
-            <div>
-                <span class="card-lab">📍 Makmal Kimia 1</span>
-                <div class="card-title">Laboratory Oven</div>
-                <div class="card-model"><b>Jenama:</b> MEMMERT (UN110)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 1 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-maintenance">Under Maintenance</span></p>
-                <p><b>PIC:</b> Mohd Redzuan</p>
-            </div>
+    <!-- MAKMAL KIMIA 1 -->
+    <div class="lab-section">
+        <div class="lab-header">
+            <span>🏛️ MAKMAL KIMIA 1</span>
+            <span class="lab-update">Kemaskini: Apr 2026</span>
         </div>
+        <table>
+            <thead>
+                <tr>
+                    <th width="40">Bil</th>
+                    <th>Nama Peralatan</th>
+                    <th>Jenama / Model</th>
+                    <th width="90">Kuantiti</th>
+                    <th width="140">Status</th>
+                    <th width="160">Pegawai (PIC)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="item-row">
+                    <td>1</td>
+                    <td><b>Laboratory Oven</b></td>
+                    <td>MEMMERT / UN110</td>
+                    <td>1 Unit</td>
+                    <td><span class="badge badge-maintenance">Under Maintenance</span></td>
+                    <td>Mohd Redzuan</td>
+                </tr>
+                <tr class="item-row">
+                    <td>2</td>
+                    <td><b>Thermostated Hot Plate and Magnetic Stirrer</b></td>
+                    <td>IKA / RH DIGITAL</td>
+                    <td>1 Unit</td>
+                    <td><span class="badge badge-available">Available</span></td>
+                    <td>Mohd Redzuan</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
-        <div class="card" data-search="Thermostated Hot Plate and Magnetic Stirrer IKA RH DIGITAL Makmal Kimia 1 Mohd Redzuan">
-            <div>
-                <span class="card-lab">📍 Makmal Kimia 1</span>
-                <div class="card-title">Thermostated Hot Plate & Magnetic Stirrer</div>
-                <div class="card-model"><b>Jenama:</b> IKA (RH DIGITAL)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 1 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-available">Available</span></p>
-                <p><b>PIC:</b> Mohd Redzuan</p>
-            </div>
+    <!-- MAKMAL KIMIA 2 -->
+    <div class="lab-section">
+        <div class="lab-header">
+            <span>🏛️ MAKMAL KIMIA 2</span>
+            <span class="lab-update">Kemaskini: Apr 2026</span>
         </div>
+        <table>
+            <thead>
+                <tr>
+                    <th width="40">Bil</th>
+                    <th>Nama Peralatan</th>
+                    <th>Jenama / Model</th>
+                    <th width="90">Kuantiti</th>
+                    <th width="140">Status</th>
+                    <th width="160">Pegawai (PIC)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="item-row"><td>1</td><td><b>Thermostated Hot Plate and Magnetic Stirrer</b></td><td>IKA / RH DIGITAL</td><td>2 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
+                <tr class="item-row"><td>2</td><td><b>Analytical Balance</b></td><td>A&D / HR250AZ</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
+                <tr class="item-row"><td>3</td><td><b>Analytical Balance</b></td><td>A&D / FX-500i</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
+                <tr class="item-row"><td>4</td><td><b>Top Loading Balance</b></td><td>ADAM NIMBUS / NBL6231</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
+                <tr class="item-row"><td>5</td><td><b>Laboratory Oven</b></td><td>MEMMERT / UN110</td><td>2 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
+                <tr class="item-row"><td>6</td><td><b>Distilled Water System</b></td><td>WATER STILL / PSH 230</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
+                <tr class="item-row"><td>7</td><td><b>Drying Cabinet</b></td><td>PROTECH / FDD-720</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
+                <tr class="item-row"><td>8</td><td><b>Refrigerator</b></td><td>JUSCOOL / 1D/DC-S-E</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
+                <tr class="item-row"><td>9</td><td><b>Heating Mantle</b></td><td>HUANGHUA FAITHFUL / 98-1-B 500ml</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
+                <tr class="item-row"><td>10</td><td><b>Water Bath</b></td><td>MEMMERT / WNB 14 SC</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
+            </tbody>
+        </table>
+    </div>
 
-        <!-- MAKMAL KIMIA 2 -->
-        <div class="card" data-search="Thermostated Hot Plate and Magnetic Stirrer IKA RH DIGITAL Makmal Kimia 2 Mohd Redzuan">
-            <div>
-                <span class="card-lab">📍 Makmal Kimia 2</span>
-                <div class="card-title">Thermostated Hot Plate & Magnetic Stirrer</div>
-                <div class="card-model"><b>Jenama:</b> IKA (RH DIGITAL)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 2 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-available">Available</span></p>
-                <p><b>PIC:</b> Mohd Redzuan</p>
-            </div>
+    <!-- MAKMAL ANALITIKAL DAN ANALISIS -->
+    <div class="lab-section">
+        <div class="lab-header">
+            <span>🏛️ MAKMAL ANALITIKAL DAN ANALISIS</span>
+            <span class="lab-update">Kemaskini: Apr 2026</span>
         </div>
+        <table>
+            <thead>
+                <tr>
+                    <th width="40">Bil</th>
+                    <th>Nama Peralatan</th>
+                    <th>Jenama / Model</th>
+                    <th width="90">Kuantiti</th>
+                    <th width="140">Status</th>
+                    <th width="160">Pegawai (PIC)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="item-row"><td>1</td><td><b>Atomic Absorption Spectrometer (AAS)</b></td><td>PERKIN ELMER / PINAACLE 900T</td><td>1 Unit</td><td><span class="badge badge-unavailable">Unavailable</span></td><td>Nurhaslina Hambari</td></tr>
+                <tr class="item-row"><td>2</td><td><b>Inductive Coupled Plasma (ICP-OES)</b></td><td>PERKIN ELMER / OPTIMA 8000</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Nurhaslina Hambari</td></tr>
+                <tr class="item-row"><td>3</td><td><b>Elemental Analyzer (EA)</b></td><td>PERKIN ELMER / 2400 SERIES II</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Nurhaslina Hambari</td></tr>
+                <tr class="item-row"><td>4</td><td><b>Differential Scanning Calorimeter (DSC)</b></td><td>PERKIN ELMER / DSC 6000</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
+                <tr class="item-row"><td>5</td><td><b>High Performance Liquid Chromatography (HPLC)</b></td><td>PERKIN ELMER / FLEXAR</td><td>1 Unit</td><td><span class="badge badge-unavailable">Unavailable</span></td><td>Nurhaslina Hambari</td></tr>
+                <tr class="item-row"><td>6</td><td><b>Fourier Transform Infra Red (FTIR)</b></td><td>BRUKER / VERTEX 70</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Nurhaslina Hambari</td></tr>
+                <tr class="item-row"><td>7</td><td><b>UV-VIS Spectrophotometer</b></td><td>SHIMADZU / UV 1800 PC</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
+                <tr class="item-row"><td>8</td><td><b>Gas Chromatography (GC-FID & TCD)</b></td><td>THERMO SCIENTIFIC / TRACE 1300</td><td>1 Unit</td><td><span class="badge badge-unavailable">Unavailable</span></td><td>-</td></tr>
+                <tr class="item-row"><td>9</td><td><b>Thermal Gravimetry Analyzer (TGA)</b></td><td>PERKIN ELMER / TGA 8000</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
+                <tr class="item-row"><td>10</td><td><b>Scanning Electron Microscope (SEM)</b></td><td>JEOL / JSM-IT200</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
+            </tbody>
+        </table>
+    </div>
 
-        <div class="card" data-search="Analytical Balance A&D HR250AZ Makmal Kimia 2 Mohd Redzuan">
-            <div>
-                <span class="card-lab">📍 Makmal Kimia 2</span>
-                <div class="card-title">Analytical Balance</div>
-                <div class="card-model"><b>Jenama:</b> A&D (HR250AZ)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 1 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-available">Available</span></p>
-                <p><b>PIC:</b> Mohd Redzuan</p>
-            </div>
+    <!-- MAKMAL BIOPROCESS -->
+    <div class="lab-section">
+        <div class="lab-header">
+            <span>🏛️ MAKMAL BIOPROCESS</span>
+            <span class="lab-update">Kemaskini: Apr 2026</span>
         </div>
+        <table>
+            <thead>
+                <tr>
+                    <th width="40">Bil</th>
+                    <th>Nama Peralatan</th>
+                    <th>Jenama / Model</th>
+                    <th width="90">Kuantiti</th>
+                    <th width="140">Status</th>
+                    <th width="160">Pegawai (PIC)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="item-row"><td>1</td><td><b>Analytical Balance</b></td><td>A&D / HR250AZ</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
+                <tr class="item-row"><td>2</td><td><b>Thermostated Hot Plate</b></td><td>IKA / RH DIGITAL</td><td>3 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
+                <tr class="item-row"><td>3</td><td><b>Laboratory Oven</b></td><td>MEMMERT / UN110</td><td>2 Unit</td><td><span class="badge badge-available">1 Avail, 1 Maint</span></td><td>-</td></tr>
+                <tr class="item-row"><td>4</td><td><b>Top Loading Balance</b></td><td>ADAM NIMBUS / NBL6231</td><td>1 Unit</td><td><span class="badge badge-maintenance">Under Maintenance</span></td><td>-</td></tr>
+                <tr class="item-row"><td>5</td><td><b>Distilled Water System</b></td><td>WATER STILL / PSH 230</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
+                <tr class="item-row"><td>6</td><td><b>Ultra-Pure Water System</b></td><td>PURIS EXPE / PURIS EXPE-CB UV90</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
+                <tr class="item-row"><td>7</td><td><b>Rotary Evaporator</b></td><td>HEIDOLPH / HEI-VIP PRECISION ML/G3</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
+                <tr class="item-row"><td>8</td><td><b>Bench Top Refrigerated Centrifuged</b></td><td>KUBOTA / 5500</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
+                <tr class="item-row"><td>9</td><td><b>Automatic Colony Counter</b></td><td>INTERSCIENCE / SCAN1200</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
+                <tr class="item-row"><td>10</td><td><b>Drying Cabinet</b></td><td>PROTECH / FDD-720</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
+                <tr class="item-row"><td>11</td><td><b>Refrigerator</b></td><td>JUSCOOL / 1D/DC-S-E</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
+                <tr class="item-row"><td>12</td><td><b>Heating Mantle</b></td><td>HUANGHUA FAITHFUL / 98-1-B 500ml</td><td>2 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
+                <tr class="item-row"><td>13</td><td><b>Bio Chemistry Analyzer</b></td><td>ANALOX INSTRUMENT / GL6</td><td>1 Unit</td><td><span class="badge badge-unavailable">Unavailable</span></td><td>-</td></tr>
+                <tr class="item-row"><td>14</td><td><b>Freezer (-86°C)</b></td><td>HAIER / DW-86L828</td><td>1 Unit</td><td><span class="badge badge-maintenance">Under Maintenance</span></td><td>-</td></tr>
+                <tr class="item-row"><td>15</td><td><b>Conductivity Meter & Probe</b></td><td>JENWAY / 470</td><td>2 Unit</td><td><span class="badge badge-unavailable">1 Unavailable</span></td><td>-</td></tr>
+                <tr class="item-row"><td>16</td><td><b>PH Meter</b></td><td>Eutech / PH300</td><td>2 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
+                <tr class="item-row"><td>17</td><td><b>Water Bath</b></td><td>MEMMERT / WNB 14 SC</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
+                <tr class="item-row"><td>18</td><td><b>Thermal Properties Analyzer</b></td><td>DECAGON / KD 2 PRO</td><td>1 Unit</td><td><span class="badge badge-maintenance">Under Maintenance</span></td><td>-</td></tr>
+                <tr class="item-row"><td>19</td><td><b>Ultrasonic Bath</b></td><td>ELMA / P60H</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
+                <tr class="item-row"><td>20</td><td><b>Incubator</b></td><td>MEMMERT</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
+            </tbody>
+        </table>
+    </div>
 
-        <div class="card" data-search="Analytical Balance A&D FX-500i Makmal Kimia 2 Mohd Redzuan">
-            <div>
-                <span class="card-lab">📍 Makmal Kimia 2</span>
-                <div class="card-title">Analytical Balance</div>
-                <div class="card-model"><b>Jenama:</b> A&D (FX-500i)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 1 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-available">Available</span></p>
-                <p><b>PIC:</b> Mohd Redzuan</p>
-            </div>
+    <!-- MAKMAL ENVIRONMENT -->
+    <div class="lab-section">
+        <div class="lab-header">
+            <span>🏛️ MAKMAL ENVIRONMENT</span>
+            <span class="lab-update">Kemaskini: Apr 2026</span>
         </div>
-
-        <div class="card" data-search="Top Loading Balance ADAM NIMBUS NBL6231 Makmal Kimia 2 Mohd Redzuan">
-            <div>
-                <span class="card-lab">📍 Makmal Kimia 2</span>
-                <div class="card-title">Top Loading Balance</div>
-                <div class="card-model"><b>Jenama:</b> ADAM NIMBUS (NBL6231)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 1 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-available">Available</span></p>
-                <p><b>PIC:</b> Mohd Redzuan</p>
-            </div>
-        </div>
-
-        <div class="card" data-search="Laboratory Oven MEMMERT UN110 Makmal Kimia 2 Mohd Redzuan">
-            <div>
-                <span class="card-lab">📍 Makmal Kimia 2</span>
-                <div class="card-title">Laboratory Oven</div>
-                <div class="card-model"><b>Jenama:</b> MEMMERT (UN110)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 2 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-available">Available</span></p>
-                <p><b>PIC:</b> Mohd Redzuan</p>
-            </div>
-        </div>
-
-        <div class="card" data-search="Distilled Water System WATER STILL PSH 230 Makmal Kimia 2 Mohd Redzuan">
-            <div>
-                <span class="card-lab">📍 Makmal Kimia 2</span>
-                <div class="card-title">Distilled Water System</div>
-                <div class="card-model"><b>Jenama:</b> WATER STILL (PSH 230)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 1 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-available">Available</span></p>
-                <p><b>PIC:</b> Mohd Redzuan</p>
-            </div>
-        </div>
-
-        <div class="card" data-search="Drying Cabinet PROTECH FDD-720 Makmal Kimia 2 Mohd Redzuan">
-            <div>
-                <span class="card-lab">📍 Makmal Kimia 2</span>
-                <div class="card-title">Drying Cabinet</div>
-                <div class="card-model"><b>Jenama:</b> PROTECH (FDD-720)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 1 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-available">Available</span></p>
-                <p><b>PIC:</b> Mohd Redzuan</p>
-            </div>
-        </div>
-
-        <div class="card" data-search="Refrigerator JUSCOOL 1D/DC-S-E Makmal Kimia 2 Mohd Redzuan">
-            <div>
-                <span class="card-lab">📍 Makmal Kimia 2</span>
-                <div class="card-title">Refrigerator</div>
-                <div class="card-model"><b>Jenama:</b> JUSCOOL (1D/DC-S-E)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 1 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-available">Available</span></p>
-                <p><b>PIC:</b> Mohd Redzuan</p>
-            </div>
-        </div>
-
-        <div class="card" data-search="Heating Mantle HUANGHUA FAITHFUL 98-1-B 500ml Makmal Kimia 2 Mohd Redzuan">
-            <div>
-                <span class="card-lab">📍 Makmal Kimia 2</span>
-                <div class="card-title">Heating Mantle (500ml)</div>
-                <div class="card-model"><b>Jenama:</b> HUANGHUA FAITHFUL (98-1-B)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 1 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-available">Available</span></p>
-                <p><b>PIC:</b> Mohd Redzuan</p>
-            </div>
-        </div>
-
-        <div class="card" data-search="Water Bath MEMMERT WNB 14 SC Makmal Kimia 2 Mohd Redzuan">
-            <div>
-                <span class="card-lab">📍 Makmal Kimia 2</span>
-                <div class="card-title">Water Bath</div>
-                <div class="card-model"><b>Jenama:</b> MEMMERT (WNB 14 SC)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 1 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-available">Available</span></p>
-                <p><b>PIC:</b> Mohd Redzuan</p>
-            </div>
-        </div>
-
-        <!-- MAKMAL ANALITIKAL DAN ANALISIS -->
-        <div class="card" data-search="Atomic Absorption Spectrometer AAS PERKIN ELMER PINAACLE 900T Makmal Analitikal Nurhaslina Hambari">
-            <div>
-                <span class="card-lab">📍 Makmal Analitikal</span>
-                <div class="card-title">Atomic Absorption Spectrometer (AAS)</div>
-                <div class="card-model"><b>Jenama:</b> PERKIN ELMER (PINAACLE 900T)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 1 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-unavailable">Unavailable</span></p>
-                <p><b>PIC:</b> Nurhaslina Hambari</p>
-            </div>
-        </div>
-
-        <div class="card" data-search="Inductive Coupled Plasma ICP-OES PERKIN ELMER OPTIMA 8000 Makmal Analitikal Nurhaslina Hambari">
-            <div>
-                <span class="card-lab">📍 Makmal Analitikal</span>
-                <div class="card-title">Inductive Coupled Plasma (ICP-OES)</div>
-                <div class="card-model"><b>Jenama:</b> PERKIN ELMER (OPTIMA 8000)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 1 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-available">Available</span></p>
-                <p><b>PIC:</b> Nurhaslina Hambari</p>
-            </div>
-        </div>
-
-        <div class="card" data-search="Elemental Analyzer EA PERKIN ELMER 2400 SERIES II Makmal Analitikal Nurhaslina Hambari">
-            <div>
-                <span class="card-lab">📍 Makmal Analitikal</span>
-                <div class="card-title">Elemental Analyzer (EA)</div>
-                <div class="card-model"><b>Jenama:</b> PERKIN ELMER (2400 SERIES II)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 1 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-available">Available</span></p>
-                <p><b>PIC:</b> Nurhaslina Hambari</p>
-            </div>
-        </div>
-
-        <div class="card" data-search="Differential Scanning Calorimeter DSC PERKIN ELMER DSC 6000 Makmal Analitikal">
-            <div>
-                <span class="card-lab">📍 Makmal Analitikal</span>
-                <div class="card-title">Differential Scanning Calorimeter (DSC)</div>
-                <div class="card-model"><b>Jenama:</b> PERKIN ELMER (DSC 6000)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 1 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-available">Available</span></p>
-                <p><b>PIC:</b> -</p>
-            </div>
-        </div>
-
-        <div class="card" data-search="High Performance Liquid Chromatography HPLC PERKIN ELMER FLEXAR Makmal Analitikal Nurhaslina Hambari">
-            <div>
-                <span class="card-lab">📍 Makmal Analitikal</span>
-                <div class="card-title">High Performance Liquid Chromatography (HPLC)</div>
-                <div class="card-model"><b>Jenama:</b> PERKIN ELMER (FLEXAR)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 1 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-unavailable">Unavailable</span></p>
-                <p><b>PIC:</b> Nurhaslina Hambari</p>
-            </div>
-        </div>
-
-        <div class="card" data-search="Fourier Transform Infra Red FTIR BRUKER VERTEX 70 Makmal Analitikal Nurhaslina Hambari">
-            <div>
-                <span class="card-lab">📍 Makmal Analitikal</span>
-                <div class="card-title">Fourier Transform Infra Red (FTIR)</div>
-                <div class="card-model"><b>Jenama:</b> BRUKER (VERTEX 70)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 1 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-available">Available</span></p>
-                <p><b>PIC:</b> Nurhaslina Hambari</p>
-            </div>
-        </div>
-
-        <div class="card" data-search="UVVIS Spectrophotometer SHIMADZU UV 1800 PC Makmal Analitikal">
-            <div>
-                <span class="card-lab">📍 Makmal Analitikal</span>
-                <div class="card-title">UV-VIS Spectrophotometer</div>
-                <div class="card-model"><b>Jenama:</b> SHIMADZU (UV 1800 PC)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 1 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-available">Available</span></p>
-                <p><b>PIC:</b> -</p>
-            </div>
-        </div>
-
-        <div class="card" data-search="Gas Chromatography GC-FID TCD THERMO SCIENTIFIC TRACE 1300 Makmal Analitikal">
-            <div>
-                <span class="card-lab">📍 Makmal Analitikal</span>
-                <div class="card-title">Gas Chromatography (GC-FID & TCD)</div>
-                <div class="card-model"><b>Jenama:</b> THERMO SCIENTIFIC (TRACE 1300)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 1 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-unavailable">Unavailable</span></p>
-                <p><b>PIC:</b> -</p>
-            </div>
-        </div>
-
-        <div class="card" data-search="Thermal Gravimetry Analyzer TGA PERKIN ELMER TGA 8000 Makmal Analitikal">
-            <div>
-                <span class="card-lab">📍 Makmal Analitikal</span>
-                <div class="card-title">Thermal Gravimetry Analyzer (TGA)</div>
-                <div class="card-model"><b>Jenama:</b> PERKIN ELMER (TGA 8000)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 1 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-available">Available</span></p>
-                <p><b>PIC:</b> -</p>
-            </div>
-        </div>
-
-        <div class="card" data-search="Scanning Electron Microscope SEM JEOL JSM-IT200 Makmal Analitikal">
-            <div>
-                <span class="card-lab">📍 Makmal Analitikal</span>
-                <div class="card-title">Scanning Electron Microscope (SEM)</div>
-                <div class="card-model"><b>Jenama:</b> JEOL (JSM-IT200)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 1 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-available">Available</span></p>
-                <p><b>PIC:</b> -</p>
-            </div>
-        </div>
-
-        <!-- MAKMAL BIOPROCESS -->
-        <div class="card" data-search="Analytical Balance A&D HR250AZ Makmal Bioprocess">
-            <div>
-                <span class="card-lab">📍 Makmal Bioprocess</span>
-                <div class="card-title">Analytical Balance</div>
-                <div class="card-model"><b>Jenama:</b> A&D (HR250AZ)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 1 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-available">Available</span></p>
-                <p><b>PIC:</b> -</p>
-            </div>
-        </div>
-
-        <div class="card" data-search="Thermostated Hot Plate IKA RH DIGITAL Makmal Bioprocess">
-            <div>
-                <span class="card-lab">📍 Makmal Bioprocess</span>
-                <div class="card-title">Thermostated Hot Plate</div>
-                <div class="card-model"><b>Jenama:</b> IKA (RH DIGITAL)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 3 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-available">Available</span></p>
-                <p><b>PIC:</b> -</p>
-            </div>
-        </div>
-
-        <div class="card" data-search="Laboratory Oven MEMMERT UN110 Makmal Bioprocess">
-            <div>
-                <span class="card-lab">📍 Makmal Bioprocess</span>
-                <div class="card-title">Laboratory Oven</div>
-                <div class="card-model"><b>Jenama:</b> MEMMERT (UN110)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 2 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-available">1 Available, 1 Maintenance</span></p>
-                <p><b>PIC:</b> -</p>
-            </div>
-        </div>
-
-        <div class="card" data-search="Top Loading Balance ADAM NIMBUS NBL6231 Makmal Bioprocess">
-            <div>
-                <span class="card-lab">📍 Makmal Bioprocess</span>
-                <div class="card-title">Top Loading Balance</div>
-                <div class="card-model"><b>Jenama:</b> ADAM NIMBUS (NBL6231)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 1 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-maintenance">Under Maintenance</span></p>
-                <p><b>PIC:</b> -</p>
-            </div>
-        </div>
-
-        <div class="card" data-search="Distilled Water System WATER STILL PSH 230 Makmal Bioprocess">
-            <div>
-                <span class="card-lab">📍 Makmal Bioprocess</span>
-                <div class="card-title">Distilled Water System</div>
-                <div class="card-model"><b>Jenama:</b> WATER STILL (PSH 230)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 1 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-available">Available</span></p>
-                <p><b>PIC:</b> -</p>
-            </div>
-        </div>
-
-        <div class="card" data-search="Rotary Evaporator HEIDOLPH HEI-VIP PRECISION ML/G3 Makmal Bioprocess">
-            <div>
-                <span class="card-lab">📍 Makmal Bioprocess</span>
-                <div class="card-title">Rotary Evaporator</div>
-                <div class="card-model"><b>Jenama:</b> HEIDOLPH (HEI-VIP PRECISION)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 1 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-available">Available</span></p>
-                <p><b>PIC:</b> -</p>
-            </div>
-        </div>
-
-        <div class="card" data-search="Freezer HAIER DW-86L828 Makmal Bioprocess">
-            <div>
-                <span class="card-lab">📍 Makmal Bioprocess</span>
-                <div class="card-title">Deep Freezer (-86°C)</div>
-                <div class="card-model"><b>Jenama:</b> HAIER (DW-86L828)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 1 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-maintenance">Under Maintenance</span></p>
-                <p><b>PIC:</b> -</p>
-            </div>
-        </div>
-
-        <!-- MAKMAL ENVIRONMENT -->
-        <div class="card" data-search="Jar Test Apparatus Floc Tester VELP SCIENTIFIC JLT-6 Makmal Environment Mohd Redzuan">
-            <div>
-                <span class="card-lab">📍 Makmal Environment</span>
-                <div class="card-title">Jar Test Apparatus (Floc Tester)</div>
-                <div class="card-model"><b>Jenama:</b> VELP SCIENTIFIC (JLT-6)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 2 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-available">Available</span></p>
-                <p><b>PIC:</b> Mohd Redzuan</p>
-            </div>
-        </div>
-
-        <div class="card" data-search="Autoclave HIRAYAMA HVE-50 Makmal Environment">
-            <div>
-                <span class="card-lab">📍 Makmal Environment</span>
-                <div class="card-title">Autoclave</div>
-                <div class="card-model"><b>Jenama:</b> HIRAYAMA (HVE-50)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 1 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-available">Available</span></p>
-                <p><b>PIC:</b> -</p>
-            </div>
-        </div>
-
-        <div class="card" data-search="COD Reactor Spectrophotometer HACH YSI DR3900 DR900 DRB2000 Makmal Environment">
-            <div>
-                <span class="card-lab">📍 Makmal Environment</span>
-                <div class="card-title">COD Reactor & Spectrophotometer</div>
-                <div class="card-model"><b>Jenama:</b> HACH / YSI (DR3900/DR900)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 1 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-available">Available</span></p>
-                <p><b>PIC:</b> -</p>
-            </div>
-        </div>
-
-        <div class="card" data-search="Vacuum Furnace DELTA VF 1200-12L Makmal Environment">
-            <div>
-                <span class="card-lab">📍 Makmal Environment</span>
-                <div class="card-title">Vacuum Furnace</div>
-                <div class="card-model"><b>Jenama:</b> DELTA (VF 1200-12L)</div>
-            </div>
-            <div class="card-details">
-                <p><b>Kuantiti:</b> 1 Unit</p>
-                <p><b>Status:</b> <span class="badge badge-available">Available</span></p>
-                <p><b>PIC:</b> -</p>
-            </div>
-        </div>
-
+        <table>
+            <thead>
+                <tr>
+                    <th width="40">Bil</th>
+                    <th>Nama Peralatan</th>
+                    <th>Jenama / Model</th>
+                    <th width="90">Kuantiti</th>
+                    <th width="140">Status</th>
+                    <th width="160">Pegawai (PIC)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="item-row"><td>1</td><td><b>Top Loading Balance</b></td><td>ADAM NIMBUS / NBL6231</td><td>2 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
+                <tr class="item-row"><td>2</td><td><b>Stirring Hot Plate</b></td><td>FAVORIT / HS0707V2</td><td>2 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
+                <tr class="item-row"><td>3</td><td><b>Laboratory Oven</b></td><td>MEMMERT / UN110</td><td>2 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
+                <tr class="item-row"><td>4</td><td><b>Analytical Balance</b></td><td>A&D / HR250AZ</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
+                <tr class="item-row"><td>5</td><td><b>Drying Cabinet</b></td><td>PROTECH / FDD-720</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
+                <tr class="item-row"><td>6</td><td><b>Jar Test Apparatus (Floc Tester)</b></td><td>VELP SCIENTIFIC / JLT-6</td><td>2 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
+                <tr class="item-row"><td>7</td><td><b>Autoclave</b></td><td>HIRAYAMA / HVE-50</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
+                <tr class="item-row"><td>8</td><td><b>Sieve Shaker</b></td><td>RETSCH / AS200</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
+                <tr class="item-row"><td>9</td><td><b>Heating Mantle</b></td><td>HUANGHUA FAITHFUL / 98-1-B 500ml</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
+                <tr class="item-row"><td>10</td><td><b>Muffle Furnace</b></td><td>NUVE / MF 106</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
+                <tr class="item-row"><td>11</td><td><b>Refrigerator</b></td><td>JUSCOOL / 1D/DC-S-E</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
+                <tr class="item-row"><td>12</td><td><b>Distilled Water System</b></td><td>FAVORIT / W4L</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
+                <tr class="item-row"><td>13</td><td><b>COD Reactor, Spectrophotometer</b></td><td>HACH, YSI / DR3900, DR900, DRB2000</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
+                <tr class="item-row"><td>14</td><td><b>Incubator Shaker</b></td><td>NEW BRUNSWICK SCIENTIFIC / INNOVA 44</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
+                <tr class="item-row"><td>15</td><td><b>Dissolve Oxygen Meter with Data System</b></td><td>YSI / 5100 SERIES</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
+                <tr class="item-row"><td>16</td><td><b>Grinder</b></td><td>RETSCH / GM 200</td><td>1 Unit</td><td><span class="badge badge-maintenance">Under Maintenance</span></td><td>-</td></tr>
+                <tr class="item-row"><td>17</td><td><b>Turbidity meter</b></td><td>-</td><td>2 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
+                <tr class="item-row"><td>18</td><td><b>Orbital Shaker</b></td><td>STUART / SSL1</td><td>2 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
+                <tr class="item-row"><td>19</td><td><b>Soxhlet Extractor</b></td><td>BEHROTEST / R106S-SK</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
+                <tr class="item-row"><td>20</td><td><b>Vacuum Furnace</b></td><td>DELTA / VF 1200-12L</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
+                <tr class="item-row"><td>21</td><td><b>PH Meter</b></td><td>Eutech / PH300</td><td>2 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
+                <tr class="item-row"><td>22</td><td><b>Air Pollution Monitoring System</b></td><td>MRU / VARIO PLUS INDUSTRIAL</td><td>1 Unit</td><td><span class="badge badge-unavailable">Unavailable</span></td><td>-</td></tr>
+                <tr class="item-row"><td>23</td><td><b>Portable Multimeter Probe (DO, pH, Cond)</b></td><td>YSI / PRO PLUS</td><td>2 Unit</td><td><span class="badge badge-unavailable">Unavailable</span></td><td>-</td></tr>
+                <tr class="item-row"><td>24</td><td><b>Thermostated Hot Plate</b></td><td>IKA / RH DIGITAL</td><td>3 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
+            </tbody>
+        </table>
     </div>
 
     <script>
         function cariPeralatan() {
             let input = document.getElementById('carianInput').value.toLowerCase();
-            let kadList = document.querySelectorAll('.card');
+            let rows = document.querySelectorAll('.item-row');
 
-            kadList.forEach(kad => {
-                let textData = kad.getAttribute('data-search').toLowerCase();
-                if (textData.includes(input)) {
-                    kad.style.display = "flex";
+            rows.forEach(row => {
+                let text = row.innerText.toLowerCase();
+                if (text.includes(input)) {
+                    row.style.display = "";
                 } else {
-                    kad.style.display = "none";
+                    row.style.display = "none";
                 }
             });
         }
     </script>
 </body>
 </html>
- 
