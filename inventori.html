@@ -1,19 +1,97 @@
-<div style="margin-top: 30px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        <h3 style="margin: 0; color: #2c3e50;">Paparan Live Inventori (Google Sheets)</h3>
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventori Bahan Kimia Makmal FKK</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 1100px; margin: auto; background-color: #f9f9f9; }
         
-        <!-- BUTANG KHAS UNTUK ADMIN EDIT DATA -->
-        <a href="https://docs.google.com/spreadsheets/d/1dSGbRd96Dbiwxw4Z-wtHo_Oae-jgEHuF2T_7vGU0_K0/edit?usp=sharing" target="_blank" style="background-color: #0f9d58; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 14px; display: inline-flex; align-items: center; gap: 6px;">
-            📊 Buka & Edit Google Sheets
-        </a>
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        h2 { color: #2c3e50; margin: 0; }
+        
+        .back-btn { display: inline-block; color: #2980b9; text-decoration: none; font-weight: bold; font-size: 15px; }
+        .back-btn:hover { text-decoration: underline; }
+        
+        .btn-logout { background: #e74c3c; color: white; border: none; padding: 8px 14px; border-radius: 5px; cursor: pointer; font-size: 13px; font-weight: bold; }
+        .btn-logout:hover { background: #c0392b; }
+
+        .inventory-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-top: 10px; }
+        .inventory-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
+        
+        .btn-sheets { background-color: #0f9d58; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-sheets:hover { background-color: #0b8043; }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER + NAVIGASI -->
+    <div class="header-top">
+        <a href="makmal.html" class="back-btn">⬅️ Kembali ke Senarai Makmal</a>
+        <button id="logout-btn" class="btn-logout">🚪 Log Keluar</button>
     </div>
-    
-    <!-- PASTE PAUTAN GOOGLE SHEETS ANDA DI DALAM SRC DI BAWAH -->
-    <iframe 
-        src="https://docs.google.com/spreadsheets/d/1dSGbRd96Dbiwxw4Z-wtHo_Oae-jgEHuF2T_7vGU0_K0/edit?usp=drive_link" 
-        width="100%" 
-        height="650px" 
-        style="border: 1px solid #ccc; border-radius: 6px; display: block;">
-    </iframe>
-</div>
+
+    <h2>🧪 Inventori Bahan Kimia & Peralatan</h2>
+
+    <!-- CONTAINER GOOGLE SHEETS ANDA -->
+    <div class="inventory-card">
+        <div class="inventory-header">
+            <h3 style="margin: 0; color: #2c3e50;">Paparan Live Inventori (Google Sheets)</h3>
+            
+            <!-- BUTANG EDIT GOOGLE SHEETS -->
+            <a href="https://docs.google.com/spreadsheets/d/1dSGbRd96Dbiwxw4Z-wtHo_Oae-jgEHuF2T_7vGU0_K0/edit?usp=sharing" target="_blank" class="btn-sheets">
+                📊 Buka & Edit Google Sheets
+            </a>
+        </div>
+        
+        <!-- PAPARAN IFRAME GOOGLE SHEETS -->
+        <iframe 
+            src="https://docs.google.com/spreadsheets/d/1dSGbRd96Dbiwxw4Z-wtHo_Oae-jgEHuF2T_7vGU0_K0/htmlembed?widget=true&amp;headers=false" 
+            width="100%" 
+            height="650px" 
+            style="border: 1px solid #ccc; border-radius: 6px; display: block;">
+        </iframe>
+    </div>
+
+    <!-- SKRIP FIREBASE (KESELAMATAN & LOG KELUAR) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDDC9PLSCOzna4caIsrfPSvfR3A_FczKDc",
+            authDomain: "sistem-makmal-fkkuitmpg.firebaseapp.com",
+            projectId: "sistem-makmal-fkkuitmpg",
+            storageBucket: "sistem-makmal-fkkuitmpg.firebasestorage.app",
+            messagingSenderId: "291806336887",
+            appId: "1:291806336887:web:a0d4fca1866459ead03372"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // KAWALAN KESELAMATAN: Tendang jika belum log masuk
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const email = user.email;
+                if (!email.endsWith('@uitm.edu.my') && !email.endsWith('@student.uitm.edu.my')) {
+                    signOut(auth);
+                    window.location.href = "index.html";
+                }
+            } else {
+                window.location.href = "index.html";
+            }
+        });
+
+        // FUNGSI LOG KELUAR
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            signOut(auth).then(() => {
+                window.location.href = "index.html";
+            }).catch((error) => {
+                alert("Ralat semasa log keluar: " + error.message);
+            });
+        });
+    </script>
+</body>
+</html>
 
