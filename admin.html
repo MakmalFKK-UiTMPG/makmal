@@ -8,7 +8,6 @@
     <style>
         body { font-family: Arial, sans-serif; padding: 20px; max-width: 1200px; margin: auto; background-color: #f9f9f9; }
         
-        /* SEMBUNYIKAN KANDUNGAN PADA AWALNYA UNTUK KESELAMATAN */
         #main-admin-content { display: none; }
         #loading-admin { text-align: center; padding: 80px 20px; color: #2c3e50; }
 
@@ -33,16 +32,17 @@
         th, td { border: 1px solid #ddd; padding: 10px; text-align: left; font-size: 13px; }
         th { background-color: #2c3e50; color: white; }
 
+        /* WARNA STATUS */
         .status-menunggu { color: #d35400; font-weight: bold; }
         .status-lulus { color: #27ae60; font-weight: bold; }
         .status-tolak, .status-ditolak { color: #c0392b; font-weight: bold; }
+        .status-batal { color: #7f8c8d; font-weight: bold; font-style: italic; } /* Warna kelabu untuk Batal */
 
         .btn-lulus { background-color: #27ae60; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; }
         .btn-tolak { background-color: #c0392b; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; margin-left: 3px; }
         .btn-detail { background-color: #2980b9; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-weight: bold; margin-left: 3px; }
         .btn-padam { background-color: #7f8c8d; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-weight: bold; margin-left: 3px; }
 
-        /* MODAL POPUP DETAIL */
         .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
         .modal-content { background-color: white; margin: 3% auto; padding: 20px; border-radius: 8px; width: 85%; max-width: 750px; max-height: 85vh; overflow-y: auto; }
         .close-modal { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
@@ -50,13 +50,11 @@
 </head>
 <body>
 
-    <!-- SKRIN TUNGGU / LOADING -->
     <div id="loading-admin">
         <h2>🔒 Menyemak Kawalan Keselamatan Admin...</h2>
         <p>Sila tunggu sebentar.</p>
     </div>
 
-    <!-- KANDUNGAN UTAMA ADMIN -->
     <div id="main-admin-content">
         <div class="header-top">
             <a href="makmal.html" class="back-btn">⬅️ Kembali ke Senarai Makmal</a>
@@ -66,13 +64,11 @@
         <h2>⚙️ Panel Admin & Pegawai Makmal</h2>
         <p>Uruskan kelulusan tempahan peralatan dan permohonan bahan kimia/radas di sini.</p>
 
-        <!-- MENU TAB -->
         <div class="tab-container">
             <button class="tab-btn active" onclick="tukarTab('tempahan')">📅 Tempahan Slot Peralatan</button>
             <button class="tab-btn" onclick="tukarTab('bahan')">🧪 Permohonan Bahan Kimia & Radas</button>
         </div>
 
-        <!-- SEKSYEN 1: TEMPAHAN SLOT -->
         <div id="sekSyenTempahan">
             <div class="summary-container">
                 <div class="summary-card"><h4>JUMLAH TEMPAHAN</h4><p id="totalTempahan">0</p></div>
@@ -90,7 +86,6 @@
             </table>
         </div>
 
-        <!-- SEKSYEN 2: PERMOHONAN BAHAN KIMIA & RADAS -->
         <div id="sekSyenBahan" style="display:none;">
             <table>
                 <thead>
@@ -102,7 +97,6 @@
             </table>
         </div>
 
-        <!-- MODAL POPUP PERINCIAN BAHAN/RADAS -->
         <div id="modalDetail" class="modal">
             <div class="modal-content">
                 <span class="close-modal" onclick="tutupModal()">&times;</span>
@@ -112,7 +106,6 @@
         </div>
     </div>
 
-    <!-- FIREBASE AUTH -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -183,12 +176,11 @@
             }
         }
 
-        // 1. DATA TEMPAHAN SLOT (Tapis status yang BUKAN 'Batal')
+        // 1. DATA TEMPAHAN SLOT (Tarik SEMUA rekod termasuk 'Batal')
         async function dapatkanTempahan() {
             const { data } = await supabaseClient
                 .from('tempahan_peralatan')
                 .select('*')
-                .neq('status', 'Batal')
                 .order('id', { ascending: false });
                 
             const tbody = document.getElementById('isiJadualTempahan');
@@ -211,19 +203,18 @@
                         <td>
                             <button class="btn-lulus" onclick="tukarStatus('tempahan_peralatan', ${r.id}, 'Lulus')">Lulus</button>
                             <button class="btn-tolak" onclick="tukarStatus('tempahan_peralatan', ${r.id}, 'Ditolak')">Tolak</button>
-                            <button class="btn-padam" onclick="padamRekod('tempahan_peralatan', ${r.id})">🗑️</button>
+                            <button class="btn-padam" onclick="padamRekod('tempahan_peralatan', ${r.id})">🗑️ Batal</button>
                         </td>
                     `;
                 });
             }
         }
 
-        // 2. DATA PERMOHONAN BAHAN & RADAS (Tapis status yang BUKAN 'Batal')
+        // 2. DATA PERMOHONAN BAHAN & RADAS (Tarik SEMUA rekod termasuk 'Batal')
         async function dapatkanBahanRadas() {
             const { data } = await supabaseClient
                 .from('permohonan_bahan_radas')
                 .select('*')
-                .neq('status', 'Batal')
                 .order('id', { ascending: false });
                 
             const tbody = document.getElementById('isiJadualBahan');
@@ -243,14 +234,13 @@
                         <td><span class="status-${(r.status||'menunggu').toLowerCase()}">${r.status||'Menunggu'}</span></td>
                         <td>
                             <button class="btn-detail" onclick="paparkanDetail(${r.id})">🔍 Lihat / Semak</button>
-                            <button class="btn-padam" onclick="padamRekod('permohonan_bahan_radas', ${r.id})">🗑️</button>
+                            <button class="btn-padam" onclick="padamRekod('permohonan_bahan_radas', ${r.id})">🗑️ Batal</button>
                         </td>
                     `;
                 });
             }
         }
 
-        // FUNGSI POPUP PERINCIAN & KELULUSAN SEPARA
         function paparkanDetail(id) {
             const rekod = dataBahanGlobal.find(r => r.id === id);
             if (!rekod) return;
@@ -294,7 +284,6 @@
 
         function tutupModal() { document.getElementById('modalDetail').style.display = 'none'; }
 
-        // SIMPAN KEPUTUSAN BERSAMA CATATAN ADMIN
         async function simpanKeputusan(id, status) {
             const catatan = document.getElementById('catatanAdminInput').value;
             
@@ -319,9 +308,9 @@
             dapatkanBahanRadas();
         }
 
-        // FUNGSI SOFT DELETE (Tukar status kepada 'Batal' tanpa padam data dari DB)
+        // TUKAR STATUS KEPADA 'Batal' (Rekod kekal ada dalam jadual)
         async function padamRekod(jadual, id) {
-            if(confirm("Pasti mahu memadam/membatalkan rekod ini daripada paparan?")) {
+            if(confirm("Pasti mahu menukar status rekod ini kepada 'Batal'?")) {
                 const { error } = await supabaseClient
                     .from(jadual)
                     .update({ status: 'Batal' })
@@ -330,7 +319,7 @@
                 if (error) {
                     alert("❌ Ralat: " + error.message);
                 } else {
-                    alert("✅ Rekod telah dipadam dari paparan.");
+                    alert("✅ Status rekod telah dikemaskini kepada 'Batal'.");
                     dapatkanTempahan();
                     dapatkanBahanRadas();
                 }
