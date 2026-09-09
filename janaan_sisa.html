@@ -4,13 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Borang Pemberitahuan Sisa Kimia (FKK-SW-F01)</title>
+    
+    <!-- SUPABASE SDK -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     
     <!-- ✉️ SDK EMAILJS UNTUK NOTIFIKASI EMEL -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script type="text/javascript">
        (function(){
-          // ⚠️ Gantikan YOUR_PUBLIC_KEY dari menu Account -> API Keys di EmailJS
+          // ⚠️ Gantikan YOUR_PUBLIC_KEY dengan Public Key dari akaun EmailJS anda
           emailjs.init("YOUR_PUBLIC_KEY");
        })();
     </script>
@@ -26,6 +28,7 @@
         input[type="text"], input[type="number"], input[type="date"], select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         
+        /* GAYA UNTUK GABUNGAN NOMBOR & UNIT */
         .input-unit-group { display: flex; gap: 8px; }
         .input-unit-group input[type="number"] { flex: 2; }
         .input-unit-group select { flex: 1; min-width: 90px; background-color: #fff; }
@@ -127,9 +130,9 @@
                 <div class="input-unit-group">
                     <input type="number" step="0.01" id="nilaimuka_kasar" required placeholder="Contoh: 2.5">
                     <select id="unit_kasar" required>
-                        <option value="kg"selected>kg</option>
-                        <option value="g">g</option>
-                        <option value="L">L</option>
+                        <option value="kg" selected>kg</option>
+                        <option value="gram">g</option>
+                        <option value="Liter">Liter</option>
                         <option value="mL">mL</option>
                     </select>
                 </div>
@@ -205,7 +208,7 @@
         });
     </script>
 
-    <!-- SUPABASE & EMAILJS LOGIK -->
+    <!-- SUPABASE LOGIK & EMAILJS FUNCTION -->
     <script>
         const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
@@ -346,10 +349,10 @@
                 btnHantar.disabled = false;
                 btnHantar.innerText = "🚀 Hantar Borang Sisa";
             } else {
-                // 2. Hantar Notifikasi Emel
+                // 2. Hantar Notifikasi Emel Via EmailJS
                 await hantarNotifikasiEmel(formData);
 
-                alert("✅ Borang Pemberitahuan Sisa Kimia berjaya dihantar dan e-mel notifikasi telah dihantar!");
+                alert("✅ Borang Pemberitahuan Sisa Kimia berjaya dihantar!");
                 document.getElementById('formJanaanSisa').reset();
                 btnHantar.disabled = false;
                 btnHantar.innerText = "🚀 Hantar Borang Sisa";
