@@ -3,261 +3,350 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Senarai Peralatan Makmal FKK</title>
+    <title>Senarai Peralatan Makmal FKK UiTM Pasir Gudang</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; max-width: 1100px; margin: auto; background-color: #f8f9fa; }
-        
-        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .back-btn { color: #2980b9; text-decoration: none; font-weight: bold; font-size: 14px; }
-        .back-btn:hover { text-decoration: underline; }
-
-        .title-box { text-align: center; margin-bottom: 25px; }
-        .title-box h2 { color: #2c3e50; margin-bottom: 5px; }
-        .title-box p { color: #7f8c8d; margin: 0; font-size: 14px; }
-
-        /* KOTAK CARIAN */
-        .search-container { margin-bottom: 25px; text-align: center; }
-        .search-input { width: 100%; max-width: 550px; padding: 12px 20px; border: 2px solid #16a085; border-radius: 25px; font-size: 15px; outline: none; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-
-        /* SEKSYEN MAKMAL */
-        .lab-section { background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 25px; overflow: hidden; border: 1px solid #e2e8f0; }
-        .lab-header { background-color: #2c3e50; color: white; padding: 12px 20px; font-size: 16px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
-        .lab-update { font-size: 12px; font-weight: normal; opacity: 0.8; }
-
-        /* JADUAL SENARAI ALAT */
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 10px 15px; text-align: left; font-size: 13px; border-bottom: 1px solid #eee; }
-        th { background-color: #f1f5f9; color: #334155; font-size: 12px; text-transform: uppercase; }
-        tr:hover { background-color: #f8fafc; }
-
-        /* BADGE STATUS */
-        .badge { font-weight: bold; padding: 3px 8px; border-radius: 12px; font-size: 11px; display: inline-block; }
-        .badge-available { background: #d4edda; color: #155724; }
-        .badge-maintenance { background: #fff3cd; color: #856404; }
-        .badge-unavailable { background: #f8d7da; color: #721c24; }
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
     </style>
 </head>
-<body>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen">
 
-    <div class="header-top">
-        <a href="makmal.html" class="back-btn">⬅️ Kembali ke Senarai Makmal</a>
-        <a href="bahan-radas.html" class="back-btn" style="color: #16a085;">🧪 Permohonan Bahan & Radas</a>
-    </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-    <div class="title-box">
-        <h2>🔬 Senarai Peralatan & Instrumen Makmal FKK</h2>
-        <p>Direktori lengkap mengikut makmal (Dikemaskini: April 2026)</p>
-    </div>
-
-    <!-- CARIAN -->
-    <div class="search-container">
-        <input type="text" id="carianInput" class="search-input" onkeyup="cariPeralatan()" placeholder="🔍 Cari nama peralatan, jenama, model, atau pegawai...">
-    </div>
-
-    <!-- MAKMAL KIMIA 1 -->
-    <div class="lab-section">
-        <div class="lab-header">
-            <span>🏛️ MAKMAL KIMIA 1</span>
-            <span class="lab-update">Kemaskini: Apr 2026</span>
+        <!-- HEADER NAVIGASI / BREADCRUMB -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+            <a href="makmal.html" class="inline-flex items-center space-x-2 text-sm font-semibold text-slate-600 hover:text-indigo-600 transition group">
+                <i data-lucide="arrow-left" class="w-4 h-4 transition-transform group-hover:-translate-x-1"></i>
+                <span>Kembali ke Senarai Makmal</span>
+            </a>
+            <a href="bahan-radas.html" class="inline-flex items-center space-x-2 text-sm font-semibold text-teal-700 bg-teal-50 hover:bg-teal-100 px-3.5 py-2 rounded-xl transition border border-teal-200">
+                <i data-lucide="flask-conical" class="w-4 h-4"></i>
+                <span>Permohonan Bahan & Radas</span>
+            </a>
         </div>
-        <table>
-            <thead>
-                <tr>
-                    <th width="40">Bil</th>
-                    <th>Nama Peralatan</th>
-                    <th>Jenama / Model</th>
-                    <th width="90">Kuantiti</th>
-                    <th width="140">Status</th>
-                    <th width="160">Pegawai (PIC)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr class="item-row">
-                    <td>1</td>
-                    <td><b>Laboratory Oven</b></td>
-                    <td>MEMMERT / UN110</td>
-                    <td>1 Unit</td>
-                    <td><span class="badge badge-maintenance">Under Maintenance</span></td>
-                    <td>Mohd Redzuan</td>
-                </tr>
-                <tr class="item-row">
-                    <td>2</td>
-                    <td><b>Thermostated Hot Plate and Magnetic Stirrer</b></td>
-                    <td>IKA / RH DIGITAL</td>
-                    <td>1 Unit</td>
-                    <td><span class="badge badge-available">Available</span></td>
-                    <td>Mohd Redzuan</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
 
-    <!-- MAKMAL KIMIA 2 -->
-    <div class="lab-section">
-        <div class="lab-header">
-            <span>🏛️ MAKMAL KIMIA 2</span>
-            <span class="lab-update">Kemaskini: Apr 2026</span>
+        <!-- TAJUK UTAMA -->
+        <header class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mb-8 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">Direktori Inventori</span>
+                <h1 class="text-xl sm:text-2xl font-bold text-slate-900 mt-0.5">Senarai Peralatan & Instrumen Makmal FKK</h1>
+                <p class="text-xs sm:text-sm text-slate-500 mt-1">Kemaskini Terakhir: April 2026</p>
+            </div>
+            <div class="p-3 bg-indigo-50 text-indigo-600 rounded-2xl hidden sm:block">
+                <i data-lucide="microscope" class="w-8 h-8"></i>
+            </div>
+        </header>
+
+        <!-- KOTAK CARIAN & PENAPIS -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <!-- CARIAN REAL-TIME -->
+            <div class="relative md:col-span-2">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <i data-lucide="search" class="w-5 h-5"></i>
+                </div>
+                <input type="text" id="carianInput" onkeyup="cariPeralatan()" placeholder="Cari nama peralatan, jenama, model, atau pegawai (PIC)..." class="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent shadow-sm transition">
+            </div>
+
+            <!-- DROPDOWN PENAPIS MAKMAL -->
+            <div>
+                <select id="labFilter" onchange="filterMakmal()" class="w-full py-3 px-4 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm transition cursor-pointer">
+                    <option value="all"> Semua Makmal</option>
+                    <option value="kimia-1">Makmal Kimia 1</option>
+                    <option value="kimia-2">Makmal Kimia 2</option>
+                    <option value="analitikal">Makmal Analitikal dan Analisis</option>
+                    <option value="bioprocess">Makmal Bioprocess</option>
+                    <option value="environment">Makmal Environment</option>
+                </select>
+            </div>
         </div>
-        <table>
-            <thead>
-                <tr>
-                    <th width="40">Bil</th>
-                    <th>Nama Peralatan</th>
-                    <th>Jenama / Model</th>
-                    <th width="90">Kuantiti</th>
-                    <th width="140">Status</th>
-                    <th width="160">Pegawai (PIC)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr class="item-row"><td>1</td><td><b>Thermostated Hot Plate and Magnetic Stirrer</b></td><td>IKA / RH DIGITAL</td><td>2 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
-                <tr class="item-row"><td>2</td><td><b>Analytical Balance</b></td><td>A&D / HR250AZ</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
-                <tr class="item-row"><td>3</td><td><b>Analytical Balance</b></td><td>A&D / FX-500i</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
-                <tr class="item-row"><td>4</td><td><b>Top Loading Balance</b></td><td>ADAM NIMBUS / NBL6231</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
-                <tr class="item-row"><td>5</td><td><b>Laboratory Oven</b></td><td>MEMMERT / UN110</td><td>2 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
-                <tr class="item-row"><td>6</td><td><b>Distilled Water System</b></td><td>WATER STILL / PSH 230</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
-                <tr class="item-row"><td>7</td><td><b>Drying Cabinet</b></td><td>PROTECH / FDD-720</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
-                <tr class="item-row"><td>8</td><td><b>Refrigerator</b></td><td>JUSCOOL / 1D/DC-S-E</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
-                <tr class="item-row"><td>9</td><td><b>Heating Mantle</b></td><td>HUANGHUA FAITHFUL / 98-1-B 500ml</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
-                <tr class="item-row"><td>10</td><td><b>Water Bath</b></td><td>MEMMERT / WNB 14 SC</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
-            </tbody>
-        </table>
-    </div>
 
-    <!-- MAKMAL ANALITIKAL DAN ANALISIS -->
-    <div class="lab-section">
-        <div class="lab-header">
-            <span>🏛️ MAKMAL ANALITIKAL DAN ANALISIS</span>
-            <span class="lab-update">Kemaskini: Apr 2026</span>
+        <!-- MAKMAL KIMIA 1 -->
+        <div class="lab-section bg-white border border-slate-200 rounded-2xl shadow-sm mb-8 overflow-hidden" data-lab="kimia-1">
+            <div class="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <i data-lucide="building-2" class="w-5 h-5 text-indigo-400"></i>
+                    <h2 class="font-bold text-sm sm:text-base">MAKMAL KIMIA 1</h2>
+                </div>
+                <span class="text-xs text-slate-400 font-medium">Kemaskini: Apr 2026</span>
+            </div>
+            <div class="overflow-x-auto custom-scrollbar">
+                <table class="w-full text-left border-collapse min-w-[700px]">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            <th class="py-3 px-4 w-12 text-center">Bil</th>
+                            <th class="py-3 px-4">Nama Peralatan</th>
+                            <th class="py-3 px-4">Jenama / Model</th>
+                            <th class="py-3 px-4 w-28 text-center">Kuantiti</th>
+                            <th class="py-3 px-4 w-40">Status</th>
+                            <th class="py-3 px-4 w-48">Pegawai (PIC)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-sm">
+                        <tr class="item-row hover:bg-slate-50/80 transition">
+                            <td class="py-3.5 px-4 text-center font-medium text-slate-400">1</td>
+                            <td class="py-3.5 px-4 font-bold text-slate-800">Laboratory Oven</td>
+                            <td class="py-3.5 px-4 text-slate-600 font-mono text-xs">MEMMERT / UN110</td>
+                            <td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td>
+                            <td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">Under Maintenance</span></td>
+                            <td class="py-3.5 px-4 text-slate-600 font-medium">Mohd Redzuan</td>
+                        </tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition">
+                            <td class="py-3.5 px-4 text-center font-medium text-slate-400">2</td>
+                            <td class="py-3.5 px-4 font-bold text-slate-800">Thermostated Hot Plate and Magnetic Stirrer</td>
+                            <td class="py-3.5 px-4 text-slate-600 font-mono text-xs">IKA / RH DIGITAL</td>
+                            <td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td>
+                            <td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td>
+                            <td class="py-3.5 px-4 text-slate-600 font-medium">Mohd Redzuan</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <table>
-            <thead>
-                <tr>
-                    <th width="40">Bil</th>
-                    <th>Nama Peralatan</th>
-                    <th>Jenama / Model</th>
-                    <th width="90">Kuantiti</th>
-                    <th width="140">Status</th>
-                    <th width="160">Pegawai (PIC)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr class="item-row"><td>1</td><td><b>Atomic Absorption Spectrometer (AAS)</b></td><td>PERKIN ELMER / PINAACLE 900T</td><td>1 Unit</td><td><span class="badge badge-unavailable">Unavailable</span></td><td>Nurhaslina Hambari</td></tr>
-                <tr class="item-row"><td>2</td><td><b>Inductive Coupled Plasma (ICP-OES)</b></td><td>PERKIN ELMER / OPTIMA 8000</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Nurhaslina Hambari</td></tr>
-                <tr class="item-row"><td>3</td><td><b>Elemental Analyzer (EA)</b></td><td>PERKIN ELMER / 2400 SERIES II</td><td>1 Unit</td><td><span class="badge badge-unavailable">Unavailable</span></td><td>Nurhaslina Hambari</td></tr>
-                <tr class="item-row"><td>4</td><td><b>Differential Scanning Calorimeter (DSC)</b></td><td>PERKIN ELMER / DSC 6000</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
-                <tr class="item-row"><td>5</td><td><b>High Performance Liquid Chromatography (HPLC)</b></td><td>PERKIN ELMER / FLEXAR</td><td>1 Unit</td><td><span class="badge badge-unavailable">Unavailable</span></td><td>Nurhaslina Hambari</td></tr>
-                <tr class="item-row"><td>6</td><td><b>Fourier Transform Infra Red (FTIR)</b></td><td>BRUKER / VERTEX 70</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Nurhaslina Hambari</td></tr>
-                <tr class="item-row"><td>7</td><td><b>UV-VIS Spectrophotometer</b></td><td>SHIMADZU / UV 1800 PC</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
-                <tr class="item-row"><td>8</td><td><b>Gas Chromatography (GC-FID & TCD)</b></td><td>THERMO SCIENTIFIC / TRACE 1300</td><td>1 Unit</td><td><span class="badge badge-unavailable">Unavailable</span></td><td>-</td></tr>
-                <tr class="item-row"><td>9</td><td><b>Thermal Gravimetry Analyzer (TGA)</b></td><td>PERKIN ELMER / TGA 8000</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
-                <tr class="item-row"><td>10</td><td><b>Scanning Electron Microscope (SEM)</b></td><td>JEOL / JSM-IT200</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
-            </tbody>
-        </table>
-    </div>
 
-    <!-- MAKMAL BIOPROCESS -->
-    <div class="lab-section">
-        <div class="lab-header">
-            <span>🏛️ MAKMAL BIOPROCESS</span>
-            <span class="lab-update">Kemaskini: Apr 2026</span>
+        <!-- MAKMAL KIMIA 2 -->
+        <div class="lab-section bg-white border border-slate-200 rounded-2xl shadow-sm mb-8 overflow-hidden" data-lab="kimia-2">
+            <div class="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <i data-lucide="building-2" class="w-5 h-5 text-indigo-400"></i>
+                    <h2 class="font-bold text-sm sm:text-base">MAKMAL KIMIA 2</h2>
+                </div>
+                <span class="text-xs text-slate-400 font-medium">Kemaskini: Apr 2026</span>
+            </div>
+            <div class="overflow-x-auto custom-scrollbar">
+                <table class="w-full text-left border-collapse min-w-[700px]">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            <th class="py-3 px-4 w-12 text-center">Bil</th>
+                            <th class="py-3 px-4">Nama Peralatan</th>
+                            <th class="py-3 px-4">Jenama / Model</th>
+                            <th class="py-3 px-4 w-28 text-center">Kuantiti</th>
+                            <th class="py-3 px-4 w-40">Status</th>
+                            <th class="py-3 px-4 w-48">Pegawai (PIC)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-sm">
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">1</td><td class="py-3.5 px-4 font-bold text-slate-800">Thermostated Hot Plate and Magnetic Stirrer</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">IKA / RH DIGITAL</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">2 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-600 font-medium">Mohd Redzuan</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">2</td><td class="py-3.5 px-4 font-bold text-slate-800">Analytical Balance</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">A&D / HR250AZ</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-600 font-medium">Mohd Redzuan</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">3</td><td class="py-3.5 px-4 font-bold text-slate-800">Analytical Balance</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">A&D / FX-500i</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-600 font-medium">Mohd Redzuan</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">4</td><td class="py-3.5 px-4 font-bold text-slate-800">Top Loading Balance</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">ADAM NIMBUS / NBL6231</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-600 font-medium">Mohd Redzuan</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">5</td><td class="py-3.5 px-4 font-bold text-slate-800">Laboratory Oven</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">MEMMERT / UN110</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">2 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-600 font-medium">Mohd Redzuan</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">6</td><td class="py-3.5 px-4 font-bold text-slate-800">Distilled Water System</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">WATER STILL / PSH 230</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-600 font-medium">Mohd Redzuan</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">7</td><td class="py-3.5 px-4 font-bold text-slate-800">Drying Cabinet</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">PROTECH / FDD-720</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-600 font-medium">Mohd Redzuan</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">8</td><td class="py-3.5 px-4 font-bold text-slate-800">Refrigerator</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">JUSCOOL / 1D/DC-S-E</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-600 font-medium">Mohd Redzuan</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">9</td><td class="py-3.5 px-4 font-bold text-slate-800">Heating Mantle</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">HUANGHUA FAITHFUL / 98-1-B 500ml</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-600 font-medium">Mohd Redzuan</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">10</td><td class="py-3.5 px-4 font-bold text-slate-800">Water Bath</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">MEMMERT / WNB 14 SC</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-600 font-medium">Mohd Redzuan</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <table>
-            <thead>
-                <tr>
-                    <th width="40">Bil</th>
-                    <th>Nama Peralatan</th>
-                    <th>Jenama / Model</th>
-                    <th width="90">Kuantiti</th>
-                    <th width="140">Status</th>
-                    <th width="160">Pegawai (PIC)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr class="item-row"><td>1</td><td><b>Analytical Balance</b></td><td>A&D / HR250AZ</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
-                <tr class="item-row"><td>2</td><td><b>Thermostated Hot Plate</b></td><td>IKA / RH DIGITAL</td><td>3 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
-                <tr class="item-row"><td>3</td><td><b>Laboratory Oven</b></td><td>MEMMERT / UN110</td><td>2 Unit</td><td><span class="badge badge-available">1 Avail, 1 Maint</span></td><td>-</td></tr>
-                <tr class="item-row"><td>4</td><td><b>Top Loading Balance</b></td><td>ADAM NIMBUS / NBL6231</td><td>1 Unit</td><td><span class="badge badge-maintenance">Under Maintenance</span></td><td>-</td></tr>
-                <tr class="item-row"><td>5</td><td><b>Distilled Water System</b></td><td>WATER STILL / PSH 230</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
-                <tr class="item-row"><td>6</td><td><b>Ultra-Pure Water System</b></td><td>PURIS EXPE / PURIS EXPE-CB UV90</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
-                <tr class="item-row"><td>7</td><td><b>Rotary Evaporator</b></td><td>HEIDOLPH / HEI-VIP PRECISION ML/G3</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
-                <tr class="item-row"><td>8</td><td><b>Bench Top Refrigerated Centrifuged</b></td><td>KUBOTA / 5500</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
-                <tr class="item-row"><td>9</td><td><b>Automatic Colony Counter</b></td><td>INTERSCIENCE / SCAN1200</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
-                <tr class="item-row"><td>10</td><td><b>Drying Cabinet</b></td><td>PROTECH / FDD-720</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
-                <tr class="item-row"><td>11</td><td><b>Refrigerator</b></td><td>JUSCOOL / 1D/DC-S-E</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
-                <tr class="item-row"><td>12</td><td><b>Heating Mantle</b></td><td>HUANGHUA FAITHFUL / 98-1-B 500ml</td><td>2 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
-                <tr class="item-row"><td>13</td><td><b>Bio Chemistry Analyzer</b></td><td>ANALOX INSTRUMENT / GL6</td><td>1 Unit</td><td><span class="badge badge-unavailable">Unavailable</span></td><td>-</td></tr>
-                <tr class="item-row"><td>14</td><td><b>Freezer (-86°C)</b></td><td>HAIER / DW-86L828</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
-                <tr class="item-row"><td>15</td><td><b>Conductivity Meter & Probe</b></td><td>JENWAY / 470</td><td>2 Unit</td><td><span class="badge badge-unavailable">1 Unavailable</span></td><td>-</td></tr>
-                <tr class="item-row"><td>16</td><td><b>PH Meter</b></td><td>Eutech / PH300</td><td>2 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
-                <tr class="item-row"><td>17</td><td><b>Water Bath</b></td><td>MEMMERT / WNB 14 SC</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
-                <tr class="item-row"><td>18</td><td><b>Thermal Properties Analyzer</b></td><td>DECAGON / KD 2 PRO</td><td>1 Unit</td><td><span class="badge badge-unavailable">Unvailable</span></td><td>-</td></tr>
-                <tr class="item-row"><td>19</td><td><b>Ultrasonic Bath</b></td><td>ELMA / P60H</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
-                <tr class="item-row"><td>20</td><td><b>Incubator</b></td><td>MEMMERT</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
-            </tbody>
-        </table>
-    </div>
 
-    <!-- MAKMAL ENVIRONMENT -->
-    <div class="lab-section">
-        <div class="lab-header">
-            <span>🏛️ MAKMAL ENVIRONMENT</span>
-            <span class="lab-update">Kemaskini: Apr 2026</span>
+        <!-- MAKMAL ANALITIKAL DAN ANALISIS -->
+        <div class="lab-section bg-white border border-slate-200 rounded-2xl shadow-sm mb-8 overflow-hidden" data-lab="analitikal">
+            <div class="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <i data-lucide="building-2" class="w-5 h-5 text-indigo-400"></i>
+                    <h2 class="font-bold text-sm sm:text-base">MAKMAL ANALITIKAL DAN ANALISIS</h2>
+                </div>
+                <span class="text-xs text-slate-400 font-medium">Kemaskini: Apr 2026</span>
+            </div>
+            <div class="overflow-x-auto custom-scrollbar">
+                <table class="w-full text-left border-collapse min-w-[700px]">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            <th class="py-3 px-4 w-12 text-center">Bil</th>
+                            <th class="py-3 px-4">Nama Peralatan</th>
+                            <th class="py-3 px-4">Jenama / Model</th>
+                            <th class="py-3 px-4 w-28 text-center">Kuantiti</th>
+                            <th class="py-3 px-4 w-40">Status</th>
+                            <th class="py-3 px-4 w-48">Pegawai (PIC)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-sm">
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">1</td><td class="py-3.5 px-4 font-bold text-slate-800">Atomic Absorption Spectrometer (AAS)</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">PERKIN ELMER / PINAACLE 900T</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">Unavailable</span></td><td class="py-3.5 px-4 text-slate-600 font-medium">Nurhaslina Hambari</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">2</td><td class="py-3.5 px-4 font-bold text-slate-800">Inductive Coupled Plasma (ICP-OES)</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">PERKIN ELMER / OPTIMA 8000</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-600 font-medium">Nurhaslina Hambari</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">3</td><td class="py-3.5 px-4 font-bold text-slate-800">Elemental Analyzer (EA)</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">PERKIN ELMER / 2400 SERIES II</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">Unavailable</span></td><td class="py-3.5 px-4 text-slate-600 font-medium">Nurhaslina Hambari</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">4</td><td class="py-3.5 px-4 font-bold text-slate-800">Differential Scanning Calorimeter (DSC)</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">PERKIN ELMER / DSC 6000</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">5</td><td class="py-3.5 px-4 font-bold text-slate-800">High Performance Liquid Chromatography (HPLC)</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">PERKIN ELMER / FLEXAR</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">Unavailable</span></td><td class="py-3.5 px-4 text-slate-600 font-medium">Nurhaslina Hambari</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">6</td><td class="py-3.5 px-4 font-bold text-slate-800">Fourier Transform Infra Red (FTIR)</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">BRUKER / VERTEX 70</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-600 font-medium">Nurhaslina Hambari</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">7</td><td class="py-3.5 px-4 font-bold text-slate-800">UV-VIS Spectrophotometer</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">SHIMADZU / UV 1800 PC</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">8</td><td class="py-3.5 px-4 font-bold text-slate-800">Gas Chromatography (GC-FID & TCD)</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">THERMO SCIENTIFIC / TRACE 1300</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">Unavailable</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">9</td><td class="py-3.5 px-4 font-bold text-slate-800">Thermal Gravimetry Analyzer (TGA)</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">PERKIN ELMER / TGA 8000</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">10</td><td class="py-3.5 px-4 font-bold text-slate-800">Scanning Electron Microscope (SEM)</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">JEOL / JSM-IT200</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <table>
-            <thead>
-                <tr>
-                    <th width="40">Bil</th>
-                    <th>Nama Peralatan</th>
-                    <th>Jenama / Model</th>
-                    <th width="90">Kuantiti</th>
-                    <th width="140">Status</th>
-                    <th width="160">Pegawai (PIC)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr class="item-row"><td>1</td><td><b>Top Loading Balance</b></td><td>ADAM NIMBUS / NBL6231</td><td>2 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
-                <tr class="item-row"><td>2</td><td><b>Stirring Hot Plate</b></td><td>FAVORIT / HS0707V2</td><td>2 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
-                <tr class="item-row"><td>3</td><td><b>Laboratory Oven</b></td><td>MEMMERT / UN110</td><td>2 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
-                <tr class="item-row"><td>4</td><td><b>Analytical Balance</b></td><td>A&D / HR250AZ</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
-                <tr class="item-row"><td>5</td><td><b>Drying Cabinet</b></td><td>PROTECH / FDD-720</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
-                <tr class="item-row"><td>6</td><td><b>Jar Test Apparatus (Floc Tester)</b></td><td>VELP SCIENTIFIC / JLT-6</td><td>2 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
-                <tr class="item-row"><td>7</td><td><b>Autoclave</b></td><td>HIRAYAMA / HVE-50</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
-                <tr class="item-row"><td>8</td><td><b>Sieve Shaker</b></td><td>RETSCH / AS200</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
-                <tr class="item-row"><td>9</td><td><b>Heating Mantle</b></td><td>HUANGHUA FAITHFUL / 98-1-B 500ml</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
-                <tr class="item-row"><td>10</td><td><b>Muffle Furnace</b></td><td>NUVE / MF 106</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
-                <tr class="item-row"><td>11</td><td><b>Refrigerator</b></td><td>JUSCOOL / 1D/DC-S-E</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
-                <tr class="item-row"><td>12</td><td><b>Distilled Water System</b></td><td>FAVORIT / W4L</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
-                <tr class="item-row"><td>13</td><td><b>COD Reactor, Spectrophotometer</b></td><td>HACH, YSI / DR3900, DR900, DRB2000</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
-                <tr class="item-row"><td>14</td><td><b>Incubator Shaker</b></td><td>NEW BRUNSWICK SCIENTIFIC / INNOVA 44</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
-                <tr class="item-row"><td>15</td><td><b>Dissolve Oxygen Meter with Data System</b></td><td>YSI / 5100 SERIES</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
-                <tr class="item-row"><td>16</td><td><b>Grinder</b></td><td>RETSCH / GM 200</td><td>1 Unit</td><td><span class="badge badge-unavailable">Unavailable</span></td><td>-</td></tr>
-                <tr class="item-row"><td>17</td><td><b>Turbidity meter</b></td><td>-</td><td>2 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
-                <tr class="item-row"><td>18</td><td><b>Orbital Shaker</b></td><td>STUART / SSL1</td><td>2 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
-                <tr class="item-row"><td>19</td><td><b>Soxhlet Extractor</b></td><td>BEHROTEST / R106S-SK</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
-                <tr class="item-row"><td>20</td><td><b>Vacuum Furnace</b></td><td>DELTA / VF 1200-12L</td><td>1 Unit</td><td><span class="badge badge-available">Available</span></td><td>-</td></tr>
-                <tr class="item-row"><td>21</td><td><b>PH Meter</b></td><td>Eutech / PH300</td><td>2 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
-                <tr class="item-row"><td>22</td><td><b>Air Pollution Monitoring System</b></td><td>MRU / VARIO PLUS INDUSTRIAL</td><td>1 Unit</td><td><span class="badge badge-unavailable">Unavailable</span></td><td>-</td></tr>
-                <tr class="item-row"><td>23</td><td><b>Portable Multimeter Probe (DO, pH, Cond)</b></td><td>YSI / PRO PLUS</td><td>2 Unit</td><td><span class="badge badge-unavailable">Unavailable</span></td><td>-</td></tr>
-                <tr class="item-row"><td>24</td><td><b>Thermostated Hot Plate</b></td><td>IKA / RH DIGITAL</td><td>3 Unit</td><td><span class="badge badge-available">Available</span></td><td>Mohd Redzuan</td></tr>
-            </tbody>
-        </table>
+
+        <!-- MAKMAL BIOPROCESS -->
+        <div class="lab-section bg-white border border-slate-200 rounded-2xl shadow-sm mb-8 overflow-hidden" data-lab="bioprocess">
+            <div class="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <i data-lucide="building-2" class="w-5 h-5 text-indigo-400"></i>
+                    <h2 class="font-bold text-sm sm:text-base">MAKMAL BIOPROCESS</h2>
+                </div>
+                <span class="text-xs text-slate-400 font-medium">Kemaskini: Apr 2026</span>
+            </div>
+            <div class="overflow-x-auto custom-scrollbar">
+                <table class="w-full text-left border-collapse min-w-[700px]">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            <th class="py-3 px-4 w-12 text-center">Bil</th>
+                            <th class="py-3 px-4">Nama Peralatan</th>
+                            <th class="py-3 px-4">Jenama / Model</th>
+                            <th class="py-3 px-4 w-28 text-center">Kuantiti</th>
+                            <th class="py-3 px-4 w-40">Status</th>
+                            <th class="py-3 px-4 w-48">Pegawai (PIC)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-sm">
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">1</td><td class="py-3.5 px-4 font-bold text-slate-800">Analytical Balance</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">A&D / HR250AZ</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">2</td><td class="py-3.5 px-4 font-bold text-slate-800">Thermostated Hot Plate</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">IKA / RH DIGITAL</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">3 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">3</td><td class="py-3.5 px-4 font-bold text-slate-800">Laboratory Oven</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">MEMMERT / UN110</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">2 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">1 Avail, 1 Maint</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">4</td><td class="py-3.5 px-4 font-bold text-slate-800">Top Loading Balance</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">ADAM NIMBUS / NBL6231</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">Under Maintenance</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">5</td><td class="py-3.5 px-4 font-bold text-slate-800">Distilled Water System</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">WATER STILL / PSH 230</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">6</td><td class="py-3.5 px-4 font-bold text-slate-800">Ultra-Pure Water System</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">PURIS EXPE / PURIS EXPE-CB UV90</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">7</td><td class="py-3.5 px-4 font-bold text-slate-800">Rotary Evaporator</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">HEIDOLPH / HEI-VIP PRECISION ML/G3</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">8</td><td class="py-3.5 px-4 font-bold text-slate-800">Bench Top Refrigerated Centrifuged</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">KUBOTA / 5500</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">9</td><td class="py-3.5 px-4 font-bold text-slate-800">Automatic Colony Counter</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">INTERSCIENCE / SCAN1200</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">10</td><td class="py-3.5 px-4 font-bold text-slate-800">Drying Cabinet</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">PROTECH / FDD-720</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">11</td><td class="py-3.5 px-4 font-bold text-slate-800">Refrigerator</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">JUSCOOL / 1D/DC-S-E</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">12</td><td class="py-3.5 px-4 font-bold text-slate-800">Heating Mantle</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">HUANGHUA FAITHFUL / 98-1-B 500ml</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">2 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">13</td><td class="py-3.5 px-4 font-bold text-slate-800">Bio Chemistry Analyzer</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">ANALOX INSTRUMENT / GL6</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">Unavailable</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">14</td><td class="py-3.5 px-4 font-bold text-slate-800">Freezer (-86°C)</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">HAIER / DW-86L828</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">15</td><td class="py-3.5 px-4 font-bold text-slate-800">Conductivity Meter & Probe</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">JENWAY / 470</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">2 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">1 Unavailable</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">16</td><td class="py-3.5 px-4 font-bold text-slate-800">PH Meter</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">Eutech / PH300</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">2 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">17</td><td class="py-3.5 px-4 font-bold text-slate-800">Water Bath</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">MEMMERT / WNB 14 SC</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">18</td><td class="py-3.5 px-4 font-bold text-slate-800">Thermal Properties Analyzer</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">DECAGON / KD 2 PRO</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">Unavailable</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">19</td><td class="py-3.5 px-4 font-bold text-slate-800">Ultrasonic Bath</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">ELMA / P60H</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">20</td><td class="py-3.5 px-4 font-bold text-slate-800">Incubator</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">MEMMERT</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- MAKMAL ENVIRONMENT -->
+        <div class="lab-section bg-white border border-slate-200 rounded-2xl shadow-sm mb-8 overflow-hidden" data-lab="environment">
+            <div class="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <i data-lucide="building-2" class="w-5 h-5 text-indigo-400"></i>
+                    <h2 class="font-bold text-sm sm:text-base">MAKMAL ENVIRONMENT</h2>
+                </div>
+                <span class="text-xs text-slate-400 font-medium">Kemaskini: Apr 2026</span>
+            </div>
+            <div class="overflow-x-auto custom-scrollbar">
+                <table class="w-full text-left border-collapse min-w-[700px]">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            <th class="py-3 px-4 w-12 text-center">Bil</th>
+                            <th class="py-3 px-4">Nama Peralatan</th>
+                            <th class="py-3 px-4">Jenama / Model</th>
+                            <th class="py-3 px-4 w-28 text-center">Kuantiti</th>
+                            <th class="py-3 px-4 w-40">Status</th>
+                            <th class="py-3 px-4 w-48">Pegawai (PIC)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-sm">
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">1</td><td class="py-3.5 px-4 font-bold text-slate-800">Top Loading Balance</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">ADAM NIMBUS / NBL6231</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">2 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-600 font-medium">Mohd Redzuan</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">2</td><td class="py-3.5 px-4 font-bold text-slate-800">Stirring Hot Plate</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">FAVORIT / HS0707V2</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">2 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-600 font-medium">Mohd Redzuan</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">3</td><td class="py-3.5 px-4 font-bold text-slate-800">Laboratory Oven</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">MEMMERT / UN110</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">2 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-600 font-medium">Mohd Redzuan</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">4</td><td class="py-3.5 px-4 font-bold text-slate-800">Analytical Balance</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">A&D / HR250AZ</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-600 font-medium">Mohd Redzuan</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">5</td><td class="py-3.5 px-4 font-bold text-slate-800">Drying Cabinet</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">PROTECH / FDD-720</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-600 font-medium">Mohd Redzuan</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">6</td><td class="py-3.5 px-4 font-bold text-slate-800">Jar Test Apparatus (Floc Tester)</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">VELP SCIENTIFIC / JLT-6</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">2 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-600 font-medium">Mohd Redzuan</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">7</td><td class="py-3.5 px-4 font-bold text-slate-800">Autoclave</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">HIRAYAMA / HVE-50</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">8</td><td class="py-3.5 px-4 font-bold text-slate-800">Sieve Shaker</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">RETSCH / AS200</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-600 font-medium">Mohd Redzuan</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">9</td><td class="py-3.5 px-4 font-bold text-slate-800">Heating Mantle</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">HUANGHUA FAITHFUL / 98-1-B 500ml</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-600 font-medium">Mohd Redzuan</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">10</td><td class="py-3.5 px-4 font-bold text-slate-800">Muffle Furnace</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">NUVE / MF 106</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-600 font-medium">Mohd Redzuan</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">11</td><td class="py-3.5 px-4 font-bold text-slate-800">Refrigerator</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">JUSCOOL / 1D/DC-S-E</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-600 font-medium">Mohd Redzuan</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">12</td><td class="py-3.5 px-4 font-bold text-slate-800">Distilled Water System</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">FAVORIT / W4L</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-600 font-medium">Mohd Redzuan</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">13</td><td class="py-3.5 px-4 font-bold text-slate-800">COD Reactor, Spectrophotometer</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">HACH, YSI / DR3900, DR900, DRB2000</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">14</td><td class="py-3.5 px-4 font-bold text-slate-800">Incubator Shaker</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">NEW BRUNSWICK SCIENTIFIC / INNOVA 44</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">15</td><td class="py-3.5 px-4 font-bold text-slate-800">Dissolve Oxygen Meter with Data System</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">YSI / 5100 SERIES</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">16</td><td class="py-3.5 px-4 font-bold text-slate-800">Grinder</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">RETSCH / GM 200</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">Unavailable</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">17</td><td class="py-3.5 px-4 font-bold text-slate-800">Turbidity meter</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">-</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">2 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-600 font-medium">Mohd Redzuan</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">18</td><td class="py-3.5 px-4 font-bold text-slate-800">Orbital Shaker</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">STUART / SSL1</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">2 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">19</td><td class="py-3.5 px-4 font-bold text-slate-800">Soxhlet Extractor</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">BEHROTEST / R106S-SK</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">20</td><td class="py-3.5 px-4 font-bold text-slate-800">Vacuum Furnace</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">DELTA / VF 1200-12L</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">21</td><td class="py-3.5 px-4 font-bold text-slate-800">PH Meter</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">Eutech / PH300</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">2 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-600 font-medium">Mohd Redzuan</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">22</td><td class="py-3.5 px-4 font-bold text-slate-800">Air Pollution Monitoring System</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">MRU / VARIO PLUS INDUSTRIAL</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">1 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">Unavailable</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">23</td><td class="py-3.5 px-4 font-bold text-slate-800">Portable Multimeter Probe (DO, pH, Cond)</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">YSI / PRO PLUS</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">2 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">Unavailable</span></td><td class="py-3.5 px-4 text-slate-400">-</td></tr>
+                        <tr class="item-row hover:bg-slate-50/80 transition"><td class="py-3.5 px-4 text-center font-medium text-slate-400">24</td><td class="py-3.5 px-4 font-bold text-slate-800">Thermostated Hot Plate</td><td class="py-3.5 px-4 text-slate-600 font-mono text-xs">IKA / RH DIGITAL</td><td class="py-3.5 px-4 text-center font-semibold text-slate-700">3 Unit</td><td class="py-3.5 px-4"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Available</span></td><td class="py-3.5 px-4 text-slate-600 font-medium">Mohd Redzuan</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="mt-12 text-center text-xs text-slate-400">
+            &copy; Hak Cipta Terpelihara Fakulti Kejuruteraan Kimia UiTM Pasir Gudang.
+        </footer>
+
     </div>
 
+    <!-- SKRIP CARIAN DAN FILTER -->
     <script>
+        // INISIALISASI IKON LUCIDE
+        lucide.createIcons();
+
+        // FUNGSI CARIAN REAL-TIME
         function cariPeralatan() {
             let input = document.getElementById('carianInput').value.toLowerCase();
-            let rows = document.querySelectorAll('.item-row');
+            let labSections = document.querySelectorAll('.lab-section');
 
-            rows.forEach(row => {
-                let text = row.innerText.toLowerCase();
-                if (text.includes(input)) {
-                    row.style.display = "";
+            labSections.forEach(section => {
+                let rows = section.querySelectorAll('.item-row');
+                let hasMatch = false;
+
+                rows.forEach(row => {
+                    let text = row.innerText.toLowerCase();
+                    if (text.includes(input)) {
+                        row.style.display = "";
+                        hasMatch = true;
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+
+                // Sembunyikan seksyen makmal jika tidak mengandungi item yang dipadan
+                if (hasMatch) {
+                    section.style.display = "";
                 } else {
-                    row.style.display = "none";
+                    section.style.display = "none";
+                }
+            });
+        }
+
+        // FUNGSI PENAPIS MAKMAL
+        function filterMakmal() {
+            let selectedLab = document.getElementById('labFilter').value;
+            let labSections = document.querySelectorAll('.lab-section');
+
+            // Reset carian teks apabila menukar pilihan makmal
+            document.getElementById('carianInput').value = "";
+
+            labSections.forEach(section => {
+                let rows = section.querySelectorAll('.item-row');
+                rows.forEach(row => row.style.display = ""); // Paparkan semula semua baris
+
+                if (selectedLab === 'all' || section.getAttribute('data-lab') === selectedLab) {
+                    section.style.display = "";
+                } else {
+                    section.style.display = "none";
                 }
             });
         }
     </script>
 </body>
 </html>
+
