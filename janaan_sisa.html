@@ -6,7 +6,7 @@
     <title>Borang Pemberitahuan Sisa Kimia (FKK-SW-F01)</title>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; max-width: 950px; margin: auto; background-color: #f4f6f9; }
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: auto; background-color: #f4f6f9; }
         .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         h2 { color: #2c3e50; margin-top: 0; }
@@ -63,30 +63,36 @@
             </div>
 
             <h3>BAHAGIAN 2: DEKLARASI KANDUNGAN SISA</h3>
-            <div class="form-group">
-                <label>Fizikal Sisa:</label>
-                <div class="radio-group">
-                    <label><input type="radio" name="fizikal_sisa" value="Cecair Akues" checked> Cecair Akues</label>
-                    <label><input type="radio" name="fizikal_sisa" value="Pelarut Organik"> Pelarut Organik</label>
-                    <label><input type="radio" name="fizikal_sisa" value="Pepejal Tercemar"> Pepejal Tercemar</label>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Fizikal Sisa:</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="fizikal_sisa" value="Cecair Akues" checked> Cecair Akues</label>
+                        <label><input type="radio" name="fizikal_sisa" value="Pelarut Organik"> Pelarut Organik</label>
+                        <label><input type="radio" name="fizikal_sisa" value="Pepejal Tercemar"> Pepejal Tercemar</label>
+                    </div>
+                </div>
+                <!-- 📅 TARIKH MULA SISA DIJANA -->
+                <div class="form-group">
+                    <label>Tarikh Mula Sisa Dijana:</label>
+                    <input type="date" id="tarikh_penstoran" required>
                 </div>
             </div>
 
-            <label><b>Komposisi Campuran & Tarikh Penstoran Bahan Kimia:</b></label>
+            <br>
+            <label><b>Komposisi Bahan Kimia Dalam Campuran Sisa:</b></label>
             <table>
                 <thead>
                     <tr>
-                        <th width="35%">Nama Penuh Komponen Kimia</th>
-                        <th width="25%">Peratus (%) / Isipadu (mL)</th>
-                        <th width="25%">Tarikh Penstoran</th>
+                        <th>Nama Penuh Komponen Kimia</th>
+                        <th width="35%">Peratus (%) / Isipadu (mL)</th>
                         <th width="15%" class="no-print">Tindakan</th>
                     </tr>
                 </thead>
                 <tbody id="jadualKomposisi">
                     <tr>
                         <td><input type="text" class="komponen-nama" required placeholder="Contoh: Methanol"></td>
-                        <td><input type="text" class="komponen-peratus" required placeholder="Contoh: 70%"></td>
-                        <td><input type="date" class="komponen-tarikh" required></td>
+                        <td><input type="text" class="komponen-peratus" required placeholder="Contoh: 70% / 500mL"></td>
                         <td class="no-print"><button type="button" class="btn-add" onclick="tambahBarisKomposisi()">+ Tambah</button></td>
                     </tr>
                 </tbody>
@@ -103,9 +109,9 @@
             </div>
 
             <br>
-            <label><input type="checkbox" id="perakuan_pengguna" required> Saya mengesahkan maklumat komponen dan tarikh penstoran di atas adalah benar.</label>
+            <label><input type="checkbox" id="perakuan_pengguna" required> Saya mengesahkan maklumat campuran sisa di atas adalah benar.</label>
 
-            <button type="submit" class="btn-submit no-print">🚀 Hantar / Kemaskini Borang Sisa</button>
+            <button type="submit" class="btn-submit no-print">🚀 Hantar Borang Sisa</button>
         </form>
     </div>
 
@@ -140,14 +146,12 @@
             document.getElementById('seksyenPostgrad').style.display = (kat === 'Postgrad') ? 'block' : 'none';
         }
 
-        // FUNGSI TAMBAH BARIS BESERTA TARIKH PENSTORAN
         function tambahBarisKomposisi() {
             const tbody = document.getElementById('jadualKomposisi');
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td><input type="text" class="komponen-nama" required placeholder="Nama Kimia"></td>
                 <td><input type="text" class="komponen-peratus" required placeholder="Peratus/Isipadu"></td>
-                <td><input type="date" class="komponen-tarikh" required></td>
                 <td class="no-print"><button type="button" style="background:#e74c3c; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;" onclick="this.parentElement.parentElement.remove()">Padam</button></td>
             `;
             tbody.appendChild(tr);
@@ -158,14 +162,12 @@
             
             const namas = document.querySelectorAll('.komponen-nama');
             const peratuss = document.querySelectorAll('.komponen-peratus');
-            const tarikhs = document.querySelectorAll('.komponen-tarikh');
             
             let senaraiKomposisi = [];
             namas.forEach((input, i) => { 
                 senaraiKomposisi.push({ 
                     nama: input.value, 
-                    peratus: peratuss[i].value,
-                    tarikh_penstoran: tarikhs[i].value 
+                    peratus: peratuss[i].value
                 }); 
             });
 
@@ -177,6 +179,7 @@
                 nama_penyelia: document.getElementById('nama_penyelia').value,
                 kategori_pengguna: document.querySelector('input[name="kategori"]:checked').value,
                 fizikal_sisa: document.querySelector('input[name="fizikal_sisa"]:checked').value,
+                tarikh_penstoran: document.getElementById('tarikh_penstoran').value, // Kekal simpan dalam medan tarikh_penstoran Supabase
                 komposisi_sisa: senaraiKomposisi,
                 berat_kasar: parseFloat(document.getElementById('berat_kasar').value),
                 sw_code: document.getElementById('sw_code').value || null,
@@ -189,7 +192,7 @@
             if (error) {
                 alert("❌ Ralat: " + error.message);
             } else {
-                alert("✅ Borang Pemberitahuan Sisa Kimia berjaya dihantar / dikemaskini!");
+                alert("✅ Borang Pemberitahuan Sisa Kimia berjaya dihantar!");
                 window.location.href = "sisa.html";
             }
         });
