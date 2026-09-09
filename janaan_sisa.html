@@ -287,8 +287,8 @@
                 htmlKomposisi += '</ul>';
 
                 // 🛠️ KEMASKINI LABEL STATUS & BADGE UNTUK PAPARAN LALAI
-                const statusPapar = item.status || 'Belum Disahkan';
-                const badgeClass = (statusPapar === 'Disahkan') ? 'badge-disahkan' : 'badge-belum-disahkan';
+                const statusPapar = item.status || 'Belum Disemak';
+                const badgeClass = (statusPapar === 'Disemak') ? 'badge-disemak' : 'badge-belum-disemak';
                 const beratPaparan = item.berat_kasar ? `${item.berat_kasar}` : '-';
 
                 const tr = document.createElement('tr');
@@ -310,7 +310,7 @@
             
             const btnHantar = document.getElementById('btnHantar');
             btnHantar.disabled = true;
-            btnHantar.innerText = "⏳ Sedang Menghantar & Hantar Emel...";
+            btnHantar.innerText = "⏳ Sedang Menghantar & Notifikasi...";
 
             const namas = document.querySelectorAll('.komponen-nama');
             const peratuss = document.querySelectorAll('.komponen-peratus');
