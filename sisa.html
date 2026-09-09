@@ -57,9 +57,8 @@
                 <h3>📂 Inventori Sisa Terjadual</h3>
                 <p>Akses ke Google Drive pengurusan stok dan pangkalan data sisa terjadual. Khas untuk Staf & Pegawai Makmal bertugas sahaja.</p>
             </div>
-       <a id="btn-google-drive" href="https://drive.google.com/drive/folders/1iaY6FNKINefqcMFGxxm2a8A2tI3b6VGM" target="_blank" rel="noopener noreferrer" class="btn-action btn-drive">
-    Buka Google Drive Sisa 📂
-</a> target="_blank" class="btn-action btn-drive">
+            <!-- ✅ DIBAIKI: HANYA 1 PAUTAN ANKOR SAHAJA -->
+            <a id="btn-google-drive" href="https://drive.google.com/drive/folders/1iaY6FNKINefqcMFGxxm2a8A2tI3b6VGM" target="_blank" rel="noopener noreferrer" class="btn-action btn-drive">
                 Buka Google Drive Sisa 📂
             </a>
         </div>
@@ -82,7 +81,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // SENARAI E-MEL STAF (SEMUA DIGUNAKAN HURUF KECIL)
+        // SENARAI E-MEL STAF
         const senaraiStafSisa = [
             'admin@uitm.edu.my',
             'pegawaimakmal@uitm.edu.my',
@@ -102,7 +101,6 @@
                     return;
                 }
 
-                // SEMAK SAMA ADA E-MEL WUJUD DALAM SENARAI
                 if (senaraiStafSisa.includes(userEmail)) {
                     console.log("✅ E-mel sah sebagai Staf! Memaparkan Kad Google Drive...");
                     const cardDrive = document.getElementById('card-drive');
