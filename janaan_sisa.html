@@ -67,6 +67,7 @@
                 <div class="radio-group">
                     <label><input type="radio" name="kategori" value="FYP/LI" checked onchange="tukarKategori()"> Pelajar FYP / LI</label>
                     <label><input type="radio" name="kategori" value="Postgrad" onchange="tukarKategori()"> Pascasiswazah (Master/PhD)</label>
+                    <label><input type="radio" name="kategori" value="Pihak Luar" onchange="tukarKategori()"> Pihak Luar</label>
                 </div>
             </div>
 
@@ -107,8 +108,8 @@
 
             <br>
             <div class="form-group">
-                <label>Anggaran Berat Kasar Termasuk Bekas (kg):</label>
-                <input type="number" step="0.01" id="berat_kasar" required placeholder="Contoh: 2.5">
+                <label>Anggaran Berat / Isipadu:</label>
+                <input type="number" step="0.01" id="anggaran_berat" required placeholder="Contoh: 1kg / 1L">
             </div>
 
             <div id="seksyenPostgrad" style="display:none; background:#eef9f6; padding:15px; border-radius:6px;">
