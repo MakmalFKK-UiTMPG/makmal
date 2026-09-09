@@ -2,128 +2,65 @@
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
-    <title>Sistem Makmal FKK</title>
+    <title>Sistem Makmal Saya</title>
+    <!-- Ini adalah kod untuk memanggil sistem Supabase ke dalam HTML kita -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: auto; }
+        body { font-family: Arial, sans-serif; padding: 20px; }
         table { border-collapse: collapse; width: 100%; margin-top: 20px; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
         th { background-color: #f2f2f2; }
-        .card { border: 1px solid #ccc; padding: 30px; border-radius: 8px; text-align: center; max-width: 400px; margin: 50px auto; }
-        .btn-google { background-color: #1557bf; color: white; border: none; padding: 12px 20px; font-size: 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        .btn-google:hover { background-color: #0d3c8a; }
-        .logout-btn { background-color: #dc3545; color: white; border: none; padding: 8px 12px; border-radius: 4px; float: right; cursor: pointer; }
-        #appContent { display: none; }
     </style>
 </head>
 <body>
 
-    <!-- KAD LOG MASUK GOOGLE -->
-    <div id="loginCard" class="card">
-        <h2>🏛️ Sistem Makmal FKK</h2>
-        <p style="color: #666;">Sila log masuk menggunakan e-mel rasmi UiTM untuk mengakses senarai makmal.</p>
-        <button class="btn-google" onclick="alert('Butang berfungsi!'); logMasukGoogle();">🔑 Log Masuk dengan Google</button>
-        <p id="statusMsg" style="margin-top: 15px; color: gray;"></p>
-    </div>
-
-    <!-- JADUAL TEMPAHAN -->
-    <div id="appContent">
-        <button class="logout-btn" onclick="logKeluar()">Log Keluar</button>
-        <h2>Senarai Tempahan Peralatan</h2>
-        <p id="userInfo" style="color: gray;"></p>
-        
-        <table id="jadualTempahan">
-            <thead>
-                <tr>
-                    <th>Nama Pemohon</th>
-                    <th>Peralatan</th>
-                    <th>Tarikh Guna</th>
-                    <th>Masa Mula</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
+    <h2>Senarai Tempahan Peralatan</h2>
+    
+    <!-- Jadual kosong yang akan diisi oleh Supabase nanti -->
+    <table id="jadualTempahan">
+        <tr>
+            <th>Nama Pemohon</th>
+            <th>Peralatan</th>
+            <th>Tarikh</th>
+            <th>Status</th>
+        </tr>
+    </table>
 
     <script>
+        // 1. TAMPAL URL DAN KEY AWAK DI SINI
         const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
+        
+        // 2. Sambungkan laman web ke Supabase
         const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        // 1. Kunci Utama: Mendengar perubahan status Auth (Mengesan token dari URL Google Redirect)
-        supabase.auth.onAuthStateChange((event, session) => {
-            console.log("Auth Event:", event);
-            if (session) {
-                // Semak domain e-mel
-                if (!session.user.email.endsWith('@uitm.edu.my')) {
-                    alert('Log masuk gagal: Hanya e-mel rasmi UiTM (@uitm.edu.my) sahaja dibenarkan!');
-                    logKeluar();
-                    return;
-                }
-
-                // Pengguna sah authenticated & e-mel UiTM
-                document.getElementById('loginCard').style.display = 'none';
-                document.getElementById('appContent').style.display = 'block';
-                document.getElementById('userInfo').innerText = `Log masuk sebagai: ${session.user.email}`;
-                
-                // Tarik data dari Supabase
-                dapatkanData();
-            } else {
-                document.getElementById('loginCard').style.display = 'block';
-                document.getElementById('appContent').style.display = 'none';
-            }
-        });
-
-        // 2. Fungsi Panggil Google OAuth
-        async function logMasukGoogle() {
-            document.getElementById('statusMsg').innerText = "Mengarahkan ke Google...";
-            const { error } = await supabase.auth.signInWithOAuth({
-                provider: 'google',
-                options: {
-                    redirectTo: window.location.origin + window.location.pathname
-                }
-            });
-
-            if (error) {
-                alert("Ralat Google Auth: " + error.message);
-            }
-        }
-
-        // 3. Log Keluar
-        async function logKeluar() {
-            await supabase.auth.signOut();
-            window.location.reload();
-        }
-
-        // 4. Tarik data tempahan dari Supabase
+        // 3. Fungsi untuk tarik data dari jadual 'tempahan_peralatan'
         async function dapatkanData() {
-            const tbody = document.querySelector('#jadualTempahan tbody');
-            tbody.innerHTML = '<tr><td colspan="4">Sedang memuatkan data...</td></tr>';
-
             const { data, error } = await supabase
                 .from('tempahan_peralatan')
                 .select('*');
 
             if (error) {
-                console.error('Ralat:', error);
-                tbody.innerHTML = `<tr><td colspan="4" style="color:red">Ralat RLS/Akses: ${error.message}</td></tr>`;
+                console.error('Ada masalah ralat:', error);
                 return;
             }
 
-            if (!data || data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4">Tiada rekod tempahan ditemui.</td></tr>';
-                return;
-            }
-
-            tbody.innerHTML = ''; // Kosongkan mesej muat data
+            // 4. Masukkan data ke dalam jadual HTML kita
+            const table = document.getElementById('jadualTempahan');
             data.forEach(rekod => {
-                const row = tbody.insertRow();
-                row.insertCell(0).innerText = rekod.nama_pemohon || '-';
-                row.insertCell(1).innerText = rekod.nama_peralatan || '-';
-                row.insertCell(2).innerText = rekod.tarikh_guna || '-';
-                row.insertCell(3).innerText = rekod.masa_mula || '-';
+                const row = table.insertRow();
+                row.insertCell(0).innerText = rekod.nama_pemohon;
+                row.insertCell(1).innerText = rekod.nama_peralatan;
+                row.insertCell(2).innerText = rekod.tarikh_guna;
+                row.insertCell(3).innerText = rekod.status;
             });
         }
+
+        // Jalankan fungsi bila laman web dibuka
+        dapatkanData();
     </script>
+
 </body>
 </html>
+
+
