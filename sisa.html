@@ -28,8 +28,8 @@
         .btn-form { background-color: #d35400; }
         .btn-form:hover { background-color: #a04000; }
         
-        /* BUTANG DRIVE (DISEMBUNYIKAN SECARA DEFAULT UNTUK ORANG AWAM) */
-        .btn-drive { background-color: #27ae60; display: none; }
+        /* BUTANG DRIVE */
+        .btn-drive { background-color: #27ae60; }
         .btn-drive:hover { background-color: #1e8449; }
     </style>
 </head>
@@ -41,7 +41,7 @@
         <button id="logout-btn" class="btn-logout">🚪 Log Keluar</button>
     </div>
 
-    <h2>⚠️ Pengurusan Sisa Terjadual (Scheduled Waste)</h2>
+    <h2>🛢️ Pengurusan Sisa Terjadual (Scheduled Waste)</h2>
     <p style="color: #7f8c8d; font-size: 14px;">Pilih perkhidmatan pengurusan sisa kimia makmal di bawah:</p>
 
     <div class="card-container">
@@ -61,7 +61,6 @@
                 <h3>📂 Inventori Sisa Terjadual</h3>
                 <p>Akses ke Google Drive pengurusan stok dan pangkalan data sisa terjadual. Khas untuk Staf & Pegawai Makmal bertugas sahaja.</p>
             </div>
-            <!-- Masukkan pautan Google Drive anda di bawah -->
             <a id="btn-google-drive" href="https://drive.google.com/drive/folders/PAUTAN_GOOGLE_DRIVE_ANDA" target="_blank" class="btn-action btn-drive">
                 Buka Google Drive Sisa 📂
             </a>
@@ -86,18 +85,17 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // 🎯 SENARAI E-MEL STAF / PEGAWAI DIBENARKAN BUKA GOOGLE DRIVE SISA
+        // 🎯 SENARAI E-MEL STAF / PEGAWAI DIBENARKAN BUKA GOOGLE DRIVE SISA (KOMA TELAH DIBAIKI)
         const senaraiStafSisa = [
             'admin@uitm.edu.my',
             'pegawaimakmal@uitm.edu.my',
-            'stafsisa@uitm.edu.my'
+            'stafsisa@uitm.edu.my',
             'nurha1559@uitm.edu.my'
-            // Masukkan e-mel staf anda di sini
         ];
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                const email = user.email || '';
+                const email = (user.email || '').toLowerCase().trim();
                 
                 // 1. Semak e-mel rasmi UiTM
                 if (!email.endsWith('@uitm.edu.my') && !email.endsWith('@student.uitm.edu.my')) {
@@ -106,10 +104,9 @@
                     return;
                 }
 
-                // 2. Khas: Paparkan Kad Google Drive HANYA jika e-mel ada dalam senarai Staf
+                // 2. Semak jika e-mel pengguna wujud dalam senarai Staf
                 if (senaraiStafSisa.includes(email)) {
                     document.getElementById('card-drive').style.display = 'flex';
-                    document.getElementById('btn-google-drive').style.display = 'inline-block';
                 }
 
             } else {
