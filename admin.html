@@ -133,12 +133,10 @@
             if (user) {
                 const email = user.email || '';
                 if (email.endsWith('@uitm.edu.my') || email.endsWith('@student.uitm.edu.my')) {
-                    // SEKATAN LAPIS 2: PROMPT KATA LALUAN ADMIN
                     const KATA_LALUAN_ADMIN = "FKK@20160901";
                     const inputPassword = prompt("🔒 KAWALAN ADMIN:\nSila masukkan kata laluan:");
 
                     if (inputPassword === KATA_LALUAN_ADMIN) {
-                        // Kata laluan betul -> Buka paparan admin & panggil data Supabase
                         document.getElementById('loading-admin').style.display = 'none';
                         document.getElementById('main-admin-content').style.display = 'block';
                         window.muatTurunSemuaData();
@@ -167,7 +165,6 @@
 
         let dataBahanGlobal = [];
 
-        // Ditembak secara automatik dari skrip Firebase selepas kata laluan betul
         window.muatTurunSemuaData = function() {
             dapatkanTempahan();
             dapatkanBahanRadas();
@@ -186,9 +183,14 @@
             }
         }
 
-        // 1. DATA TEMPAHAN SLOT
+        // 1. DATA TEMPAHAN SLOT (Tapis status yang BUKAN 'Batal')
         async function dapatkanTempahan() {
-            const { data } = await supabaseClient.from('tempahan_peralatan').select('*').order('id', { ascending: false });
+            const { data } = await supabaseClient
+                .from('tempahan_peralatan')
+                .select('*')
+                .neq('status', 'Batal')
+                .order('id', { ascending: false });
+                
             const tbody = document.getElementById('isiJadualTempahan');
             tbody.innerHTML = '';
 
@@ -216,9 +218,14 @@
             }
         }
 
-        // 2. DATA PERMOHONAN BAHAN & RADAS
+        // 2. DATA PERMOHONAN BAHAN & RADAS (Tapis status yang BUKAN 'Batal')
         async function dapatkanBahanRadas() {
-            const { data } = await supabaseClient.from('permohonan_bahan_radas').select('*').order('id', { ascending: false });
+            const { data } = await supabaseClient
+                .from('permohonan_bahan_radas')
+                .select('*')
+                .neq('status', 'Batal')
+                .order('id', { ascending: false });
+                
             const tbody = document.getElementById('isiJadualBahan');
             tbody.innerHTML = '';
             dataBahanGlobal = data || [];
@@ -312,11 +319,21 @@
             dapatkanBahanRadas();
         }
 
+        // FUNGSI SOFT DELETE (Tukar status kepada 'Batal' tanpa padam data dari DB)
         async function padamRekod(jadual, id) {
-            if(confirm("Pasti mahu memadam rekod ini secara kekal?")) {
-                await supabaseClient.from(jadual).delete().eq('id', id);
-                dapatkanTempahan();
-                dapatkanBahanRadas();
+            if(confirm("Pasti mahu memadam/membatalkan rekod ini daripada paparan?")) {
+                const { error } = await supabaseClient
+                    .from(jadual)
+                    .update({ status: 'Batal' })
+                    .eq('id', id);
+
+                if (error) {
+                    alert("❌ Ralat: " + error.message);
+                } else {
+                    alert("✅ Rekod telah dipadam dari paparan.");
+                    dapatkanTempahan();
+                    dapatkanBahanRadas();
+                }
             }
         }
     </script>
