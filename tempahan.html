@@ -5,7 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Borang Tempahan Peralatan Makmal</title>
     
+    <!-- SUPABASE SDK -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    
+    <!-- ✉️ SDK EMAILJS UNTUK NOTIFIKASI EMEL -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+       (function(){
+          // ✅ Public Key EmailJS anda
+          emailjs.init("lIkOzetAaOEcNlzA2");
+       })();
+    </script>
+
     <style>
         body { font-family: Arial, sans-serif; padding: 20px; max-width: 1100px; margin: auto; background-color: #f9f9f9; }
         
@@ -38,6 +49,7 @@
 
         .btn-submit { background-color: #2980b9; color: white; border: none; padding: 12px 15px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 10px; }
         .btn-submit:hover { background-color: #3498db; }
+        .btn-submit:disabled { background-color: #7f8c8d; cursor: not-allowed; }
         
         table.status-table { border-collapse: collapse; width: 100%; margin-top: 20px; background: white; }
         table.status-table th, table.status-table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
@@ -135,7 +147,7 @@
                 <input type="text" id="masa_tamat" required readonly style="background-color: #eef2f5; font-weight: bold;" placeholder="Pilih dari jadual">
             </div>
 
-            <button type="submit" class="btn-submit">Hantar Tempahan</button>
+            <button type="submit" id="btnHantar" class="btn-submit">Hantar Tempahan</button>
         </div>
     </form>
 
@@ -196,7 +208,7 @@
         });
     </script>
 
-    <!-- SKRIP SUPABASE (FUNGSI TEMPAHAN) -->
+    <!-- SKRIP SUPABASE & EMAILJS (FUNGSI TEMPAHAN & NOTIFIKASI) -->
     <script>
         const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
@@ -209,6 +221,28 @@
             let mm = String(d.getMonth() + 1).padStart(2, '0');
             let dd = String(d.getDate()).padStart(2, '0');
             return `${yyyy}-${mm}-${dd}`;
+        }
+
+        // ✉️ FUNGSI UNTUK MENGHANTAR EMEL NOTIFIKASI TEMPAHAN PERALATAN
+        async function hantarNotifikasiTempahan(dataTempahan) {
+            const templateParams = {
+                to_email: 'nurha1559@uitm.edu.my',
+                nama_pemohon: dataTempahan.nama_pemohon,
+                no_tel: dataTempahan.no_telefon,
+                nama_peralatan: dataTempahan.nama_peralatan,
+                tarikh_guna: dataTempahan.tarikh_guna,
+                masa_mula: dataTempahan.masa_mula,
+                masa_tamat: dataTempahan.masa_tamat,
+                tujuan: dataTempahan.tujuan || '-'
+            };
+
+            try {
+                // ⚠️ Gantikan 'TEMPLATE_ID_PERALATAN' dengan Template ID baharu dari EmailJS anda
+                await emailjs.send('service_ntay5sf', 'TEMPLATE_ID_PERALATAN', templateParams);
+                console.log("✅ E-mel notifikasi tempahan peralatan berjaya dihantar!");
+            } catch (err) {
+                console.error("❌ Gagal hantar e-mel notifikasi tempahan:", err);
+            }
         }
 
         function janaTimetable2Minggu() {
@@ -329,6 +363,10 @@
             document.getElementById('formTempahan').addEventListener('submit', async function(e) {
                 e.preventDefault();
 
+                const btnHantar = document.getElementById('btnHantar');
+                btnHantar.disabled = true;
+                btnHantar.innerText = "⏳ Sedang Menghantar...";
+
                 const nama_pemohon = document.getElementById('nama_pemohon').value;
                 const no_telefon = document.getElementById('no_telefon').value;
                 const tujuan = document.getElementById('tujuan').value;
@@ -339,9 +377,12 @@
 
                 if (!tarikh_guna || !masa_mula) {
                     alert("Sila pilih slot tarikh dan masa pada jadual di Langkah 2 terlebih dahulu!");
+                    btnHantar.disabled = false;
+                    btnHantar.innerText = "Hantar Tempahan";
                     return;
                 }
 
+                // Semak jika slot bertindih
                 const { data: bertindih, error: ralatSemak } = await supabaseClient
                     .from('tempahan_peralatan')
                     .select('*')
@@ -352,41 +393,48 @@
 
                 if (ralatSemak) {
                     alert('Ralat semasa menyemak ketersediaan slot: ' + ralatSemak.message);
+                    btnHantar.disabled = false;
+                    btnHantar.innerText = "Hantar Tempahan";
                     return;
                 }
 
                 if (bertindih && bertindih.length > 0) {
                     alert(`❌ MAAF! Peralatan (${nama_peralatan}) pada tarikh ${tarikh_guna} (${masa_mula}) telah pun ditempah. Sila pilih slot lain.`);
                     await kemaskiniStatusTimetable();
+                    btnHantar.disabled = false;
+                    btnHantar.innerText = "Hantar Tempahan";
                     return;
                 }
 
+                const formData = { 
+                    nama_pemohon: nama_pemohon, 
+                    no_telefon: no_telefon,
+                    tujuan: tujuan,
+                    nama_peralatan: nama_peralatan, 
+                    tarikh_guna: tarikh_guna, 
+                    masa_mula: masa_mula, 
+                    masa_tamat: masa_tamat, 
+                    status: 'Menunggu'
+                };
+
+                // 1. Simpan Rekod Ke Supabase
                 const { data, error } = await supabaseClient
                     .from('tempahan_peralatan')
-                    .insert([
-                        { 
-                            nama_pemohon: nama_pemohon, 
-                            no_telefon: no_telefon,
-                            tujuan: tujuan,
-                            nama_peralatan: nama_peralatan, 
-                            tarikh_guna: tarikh_guna, 
-                            masa_mula: masa_mula, 
-                            masa_tamat: masa_tamat, 
-                            status: 'Menunggu'
-                        }
-                    ]);
+                    .insert([formData]);
 
                 if (error) {
                     alert('Gagal menghantar tempahan: ' + error.message);
+                    btnHantar.disabled = false;
+                    btnHantar.innerText = "Hantar Tempahan";
                 } else {
+                    // 2. Hantar E-mel Notifikasi
+                    await hantarNotifikasiTempahan(formData);
+
                     alert('✅ Tempahan berjaya dihantar!');
                     
-                    document.getElementById('nama_pemohon').value = '';
-                    document.getElementById('no_telefon').value = '';
-                    document.getElementById('tujuan').value = '';
-                    document.getElementById('tarikh_guna').value = '';
-                    document.getElementById('masa_mula').value = '';
-                    document.getElementById('masa_tamat').value = '';
+                    document.getElementById('formTempahan').reset();
+                    btnHantar.disabled = false;
+                    btnHantar.innerText = "Hantar Tempahan";
 
                     await kemaskiniStatusTimetable();
                     paparkanTempahanPelajar();
