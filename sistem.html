@@ -2,8 +2,7 @@
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
-    <title>Sistem Makmal Saya</title>
-    <!-- Kod untuk memanggil Supabase Client JS -->
+    <title>Sistem Makmal UiTM - Tempahan Peralatan</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: auto; }
@@ -11,29 +10,25 @@
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
         th { background-color: #f2f2f2; }
         .card { border: 1px solid #ccc; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
-        input { padding: 8px; margin: 5px 0; width: 95%; }
-        button { padding: 10px 15px; background-color: #28a745; color: white; border: none; cursor: pointer; border-radius: 4px; }
-        button:hover { background-color: #218838; }
+        input { padding: 10px; margin: 10px 0; width: 90%; }
+        button { padding: 10px 15px; background-color: #007bff; color: white; border: none; cursor: pointer; border-radius: 4px; }
+        button:hover { background-color: #0056b3; }
         .logout-btn { background-color: #dc3545; float: right; }
-        .logout-btn:hover { background-color: #c82333; }
-        #appContent { display: none; } /* Sembunyi jadual jika belum log masuk */
+        #appContent { display: none; }
     </style>
 </head>
 <body>
 
-    <!-- BAHAGIAN 1: BORANG LOG MASUK (Akan dipaparkan jika belum login) -->
+    <!-- BORANG LOG MASUK E-MEL UITM -->
     <div id="loginForm" class="card">
-        <h2>Sila Log Masuk</h2>
-        <p>Anda mesti log masuk untuk melihat senarai tempahan.</p>
-        <label>E-mel:</label>
-        <input type="email" id="email" placeholder="contoh@domain.com"><br>
-        <label>Kata Laluan:</label>
-        <input type="password" id="password" placeholder="******"><br><br>
-        <button onclick="logMasuk()">Log Masuk</button>
-        <p id="loginError" style="color: red;"></p>
+        <h2>Log Masuk Staff / Pelajar UiTM</h2>
+        <p>Masukkan e-mel rasmi UiTM anda (mesti berakhir dengan <strong>@uitm.edu.my</strong>):</p>
+        <input type="email" id="email" placeholder="contoh@uitm.edu.my"><br>
+        <button onclick="logMasukGunaEmail()">Hantar Pautan Log Masuk</button>
+        <p id="statusMsg" style="font-weight: bold;"></p>
     </div>
 
-    <!-- BAHAGIAN 2: KANDUNGAN JADUAL (Akan dipaparkan selepas login) -->
+    <!-- KANDUNGAN JADUAL TEMPAHAN -->
     <div id="appContent">
         <button class="logout-btn" onclick="logKeluar()">Log Keluar</button>
         <h2>Senarai Tempahan Peralatan</h2>
@@ -44,105 +39,98 @@
                 <tr>
                     <th>Nama Pemohon</th>
                     <th>Peralatan</th>
-                    <th>Tarikh</th>
-                    <th>Status</th>
+                    <th>Tarikh Guna</th>
+                    <th>Masa Mula</th>
                 </tr>
             </thead>
-            <tbody>
-                <!-- Data dari Supabase akan masuk di sini -->
-            </tbody>
+            <tbody></tbody>
         </table>
     </div>
 
     <script>
-        // 1. URL dan ANON KEY Supabase anda
         const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
-        
-        // 2. Sambungkan ke Supabase Client
         const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        // 3. Semak status sesi pengguna apabila halaman dibuka
+        // 1. Semak sesi pengguna apabila laman dibolehkan
         async function semakSesi() {
             const { data: { session } } = await supabase.auth.getSession();
 
             if (session) {
-                // Pengguna SUDAH log masuk
                 document.getElementById('loginForm').style.display = 'none';
                 document.getElementById('appContent').style.display = 'block';
                 document.getElementById('userInfo').innerText = `Log masuk sebagai: ${session.user.email}`;
-                
-                // Panggil data dari Supabase
                 dapatkanData();
             } else {
-                // Pengguna BELUM log masuk
                 document.getElementById('loginForm').style.display = 'block';
                 document.getElementById('appContent').style.display = 'none';
             }
         }
 
-        // 4. Fungsi Proses Log Masuk
-        async function logMasuk() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const errorElement = document.getElementById('loginError');
+        // 2. Log masuk menggunakan E-mel UiTM sahaja
+        async function logMasukGunaEmail() {
+            const email = document.getElementById('email').value.trim();
+            const msg = document.getElementById('statusMsg');
 
-            errorElement.innerText = "Sedang mendaftar masuk...";
+            // Semak domain e-mel
+            if (!email.endsWith('@uitm.edu.my')) {
+                msg.style.color = 'red';
+                msg.innerText = 'Sila gunakan e-mel rasmi UiTM sahaja (@uitm.edu.my)!';
+                return;
+            }
 
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email: email,
-                password: password
+            msg.style.color = 'blue';
+            msg.innerText = 'Sedang menghantar pautan pengesahan ke e-mel anda...';
+
+            // Hantar Magic Link ke e-mel
+            const { error } = await supabase.auth.signInWithOtp({
+                email: email
             });
 
             if (error) {
-                errorElement.innerText = "Gagal Log Masuk: " + error.message;
+                msg.style.color = 'red';
+                msg.innerText = 'Ralat: ' + error.message;
             } else {
-                errorElement.innerText = "";
-                // Refresh semakan sesi
-                semakSesi();
+                msg.style.color = 'green';
+                msg.innerText = 'Pautan log masuk telah dihantar! Sila semak kotak masuk e-mel UiTM anda dan tekan pautan tersebut.';
             }
         }
 
-        // 5. Fungsi Log Keluar
+        // 3. Log Keluar
         async function logKeluar() {
             await supabase.auth.signOut();
             semakSesi();
         }
 
-        // 6. Fungsi Tarik Data dari Supabase
+        // 4. Tarik data dari Supabase (Hanya berjalan untuk user authenticated)
         async function dapatkanData() {
             const tbody = document.querySelector('#jadualTempahan tbody');
-            tbody.innerHTML = ''; // Clear isi lama
+            tbody.innerHTML = '';
 
-            // Panggilan ini secara automatik membawa Token Log Masuk pengguna!
             const { data, error } = await supabase
                 .from('tempahan_peralatan')
                 .select('*');
 
             if (error) {
-                console.error('Ralat:', error);
                 alert('Ralat mengambil data: ' + error.message);
                 return;
             }
 
             if (data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4">Tiada rekod tempahan ditemui.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="4">Tiada rekod tempahan.</td></tr>';
                 return;
             }
 
-            // Masukkan data ke dalam jadual
             data.forEach(rekod => {
                 const row = tbody.insertRow();
                 row.insertCell(0).innerText = rekod.nama_pemohon || '-';
                 row.insertCell(1).innerText = rekod.nama_peralatan || '-';
                 row.insertCell(2).innerText = rekod.tarikh_guna || '-';
-                row.insertCell(3).innerText = rekod.status || '-';
+                row.insertCell(3).innerText = rekod.masa_mula || '-';
             });
         }
 
-        // Jalankan semakan sesi pada permulaan
         semakSesi();
     </script>
-
 </body>
 </html>
