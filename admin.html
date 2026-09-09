@@ -18,7 +18,7 @@
         .btn-logout { background: #e74c3c; color: white; border: none; padding: 8px 14px; border-radius: 5px; cursor: pointer; font-size: 13px; font-weight: bold; }
 
         /* TAB NAVIGATION */
-        .tab-container { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #ccc; }
+        .tab-container { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #ccc; flex-wrap: wrap; }
         .tab-btn { padding: 10px 20px; font-weight: bold; border: none; background: #e0e0e0; cursor: pointer; border-radius: 5px 5px 0 0; }
         .tab-btn.active { background: #2c3e50; color: white; }
 
@@ -34,9 +34,11 @@
 
         /* WARNA STATUS */
         .status-menunggu { color: #d35400; font-weight: bold; }
+        .status-belum-disahkan { color: #d35400; font-weight: bold; }
+        .status-disahkan { color: #27ae60; font-weight: bold; }
         .status-lulus { color: #27ae60; font-weight: bold; }
         .status-tolak, .status-ditolak { color: #c0392b; font-weight: bold; }
-        .status-batal { color: #7f8c8d; font-weight: bold; font-style: italic; } /* Warna kelabu untuk Batal */
+        .status-batal { color: #7f8c8d; font-weight: bold; font-style: italic; }
 
         .btn-lulus { background-color: #27ae60; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; }
         .btn-tolak { background-color: #c0392b; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; margin-left: 3px; }
@@ -46,6 +48,8 @@
         .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
         .modal-content { background-color: white; margin: 3% auto; padding: 20px; border-radius: 8px; width: 85%; max-width: 750px; max-height: 85vh; overflow-y: auto; }
         .close-modal { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+        
+        .komposisi-list { margin: 0; padding-left: 15px; font-size: 12px; }
     </style>
 </head>
 <body>
@@ -62,13 +66,16 @@
         </div>
 
         <h2>⚙️ Panel Admin & Pegawai Makmal</h2>
-        <p>Uruskan kelulusan tempahan peralatan dan permohonan bahan kimia/radas di sini.</p>
+        <p>Uruskan kelulusan tempahan peralatan, permohonan bahan/radas, dan pengesahan sisa kimia di sini.</p>
 
+        <!-- TAB NAVIGATION -->
         <div class="tab-container">
             <button class="tab-btn active" onclick="tukarTab('tempahan')">📅 Tempahan Slot Peralatan</button>
             <button class="tab-btn" onclick="tukarTab('bahan')">🧪 Permohonan Bahan Kimia & Radas</button>
+            <button class="tab-btn" onclick="tukarTab('sisa')">🧪 Pemberitahuan Sisa Kimia</button>
         </div>
 
+        <!-- 1. SEKSYEN TEMPAHAN PERALATAN -->
         <div id="sekSyenTempahan">
             <div class="summary-container">
                 <div class="summary-card"><h4>JUMLAH TEMPAHAN</h4><p id="totalTempahan">0</p></div>
@@ -86,6 +93,7 @@
             </table>
         </div>
 
+        <!-- 2. SEKSYEN BAHAN & RADAS -->
         <div id="sekSyenBahan" style="display:none;">
             <table>
                 <thead>
@@ -94,6 +102,25 @@
                     </tr>
                 </thead>
                 <tbody id="isiJadualBahan"><tr><td colspan="7" style="text-align:center;">Memuatkan...</td></tr></tbody>
+            </table>
+        </div>
+
+        <!-- 3. SEKSYEN SISA KIMIA (BAHARU) -->
+        <div id="sekSyenSisa" style="display:none;">
+            <table>
+                <thead>
+                    <tr>
+                        <th width="5%">ID</th>
+                        <th width="12%">Tarikh Dijana</th>
+                        <th width="20%">Pemohon / Makmal</th>
+                        <th width="15%">Fizikal Sisa</th>
+                        <th>Komposisi Bahan Kimia</th>
+                        <th width="12%">Berat / Isipadu</th>
+                        <th width="12%">Status</th>
+                        <th width="15%">Tindakan</th>
+                    </tr>
+                </thead>
+                <tbody id="isiJadualSisa"><tr><td colspan="8" style="text-align:center;">Memuatkan...</td></tr></tbody>
             </table>
         </div>
 
@@ -161,22 +188,28 @@
         window.muatTurunSemuaData = function() {
             dapatkanTempahan();
             dapatkanBahanRadas();
+            dapatkanJanaanSisa();
         };
 
         function tukarTab(tab) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('sekSyenTempahan').style.display = 'none';
+            document.getElementById('sekSyenBahan').style.display = 'none';
+            document.getElementById('sekSyenSisa').style.display = 'none';
+
             if (tab === 'tempahan') {
                 document.querySelectorAll('.tab-btn')[0].classList.add('active');
                 document.getElementById('sekSyenTempahan').style.display = 'block';
-                document.getElementById('sekSyenBahan').style.display = 'none';
-            } else {
+            } else if (tab === 'bahan') {
                 document.querySelectorAll('.tab-btn')[1].classList.add('active');
-                document.getElementById('sekSyenTempahan').style.display = 'none';
                 document.getElementById('sekSyenBahan').style.display = 'block';
+            } else if (tab === 'sisa') {
+                document.querySelectorAll('.tab-btn')[2].classList.add('active');
+                document.getElementById('sekSyenSisa').style.display = 'block';
             }
         }
 
-        // 1. DATA TEMPAHAN SLOT (Tarik SEMUA rekod termasuk 'Batal')
+        // 1. DATA TEMPAHAN SLOT
         async function dapatkanTempahan() {
             const { data } = await supabaseClient
                 .from('tempahan_peralatan')
@@ -210,7 +243,7 @@
             }
         }
 
-        // 2. DATA PERMOHONAN BAHAN & RADAS (Tarik SEMUA rekod termasuk 'Batal')
+        // 2. DATA PERMOHONAN BAHAN & RADAS
         async function dapatkanBahanRadas() {
             const { data } = await supabaseClient
                 .from('permohonan_bahan_radas')
@@ -239,6 +272,56 @@
                     `;
                 });
             }
+        }
+
+        // 3. DATA JANAAN SISA KIMIA (STATUS LALAI: Belum Disahkan)
+        async function dapatkanJanaanSisa() {
+            const { data, error } = await supabaseClient
+                .from('janaan_sisa')
+                .select('*')
+                .order('id', { ascending: false });
+                
+            const tbody = document.getElementById('isiJadualSisa');
+            tbody.innerHTML = '';
+
+            if (error) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:red;">Gagal memuatkan data sisa: ${error.message}</td></tr>`;
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;">Tiada rekod pemberitahuan sisa kimia.</td></tr>`;
+                return;
+            }
+
+            data.forEach(r => {
+                let htmlKomposisi = '<ul class="komposisi-list">';
+                if (Array.isArray(r.komposisi_sisa)) {
+                    r.komposisi_sisa.forEach(k => {
+                        htmlKomposisi += `<li><b>${k.nama}:</b> ${k.peratus}</li>`;
+                    });
+                }
+                htmlKomposisi += '</ul>';
+
+                const statusPapar = r.status || 'Belum Disemak';
+                const statusClass = (statusPapar === 'Disemak') ? 'status-disemak' : 'status-belum-disemak';
+                const beratPaparan = r.berat_kasar ? `${r.berat_kasar}` : '-';
+
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td><b>#${r.id}</b></td>
+                    <td>${r.tarikh_penstoran || '-'}</td>
+                    <td><b>${r.nama_pemohon || '-'}</b><br><small style="color:#7f8c8d;">${r.nama_makmal || '-'}</small></td>
+                    <td>${r.fizikal_sisa || '-'}</td>
+                    <td>${htmlKomposisi}</td>
+                    <td><b>${beratPaparan}</b></td>
+                    <td><span class="${statusClass}">${statusPapar}</span></td>
+                    <td>
+                        <button class="btn-lulus" onclick="tukarStatusSisa(${r.id}, 'Disemak')">Disemak</button>
+                        <button class="btn-padam" onclick="tukarStatusSisa(${r.id}, 'Batal')">🗑️ Batal</button>
+                    </td>
+                `;
+            });
         }
 
         function paparkanDetail(id) {
@@ -308,7 +391,22 @@
             dapatkanBahanRadas();
         }
 
-        // TUKAR STATUS KEPADA 'Batal' (Rekod kekal ada dalam jadual)
+        // TUKAR STATUS SISA KIMIA KEPADA 'Disahkan' / 'Batal'
+        async function tukarStatusSisa(id, status) {
+            const { error } = await supabaseClient
+                .from('janaan_sisa')
+                .update({ status: status })
+                .eq('id', id);
+
+            if (error) {
+                alert("❌ Ralat semasa mengemaskini status sisa: " + error.message);
+            } else {
+                alert(`✅ Status rekod sisa #${id} berjaya ditukar kepada '${status}'.`);
+                dapatkanJanaanSisa();
+            }
+        }
+
+        // TUKAR STATUS KEPADA 'Batal'
         async function padamRekod(jadual, id) {
             if(confirm("Pasti mahu menukar status rekod ini kepada 'Batal'?")) {
                 const { error } = await supabaseClient
