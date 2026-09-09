@@ -13,8 +13,14 @@
         h3 { color: #16a085; border-bottom: 2px solid #16a085; padding-bottom: 5px; font-size: 16px; margin-top: 20px; }
         .form-group { margin-bottom: 15px; }
         label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 13px; }
-        input[type="text"], input[type="number"], input[type="date"] { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        input[type="text"], input[type="number"], input[type="date"], select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        
+        /* GAYA UNTUK GABUNGAN NOMBOR & UNIT */
+        .input-unit-group { display: flex; gap: 8px; }
+        .input-unit-group input[type="number"] { flex: 2; }
+        .input-unit-group select { flex: 1; min-width: 90px; background-color: #fff; }
+
         .radio-group { display: flex; gap: 15px; flex-wrap: wrap; font-size: 13px; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 13px; }
@@ -23,25 +29,23 @@
         .btn-submit { background: #2980b9; color: white; border: none; padding: 12px 20px; width: 100%; border-radius: 5px; cursor: pointer; font-size: 15px; font-weight: bold; margin-top: 20px; }
         .btn-print { background: #27ae60; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-bottom: 15px; }
         
-        /* Lencana Status */
         .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; color: white; display: inline-block; }
         .badge-menunggu { background-color: #f39c12; }
         .badge-disahkan { background-color: #27ae60; }
-        
         .komposisi-list { margin: 0; padding-left: 15px; font-size: 12px; }
 
         @media print {
             body { background: white; padding: 0; }
             .card { box-shadow: none; border: none; }
             .no-print { display: none !important; }
-            input { border: none; border-bottom: 1px solid #000; }
+            input, select { border: none; border-bottom: 1px solid #000; background: transparent; appearance: none; }
         }
     </style>
 </head>
 <body>
 
     <div class="header-top no-print">
-        <a href="sisa.html" style="color:#2980b9; text-decoration:none; font-weight:bold;">⬅️ Kembali ke Pengurusan Sisa Terjadual</a>
+        <a href="sisa.html" style="color:#2980b9; text-decoration:none; font-weight:bold;">⬅️ Kembali ke Hab Sisa</a>
         <button id="logout-btn" style="background:#e74c3c; color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer;">🚪 Log Keluar</button>
     </div>
 
@@ -67,7 +71,6 @@
                 <div class="radio-group">
                     <label><input type="radio" name="kategori" value="FYP/LI" checked onchange="tukarKategori()"> Pelajar FYP / LI</label>
                     <label><input type="radio" name="kategori" value="Postgrad" onchange="tukarKategori()"> Pascasiswazah (Master/PhD)</label>
-                    <label><input type="radio" name="kategori" value="Pihak Luar" onchange="tukarKategori()"> Pihak Luar</label>
                 </div>
             </div>
 
@@ -93,23 +96,32 @@
                 <thead>
                     <tr>
                         <th>Nama Penuh Komponen Kimia</th>
-                        <th width="35%">Peratus (%) / Isipadu (mL)</th>
+                        <th width="35%">Peratus (%) / Isipadu / Berat</th>
                         <th width="15%" class="no-print">Tindakan</th>
                     </tr>
                 </thead>
                 <tbody id="jadualKomposisi">
                     <tr>
                         <td><input type="text" class="komponen-nama" required placeholder="Contoh: Methanol"></td>
-                        <td><input type="text" class="komponen-peratus" required placeholder="Contoh: 70% / 500mL"></td>
+                        <td><input type="text" class="komponen-peratus" required placeholder="Contoh: 70% / 500 mL"></td>
                         <td class="no-print"><button type="button" class="btn-add" onclick="tambahBarisKomposisi()">+ Tambah</button></td>
                     </tr>
                 </tbody>
             </table>
 
             <br>
+            <!-- ⚖️ ANGGARAN BERAT / ISIPADU KASAR BESERTA PILIHAN UNIT -->
             <div class="form-group">
-                <label>Anggaran Berat / Isipadu:</label>
-                <input type="number" step="0.01" id="anggaran_berat" required placeholder="Contoh: 1kg / 1L">
+                <label>Anggaran Berat / Isipadu Kasar Termasuk Bekas:</label>
+                <div class="input-unit-group">
+                    <input type="number" step="0.01" id="nilaimuka_kasar" required placeholder="Contoh: 2.5">
+                    <select id="unit_kasar" required>
+                        <option value="kg" selected>kg</option>
+                        <option value="g">g</option>
+                        <option value="L">L (Liter)</option>
+                        <option value="mL">mL</option>
+                    </select>
+                </div>
             </div>
 
             <div id="seksyenPostgrad" style="display:none; background:#eef9f6; padding:15px; border-radius:6px;">
@@ -123,7 +135,7 @@
         </form>
     </div>
 
-    <!-- SEKSYEN 2: SENARAI REKOD SISA DIHANTAR (MEMBERIKAN TRANSPARENSI & INVENTORI) -->
+    <!-- SEKSYEN 2: SENARAI REKOD SISA DIHANTAR -->
     <div class="card no-print">
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <h3 style="margin:0; border:none; color:#2c3e50;">📊 Rekod Pemberitahuan Sisa Kimia Dihantar</h3>
@@ -140,7 +152,7 @@
                         <th width="20%">Pemohon / Makmal</th>
                         <th width="15%">Fizikal Sisa</th>
                         <th>Komposisi Bahan Kimia</th>
-                        <th width="10%">Berat (kg)</th>
+                        <th width="12%">Berat / Isipadu</th>
                         <th width="10%">Status</th>
                     </tr>
                 </thead>
@@ -198,13 +210,12 @@
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td><input type="text" class="komponen-nama" required placeholder="Nama Kimia"></td>
-                <td><input type="text" class="komponen-peratus" required placeholder="Peratus/Isipadu"></td>
+                <td><input type="text" class="komponen-peratus" required placeholder="Peratus/Isipadu/Berat"></td>
                 <td class="no-print"><button type="button" style="background:#e74c3c; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;" onclick="this.parentElement.parentElement.remove()">Padam</button></td>
             `;
             tbody.appendChild(tr);
         }
 
-        // FUNGSI UNTUK MEMUAT TURUN & MENAMPILKAN REKOD DARI SUPABASE
         async function muatTurunRekodSisa() {
             const tbody = document.getElementById('senaraiRekodSisa');
             tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#7f8c8d;">Sedang memuatkan rekod terkini...</td></tr>`;
@@ -226,7 +237,6 @@
 
             tbody.innerHTML = '';
             data.forEach(item => {
-                // Formatkan senarai komposisi
                 let htmlKomposisi = '<ul class="komposisi-list">';
                 if (Array.isArray(item.komposisi_sisa)) {
                     item.komposisi_sisa.forEach(k => {
@@ -237,6 +247,9 @@
 
                 const badgeClass = (item.status === 'Disahkan') ? 'badge-disahkan' : 'badge-menunggu';
 
+                // Paparkan berat/isipadu beserta unit jika wujud
+                const beratPaparan = item.berat_kasar ? `${item.berat_kasar}` : '-';
+
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td><b>#${item.id}</b></td>
@@ -244,14 +257,13 @@
                     <td><b>${item.nama_pemohon}</b><br><small style="color:#7f8c8d;">${item.nama_makmal}</small></td>
                     <td>${item.fizikal_sisa}</td>
                     <td>${htmlKomposisi}</td>
-                    <td>${item.berat_kasar} kg</td>
+                    <td><b>${beratPaparan}</b></td>
                     <td><span class="badge ${badgeClass}">${item.status || 'Menunggu'}</span></td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        // PROSES HANTAR BORANG
         document.getElementById('formJanaanSisa').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -266,6 +278,11 @@
                 }); 
             });
 
+            // Gabungkan Nilai dan Unit (contoh: 2.5 kg ATAU 500 mL)
+            const nilaiAnggaran = document.getElementById('nilaimuka_kasar').value;
+            const unitAnggaran = document.getElementById('unit_kasar').value;
+            const beratKasarGabung = `${nilaiAnggaran} ${unitAnggaran}`;
+
             const formData = {
                 nama_pemohon: document.getElementById('nama_pemohon').value,
                 no_id: document.getElementById('no_id').value,
@@ -276,7 +293,7 @@
                 fizikal_sisa: document.querySelector('input[name="fizikal_sisa"]:checked').value,
                 tarikh_penstoran: document.getElementById('tarikh_penstoran').value,
                 komposisi_sisa: senaraiKomposisi,
-                berat_kasar: parseFloat(document.getElementById('berat_kasar').value),
+                berat_kasar: beratKasarGabung, // Tersimpan sebagai string berunit (Contoh: "2.5 kg" atau "500 mL")
                 sw_code: document.getElementById('sw_code').value || null,
                 perakuan_pengguna: document.getElementById('perakuan_pengguna').checked,
                 status: 'Menunggu'
@@ -288,8 +305,8 @@
                 alert("❌ Ralat: " + error.message);
             } else {
                 alert("✅ Borang Pemberitahuan Sisa Kimia berjaya dihantar!");
-                document.getElementById('formJanaanSisa').reset(); // Reset form
-                muatTurunRekodSisa(); // Refresh jadual senarai rekod di bawah
+                document.getElementById('formJanaanSisa').reset();
+                muatTurunRekodSisa();
             }
         });
     </script>
