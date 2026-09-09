@@ -3,250 +3,339 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Senarai Makmal Fakulti Kejuruteraan Kimia UiTM Pasir Gudang</title>
+    <title>Sistem Makmal FKK UiTM Pasir Gudang</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; max-width: 1000px; margin: auto; background-color: #f8f9fa; }
-        
-        /* SEMBUNYIKAN KANDUNGAN UTAMA PADA AWALNYA */
-        #main-content {
+        /* Smooth tab animation */
+        .tab-content {
             display: none;
+            animation: fadeIn 0.3s ease-in-out forwards;
         }
-
-        /* SKRIN LOADING SEMENTARA SEMASA MENYEMAK AUTH */
-        #loading-screen {
-            text-align: center;
-            padding: 100px 20px;
-            color: #2c3e50;
+        .tab-content.active {
+            display: grid;
         }
-
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        h2 { color: #2c3e50; margin: 0; font-size: 22px; }
-
-        .btn-logout { 
-            background: #e74c3c; 
-            color: white; 
-            border: none; 
-            padding: 10px 16px; 
-            border-radius: 6px; 
-            cursor: pointer; 
-            font-size: 14px; 
-            font-weight: bold;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: background 0.2s;
-        }
-        .btn-logout:hover { background: #c0392b; }
-
-        /* KAD SEKSYEN ARAS */
-        .level-card { 
-            background: white; 
-            border-radius: 8px; 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08); 
-            margin-bottom: 25px; 
-            overflow: hidden; 
-            border: 1px solid #e2e8f0;
-        }
-        
-        .level-header { 
-            background-color: #2c3e50; 
-            color: white; 
-            padding: 12px 20px; 
-            font-size: 18px; 
-            font-weight: bold; 
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .lab-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
-            gap: 15px; 
-            padding: 20px; 
-        }
-
-        .lab-item { 
-            background: #f1f5f9; 
-            padding: 15px; 
-            border-radius: 6px; 
-            border-left: 4px solid #2980b9;
-        }
-
-        .lab-item h4 {
-            margin: 0 0 6px 0;
-            color: #1e293b;
-            font-size: 15px;
-            font-weight: bold;
-        }
-
-        .pic-info {
-            margin: 0;
-            color: #475569;
-            font-size: 13px;
-            line-height: 1.4;
-        }
-
-        .pic-name {
-            font-weight: bold;
-            color: #2980b9;
-        }
-
-        /* NAVIGASI BUTANG BAWAH */
-        .nav-container { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
-            gap: 15px; 
-            margin-top: 30px; 
-        }
-
-        .btn-nav { 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            height: 60px;
-            padding: 10px 15px; 
-            color: white; 
-            text-decoration: none; 
-            font-weight: bold; 
-            font-size: 14px;
-            border-radius: 8px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-sizing: border-box;
-        }
-
-        .btn-nav:hover { 
-            transform: translateY(-2px); 
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
-<body>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen">
 
     <!-- SKRIN LOADING SEMENTARA -->
-    <div id="loading-screen">
-        <h2>⏳ Menyemak pengesahan log masuk...</h2>
-        <p>Sila tunggu sebentar.</p>
+    <div id="loading-screen" class="flex flex-col items-center justify-center min-h-screen p-6 text-center">
+        <div class="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <h2 class="text-xl font-bold text-slate-800">Menyemak Pengesahan Log Masuk...</h2>
+        <p class="text-sm text-slate-500 mt-1">Sila tunggu sebentar.</p>
     </div>
 
-    <!-- KANDUNGAN UTAMA (HANYA DIPAPARKAN SELEPAS SAH LOG MASUK) -->
-    <div id="main-content">
+    <!-- KANDUNGAN UTAMA -->
+    <div id="main-content" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        <!-- HEADER + BUTANG LOG KELUAR -->
-        <div class="header-top">
-            <h2>Senarai Makmal Fakulti Kejuruteraan Kimia UiTM Pasir Gudang</h2>
-            <button id="logout-btn" class="btn-logout">🚪 Log Keluar</button>
-        </div>
-
-        <!-- ARAS 1 -->
-        <div class="level-card">
-            <div class="level-header">🏢 ARAS 1</div>
-            <div class="lab-grid">
-                <div class="lab-item">
-                    <h4>Makmal Pilot Plant</h4>
-                    <p class="pic-info">👤 PIC: <span class="pic-name">Maria Abdul Ghani</span><br><span class="pic-role">(Penolong Jurutera)</span></p>
+        <!-- HEADER TOP BAR -->
+        <header class="flex flex-col md:flex-row md:items-center md:justify-between bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mb-8 gap-4">
+            <div class="flex items-center space-x-4">
+                <div class="p-3 bg-indigo-50 text-indigo-600 rounded-xl">
+                    <i data-lucide="flask-conical" class="w-8 h-8"></i>
                 </div>
-                <div class="lab-item">
-                    <h4>Makmal Fluid Mechanics</h4>
-                    <p class="pic-info">👤 PIC: <span class="pic-name">Maria Abdul Ghani</span><br><span class="pic-role">(Penolong Jurutera)</span></p>
-                </div>
-                <div class="lab-item">
-                    <h4>Makmal Process Control 1</h4>
-                    <p class="pic-info">👤 PIC: <span class="pic-name">Maria Abdul Ghani</span><br><span class="pic-role">(Penolong Jurutera)</span></p>
-                </div>
-                <div class="lab-item">
-                    <h4>Makmal Process Control 2 (Bengkel)</h4>
-                    <p class="pic-info">👤 PIC: <span class="pic-name">Maria Abdul Ghani</span><br><span class="pic-role">(Penolong Jurutera)</span></p>
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">UiTM Cawangan Johor • Kampus Pasir Gudang</span>
+                    <h1 class="text-xl md:text-2xl font-bold text-slate-900">Portal Makmal Fakulti Kejuruteraan Kimia</h1>
                 </div>
             </div>
-        </div>
+            <button id="logout-btn" class="inline-flex items-center justify-center space-x-2 bg-slate-100 hover:bg-red-50 text-slate-700 hover:text-red-600 px-4 py-2.5 rounded-xl font-semibold text-sm transition border border-slate-200 hover:border-red-200 self-start md:self-auto cursor-pointer">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+                <span>Log Keluar</span>
+            </button>
+        </header>
 
-        <!-- ARAS 2 -->
-        <div class="level-card">
-            <div class="level-header">🏢 ARAS 2</div>
-            <div class="lab-grid">
-                <div class="lab-item">
-                    <h4>Makmal Heat Transfer and Thermodynamics</h4>
-                    <p class="pic-info">👤 PIC: <span class="pic-name">Aliah Ahmad Shahrudin</span><br><span class="pic-role">(Penolong Jurutera)</span></p>
+        <!-- MENU UTAMA / DASHBOARD QUICK LINKS -->
+        <section class="mb-10">
+            <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4 px-1">Menu Utama & Perkhidmatan</h2>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                
+                <a href="senarai-peralatan.html" class="flex flex-col p-4 bg-white border border-slate-200 rounded-xl hover:border-indigo-500 hover:shadow-md transition group">
+                    <div class="p-2.5 rounded-lg bg-blue-50 text-blue-600 w-fit group-hover:bg-indigo-600 group-hover:text-white transition">
+                        <i data-lucide="microscope" class="w-5 h-5"></i>
+                    </div>
+                    <span class="mt-3 text-sm font-semibold text-slate-800">Senarai Peralatan</span>
+                </a>
+
+                <a href="inventori.html" class="flex flex-col p-4 bg-white border border-slate-200 rounded-xl hover:border-indigo-500 hover:shadow-md transition group">
+                    <div class="p-2.5 rounded-lg bg-amber-50 text-amber-600 w-fit group-hover:bg-indigo-600 group-hover:text-white transition">
+                        <i data-lucide="boxes" class="w-5 h-5"></i>
+                    </div>
+                    <span class="mt-3 text-sm font-semibold text-slate-800">Inventori Kimia</span>
+                </a>
+
+                <a href="tempahan.html" class="flex flex-col p-4 bg-white border border-slate-200 rounded-xl hover:border-indigo-500 hover:shadow-md transition group">
+                    <div class="p-2.5 rounded-lg bg-emerald-50 text-emerald-600 w-fit group-hover:bg-indigo-600 group-hover:text-white transition">
+                        <i data-lucide="calendar-check-2" class="w-5 h-5"></i>
+                    </div>
+                    <span class="mt-3 text-sm font-semibold text-slate-800">Tempahan Peralatan</span>
+                </a>
+
+                <a href="bahan-radas.html" class="flex flex-col p-4 bg-white border border-slate-200 rounded-xl hover:border-indigo-500 hover:shadow-md transition group">
+                    <div class="p-2.5 rounded-lg bg-teal-50 text-teal-600 w-fit group-hover:bg-indigo-600 group-hover:text-white transition">
+                        <i data-lucide="test-tube-2" class="w-5 h-5"></i>
+                    </div>
+                    <span class="mt-3 text-sm font-semibold text-slate-800">Bahan & Radas</span>
+                </a>
+
+                <a href="borang.html" class="flex flex-col p-4 bg-white border border-slate-200 rounded-xl hover:border-indigo-500 hover:shadow-md transition group">
+                    <div class="p-2.5 rounded-lg bg-purple-50 text-purple-600 w-fit group-hover:bg-indigo-600 group-hover:text-white transition">
+                        <i data-lucide="file-text" class="w-5 h-5"></i>
+                    </div>
+                    <span class="mt-3 text-sm font-semibold text-slate-800">Muat Turun Borang</span>
+                </a>
+
+                <a href="fasililiti-keselamatan.html" class="flex flex-col p-4 bg-white border border-slate-200 rounded-xl hover:border-indigo-500 hover:shadow-md transition group">
+                    <div class="p-2.5 rounded-lg bg-rose-50 text-rose-600 w-fit group-hover:bg-indigo-600 group-hover:text-white transition">
+                        <i data-lucide="shield-alert" class="w-5 h-5"></i>
+                    </div>
+                    <span class="mt-3 text-sm font-semibold text-slate-800">Fasiliti Keselamatan</span>
+                </a>
+
+                <a href="sisa.html" class="flex flex-col p-4 bg-white border border-slate-200 rounded-xl hover:border-indigo-500 hover:shadow-md transition group">
+                    <div class="p-2.5 rounded-lg bg-bio-50 text-emerald-600 bg-emerald-50 w-fit group-hover:bg-indigo-600 group-hover:text-white transition">
+                        <i data-lucide="biohazard" class="w-5 h-5"></i>
+                    </div>
+                    <span class="mt-3 text-sm font-semibold text-slate-800">Sisa Terjadual</span>
+                </a>
+
+                <a href="admin.html" class="flex flex-col p-4 bg-white border border-slate-200 rounded-xl hover:border-indigo-500 hover:shadow-md transition group">
+                    <div class="p-2.5 rounded-lg bg-slate-100 text-slate-700 w-fit group-hover:bg-indigo-600 group-hover:text-white transition">
+                        <i data-lucide="settings" class="w-5 h-5"></i>
+                    </div>
+                    <span class="mt-3 text-sm font-semibold text-slate-800">Panel Admin</span>
+                </a>
+
+            </div>
+        </section>
+
+        <!-- SEKSYEN SENARAI MAKMAL (TAB SYSTEM) -->
+        <section class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-slate-100 gap-4">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900">Direktori Makmal</h2>
+                    <p class="text-xs text-slate-500">Pilih aras untuk melihat makmal dan Pegawai Bertanggungjawab (PIC).</p>
                 </div>
-                <div class="lab-item">
-                    <h4>Makmal Chemistry 1</h4>
-                    <p class="pic-info">👤 PIC: <span class="pic-name">Mohd Redzuan Mohd Yusof</span><br><span class="pic-role">(Pembantu Makmal Kanan)</span></p>
-                </div>
-                <div class="lab-item">
-                    <h4>Makmal Chemistry 2</h4>
-                    <p class="pic-info">👤 PIC: <span class="pic-name">Mohd Redzuan Mohd Yusof</span><br><span class="pic-role">(Pembantu Makmal Kanan)</span></p>
-                </div>
-                <div class="lab-item">
-                    <h4>Makmal Analytical and Analysis</h4>
-                    <p class="pic-info">👤 PIC: <span class="pic-name">Penolong Pegawai Sains</span></p>
-                </div>
-                <div class="lab-item">
-                    <h4>Makmal Computer</h4>
-                    <p class="pic-info">👤 PIC: <span class="pic-name">Aliah Ahmad Shahrudin</span><br><span class="pic-role">(Penolong Jurutera)</span></p>
+
+                <!-- NAVIGATION TABS -->
+                <div class="inline-flex p-1 bg-slate-100 rounded-xl">
+                    <button onclick="openLevel(event, 'aras-1')" class="tab-btn active px-4 py-2 rounded-lg text-xs font-bold transition text-indigo-600 bg-white shadow-sm">Aras 1</button>
+                    <button onclick="openLevel(event, 'aras-2')" class="tab-btn px-4 py-2 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">Aras 2</button>
+                    <button onclick="openLevel(event, 'aras-3')" class="tab-btn px-4 py-2 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">Aras 3</button>
+                    <button onclick="openLevel(event, 'aras-4')" class="tab-btn px-4 py-2 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">Aras 4</button>
                 </div>
             </div>
-        </div>
 
-        <!-- ARAS 3 -->
-        <div class="level-card">
-            <div class="level-header">🏢 ARAS 3</div>
-            <div class="lab-grid">
-                <div class="lab-item">
-                    <h4>Makmal Bio Process</h4>
-                    <p class="pic-info">👤 PIC: <span class="pic-name">Penolong Pegawai Sains</span></p>
+            <div class="pt-6">
+                <!-- ARAS 1 CONTENT -->
+                <div id="aras-1" class="tab-content active grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-xl hover:border-slate-300 transition">
+                        <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Pilot Plant</h3>
+                        <div class="flex items-start space-x-2 text-xs text-slate-600">
+                            <i data-lucide="user" class="w-4 h-4 text-slate-400 mt-0.5"></i>
+                            <div>
+                                <p class="font-semibold text-slate-900">Maria Abdul Ghani</p>
+                                <p class="text-slate-500">Penolong Jurutera</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-xl hover:border-slate-300 transition">
+                        <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Fluid Mechanics</h3>
+                        <div class="flex items-start space-x-2 text-xs text-slate-600">
+                            <i data-lucide="user" class="w-4 h-4 text-slate-400 mt-0.5"></i>
+                            <div>
+                                <p class="font-semibold text-slate-900">Maria Abdul Ghani</p>
+                                <p class="text-slate-500">Penolong Jurutera</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-xl hover:border-slate-300 transition">
+                        <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Process Control 1</h3>
+                        <div class="flex items-start space-x-2 text-xs text-slate-600">
+                            <i data-lucide="user" class="w-4 h-4 text-slate-400 mt-0.5"></i>
+                            <div>
+                                <p class="font-semibold text-slate-900">Maria Abdul Ghani</p>
+                                <p class="text-slate-500">Penolong Jurutera</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-xl hover:border-slate-300 transition">
+                        <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Process Control 2 (Bengkel)</h3>
+                        <div class="flex items-start space-x-2 text-xs text-slate-600">
+                            <i data-lucide="user" class="w-4 h-4 text-slate-400 mt-0.5"></i>
+                            <div>
+                                <p class="font-semibold text-slate-900">Maria Abdul Ghani</p>
+                                <p class="text-slate-500">Penolong Jurutera</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="lab-item">
-                    <h4>Makmal Environment</h4>
-                    <p class="pic-info">👤 PIC: <span class="pic-name">Penolong Pegawai Sains</span></p>
+
+                <!-- ARAS 2 CONTENT -->
+                <div id="aras-2" class="tab-content grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-xl hover:border-slate-300 transition">
+                        <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Heat Transfer & Thermodynamics</h3>
+                        <div class="flex items-start space-x-2 text-xs text-slate-600">
+                            <i data-lucide="user" class="w-4 h-4 text-slate-400 mt-0.5"></i>
+                            <div>
+                                <p class="font-semibold text-slate-900">Aliah Ahmad Shahrudin</p>
+                                <p class="text-slate-500">Penolong Jurutera</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-xl hover:border-slate-300 transition">
+                        <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Chemistry 1</h3>
+                        <div class="flex items-start space-x-2 text-xs text-slate-600">
+                            <i data-lucide="user" class="w-4 h-4 text-slate-400 mt-0.5"></i>
+                            <div>
+                                <p class="font-semibold text-slate-900">Mohd Redzuan Mohd Yusof</p>
+                                <p class="text-slate-500">Pembantu Makmal Kanan</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-xl hover:border-slate-300 transition">
+                        <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Chemistry 2</h3>
+                        <div class="flex items-start space-x-2 text-xs text-slate-600">
+                            <i data-lucide="user" class="w-4 h-4 text-slate-400 mt-0.5"></i>
+                            <div>
+                                <p class="font-semibold text-slate-900">Mohd Redzuan Mohd Yusof</p>
+                                <p class="text-slate-500">Pembantu Makmal Kanan</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-xl hover:border-slate-300 transition">
+                        <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Analytical and Analysis</h3>
+                        <div class="flex items-start space-x-2 text-xs text-slate-600">
+                            <i data-lucide="user" class="w-4 h-4 text-slate-400 mt-0.5"></i>
+                            <div>
+                                <p class="font-semibold text-slate-900">Penolong Pegawai Sains</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-xl hover:border-slate-300 transition">
+                        <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Computer</h3>
+                        <div class="flex items-start space-x-2 text-xs text-slate-600">
+                            <i data-lucide="user" class="w-4 h-4 text-slate-400 mt-0.5"></i>
+                            <div>
+                                <p class="font-semibold text-slate-900">Aliah Ahmad Shahrudin</p>
+                                <p class="text-slate-500">Penolong Jurutera</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="lab-item">
-                    <h4>Makmal Reaction Engineering</h4>
-                    <p class="pic-info">👤 PIC: <span class="pic-name">Aliah Ahmad Shahrudin</span><br><span class="pic-role">(Penolong Jurutera)</span></p>
+
+                <!-- ARAS 3 CONTENT -->
+                <div id="aras-3" class="tab-content grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-xl hover:border-slate-300 transition">
+                        <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Bio Process</h3>
+                        <div class="flex items-start space-x-2 text-xs text-slate-600">
+                            <i data-lucide="user" class="w-4 h-4 text-slate-400 mt-0.5"></i>
+                            <div>
+                                <p class="font-semibold text-slate-900">Penolong Pegawai Sains</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-xl hover:border-slate-300 transition">
+                        <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Environment</h3>
+                        <div class="flex items-start space-x-2 text-xs text-slate-600">
+                            <i data-lucide="user" class="w-4 h-4 text-slate-400 mt-0.5"></i>
+                            <div>
+                                <p class="font-semibold text-slate-900">Penolong Pegawai Sains</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-xl hover:border-slate-300 transition">
+                        <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Reaction Engineering</h3>
+                        <div class="flex items-start space-x-2 text-xs text-slate-600">
+                            <i data-lucide="user" class="w-4 h-4 text-slate-400 mt-0.5"></i>
+                            <div>
+                                <p class="font-semibold text-slate-900">Aliah Ahmad Shahrudin</p>
+                                <p class="text-slate-500">Penolong Jurutera</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-xl hover:border-slate-300 transition">
+                        <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Physics</h3>
+                        <div class="flex items-start space-x-2 text-xs text-slate-600">
+                            <i data-lucide="user" class="w-4 h-4 text-slate-400 mt-0.5"></i>
+                            <div>
+                                <p class="font-semibold text-slate-900">Nama PIC</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="lab-item">
-                    <h4>Makmal Physics</h4>
-                    <p class="pic-info">👤 PIC: <span class="pic-name">Nama PIC</span></p>
+
+                <!-- ARAS 4 CONTENT -->
+                <div id="aras-4" class="tab-content grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-xl hover:border-slate-300 transition">
+                        <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Computer 1</h3>
+                        <div class="flex items-start space-x-2 text-xs text-slate-600">
+                            <i data-lucide="user" class="w-4 h-4 text-slate-400 mt-0.5"></i>
+                            <div>
+                                <p class="font-semibold text-slate-900">Aliah Ahmad Shahrudin</p>
+                                <p class="text-slate-500">Penolong Jurutera</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-xl hover:border-slate-300 transition">
+                        <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Computer 2</h3>
+                        <div class="flex items-start space-x-2 text-xs text-slate-600">
+                            <i data-lucide="user" class="w-4 h-4 text-slate-400 mt-0.5"></i>
+                            <div>
+                                <p class="font-semibold text-slate-900">Aliah Ahmad Shahrudin</p>
+                                <p class="text-slate-500">Penolong Jurutera</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
             </div>
-        </div>
+        </section>
 
-        <!-- ARAS 4 -->
-        <div class="level-card">
-            <div class="level-header">🏢 ARAS 4</div>
-            <div class="lab-grid">
-                <div class="lab-item">
-                    <h4>Makmal Computer 1</h4>
-                    <p class="pic-info">👤 PIC: <span class="pic-name">Aliah Ahmad Shahrudin</span><br><span class="pic-role">(Penolong Jurutera)</span></p>
-                </div>
-                <div class="lab-item">
-                    <h4>Makmal Computer 2</h4>
-                    <p class="pic-info">👤 PIC: <span class="pic-name">Aliah Ahmad Shahrudin</span><br><span class="pic-role">(Penolong Jurutera)</span></p>
-                </div>
-            </div>
-        </div>
-
-        <!-- BUTANG NAVIGASI UTAMA -->
-        <div class="nav-container">
-            <a href="senarai-peralatan.html" class="btn-nav" style="background-color: #d35400;">🔬 Senarai Peralatan Makmal</a>
-            <a href="inventori.html" class="btn-nav" style="background-color: #f39c12;">🧪 Inventori Bahan Kimia</a>
-            <a href="tempahan.html" class="btn-nav" style="background-color: #2980b9;">📋 Borang Tempahan Peralatan</a>
-            <a href="bahan-radas.html" class="btn-nav" style="background-color: #16a085;">🧪 Permohonan Bahan & Radas (Online)</a>
-            <a href="borang.html" class="btn-nav" style="background-color: #8e44ad;">📁 Muat Turun Borang</a>
-            <a href="fasililiti-keselamatan.html" class="btn-nav" style="background-color: #c0392b;">🛡️ Fasiliti Keselamatan</a>
-            <a href="sisa.html" class="btn-nav" style="background-color: #27ae60;">☣ Pengurusan Sisa Terjadual</a>
-            <a href="admin.html" class="btn-nav" style="background-color: #34495e;">⚙️ Panel Admin</a>
-        </div>
+        <!-- FOOTER SIMPLE -->
+        <footer class="mt-12 text-center text-xs text-slate-400">
+            &copy; Hak Cipta Terpelihara Fakulti Kejuruteraan Kimia UiTM Pasir Gudang.
+        </footer>
 
     </div>
+
+    <!-- SKRIP TAB NAVIGATION -->
+    <script>
+        function openLevel(evt, levelId) {
+            const tabContents = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove("active");
+            }
+
+            const tabBtns = document.getElementsByClassName("tab-btn");
+            for (let i = 0; i < tabBtns.length; i++) {
+                tabBtns[i].classList.remove("text-indigo-600", "bg-white", "shadow-sm");
+                tabBtns[i].classList.add("text-slate-600");
+            }
+
+            document.getElementById(levelId).classList.add("active");
+            evt.currentTarget.classList.remove("text-slate-600");
+            evt.currentTarget.classList.add("text-indigo-600", "bg-white", "shadow-sm");
+        }
+    </script>
 
     <!-- SKRIP FIREBASE (KESELAMATAN & LOG KELUAR) -->
     <script type="module">
@@ -272,7 +361,9 @@
                 if (email.endsWith('@uitm.edu.my') || email.endsWith('@student.uitm.edu.my')) {
                     // Pengguna Sah: Paparkan kandungan & hilangkan skrin loading
                     document.getElementById('loading-screen').style.display = 'none';
-                    document.getElementById('main-content').style.display = 'block';
+                    document.getElementById('main-content').classList.remove('hidden');
+                    // Inisialisasi ikon Lucide
+                    lucide.createIcons();
                 } else {
                     // E-mel bukan UiTM: Tendang serta-merta ke index.html
                     signOut(auth);
