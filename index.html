@@ -62,7 +62,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    // Tetapan Firebase Config anda
     const firebaseConfig = {
       apiKey: "AIzaSyDDC9PLSCOzna4caIsrfPSvfR3A_FczKDc",
       authDomain: "sistem-makmal-fkkuitmpg.firebaseapp.com",
@@ -85,11 +84,9 @@
           const user = result.user;
           const email = user.email;
 
-          // Semak e-mel rasmi UiTM (@uitm.edu.my atau @student.uitm.edu.my)
           if (email.endsWith('@uitm.edu.my') || email.endsWith('@student.uitm.edu.my')) {
             statusText.innerHTML = `<span style="color: #27ae60; font-weight: bold;">Log masuk berjaya! Mengalihkan...</span>`;
             
-            // Redirect ke makmal.html
             setTimeout(() => {
               window.location.href = "makmal.html";
             }, 1000);
