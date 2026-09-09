@@ -3,61 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <title>Sistem Makmal Saya</title>
-    <!-- Ini adalah kod untuk memanggil sistem Supabase ke dalam HTML kita -->
+    <!-- Kod untuk memanggil Supabase Client JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: auto; }
         table { border-collapse: collapse; width: 100%; margin-top: 20px; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
         th { background-color: #f2f2f2; }
+        .card { border: 1px solid #ccc; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        input { padding: 8px; margin: 5px 0; width: 95%; }
+        button { padding: 10px 15px; background-color: #28a745; color: white; border: none; cursor: pointer; border-radius: 4px; }
+        button:hover { background-color: #218838; }
+        .logout-btn { background-color: #dc3545; float: right; }
+        .logout-btn:hover { background-color: #c82333; }
+        #appContent { display: none; } /* Sembunyi jadual jika belum log masuk */
     </style>
 </head>
 <body>
 
-    <h2>Senarai Tempahan Peralatan</h2>
-    
-    <!-- Jadual kosong yang akan diisi oleh Supabase nanti -->
-    <table id="jadualTempahan">
-        <tr>
-            <th>Nama Pemohon</th>
-            <th>Peralatan</th>
-            <th>Tarikh</th>
-            <th>Status</th>
-        </tr>
-    </table>
+    <!-- BAHAGIAN 1: BORANG LOG MASUK (Akan dipaparkan jika belum login) -->
+    <div id="loginForm" class="card">
+        <h2>Sila Log Masuk</h2>
+        <p>Anda mesti log masuk untuk melihat senarai tempahan.</p>
+        <label>E-mel:</label>
+        <input type="email" id="email" placeholder="contoh@domain.com"><br>
+        <label>Kata Laluan:</label>
+        <input type="password" id="password" placeholder="******"><br><br>
+        <button onclick="logMasuk()">Log Masuk</button>
+        <p id="loginError" style="color: red;"></p>
+    </div>
+
+    <!-- BAHAGIAN 2: KANDUNGAN JADUAL (Akan dipaparkan selepas login) -->
+    <div id="appContent">
+        <button class="logout-btn" onclick="logKeluar()">Log Keluar</button>
+        <h2>Senarai Tempahan Peralatan</h2>
+        <p id="userInfo" style="color: gray;"></p>
+        
+        <table id="jadualTempahan">
+            <thead>
+                <tr>
+                    <th>Nama Pemohon</th>
+                    <th>Peralatan</th>
+                    <th>Tarikh</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data dari Supabase akan masuk di sini -->
+            </tbody>
+        </table>
+    </div>
 
     <script>
-        // 1. TAMPAL URL DAN KEY AWAK DI SINI
+        // 1. URL dan ANON KEY Supabase anda
         const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
         
-        // 2. Sambungkan laman web ke Supabase
+        // 2. Sambungkan ke Supabase Client
         const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        // 3. Fungsi untuk tarik data dari jadual 'tempahan_peralatan'
+        // 3. Semak status sesi pengguna apabila halaman dibuka
+        async function semakSesi() {
+            const { data: { session } } = await supabase.auth.getSession();
+
+            if (session) {
+                // Pengguna SUDAH log masuk
+                document.getElementById('loginForm').style.display = 'none';
+                document.getElementById('appContent').style.display = 'block';
+                document.getElementById('userInfo').innerText = `Log masuk sebagai: ${session.user.email}`;
+                
+                // Panggil data dari Supabase
+                dapatkanData();
+            } else {
+                // Pengguna BELUM log masuk
+                document.getElementById('loginForm').style.display = 'block';
+                document.getElementById('appContent').style.display = 'none';
+            }
+        }
+
+        // 4. Fungsi Proses Log Masuk
+        async function logMasuk() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorElement = document.getElementById('loginError');
+
+            errorElement.innerText = "Sedang mendaftar masuk...";
+
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+
+            if (error) {
+                errorElement.innerText = "Gagal Log Masuk: " + error.message;
+            } else {
+                errorElement.innerText = "";
+                // Refresh semakan sesi
+                semakSesi();
+            }
+        }
+
+        // 5. Fungsi Log Keluar
+        async function logKeluar() {
+            await supabase.auth.signOut();
+            semakSesi();
+        }
+
+        // 6. Fungsi Tarik Data dari Supabase
         async function dapatkanData() {
+            const tbody = document.querySelector('#jadualTempahan tbody');
+            tbody.innerHTML = ''; // Clear isi lama
+
+            // Panggilan ini secara automatik membawa Token Log Masuk pengguna!
             const { data, error } = await supabase
                 .from('tempahan_peralatan')
                 .select('*');
 
             if (error) {
-                console.error('Ada masalah ralat:', error);
+                console.error('Ralat:', error);
+                alert('Ralat mengambil data: ' + error.message);
                 return;
             }
 
-            // 4. Masukkan data ke dalam jadual HTML kita
-            const table = document.getElementById('jadualTempahan');
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4">Tiada rekod tempahan ditemui.</td></tr>';
+                return;
+            }
+
+            // Masukkan data ke dalam jadual
             data.forEach(rekod => {
-                const row = table.insertRow();
-                row.insertCell(0).innerText = rekod.nama_pemohon;
-                row.insertCell(1).innerText = rekod.nama_peralatan;
-                row.insertCell(2).innerText = rekod.tarikh_guna;
-                row.insertCell(3).innerText = rekod.status;
+                const row = tbody.insertRow();
+                row.insertCell(0).innerText = rekod.nama_pemohon || '-';
+                row.insertCell(1).innerText = rekod.nama_peralatan || '-';
+                row.insertCell(2).innerText = rekod.tarikh_guna || '-';
+                row.insertCell(3).innerText = rekod.status || '-';
             });
         }
 
-        // Jalankan fungsi bila laman web dibuka
-        dapatkanData();
+        // Jalankan semakan sesi pada permulaan
+        semakSesi();
     </script>
 
 </body>
