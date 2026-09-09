@@ -4,10 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Senarai Makmal Fakulti Kejuruteraan Kimia UiTM Pasir Gudang</title>
-    
     <style>
         body { font-family: Arial, sans-serif; padding: 20px; max-width: 1000px; margin: auto; background-color: #f8f9fa; }
         
+        /* SEMBUNYIKAN KANDUNGAN UTAMA PADA AWALNYA */
+        #main-content {
+            display: none;
+        }
+
+        /* SKRIN LOADING SEMENTARA SEMASA MENYEMAK AUTH */
+        #loading-screen {
+            text-align: center;
+            padding: 100px 20px;
+            color: #2c3e50;
+        }
+
         .header-top {
             display: flex;
             justify-content: space-between;
@@ -87,7 +98,7 @@
             color: #2980b9;
         }
 
-        /* NAVIGASI BUTANG BAWAH (SERAGAM & SIMETRI) */
+        /* NAVIGASI BUTANG BAWAH */
         .nav-container { 
             display: grid; 
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
@@ -100,7 +111,7 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            height: 60px; /* MENETAPKAN KETINGGIAN SERAGAM DENGAN TEPAT */
+            height: 60px;
             padding: 10px 15px; 
             color: white; 
             text-decoration: none; 
@@ -120,109 +131,120 @@
 </head>
 <body>
 
-    <!-- HEADER + BUTANG LOG KELUAR -->
-    <div class="header-top">
-        <h2>🏛️ Senarai Makmal Fakulti Kejuruteraan Kimia UiTM Pasir Gudang</h2>
-        <button id="logout-btn" class="btn-logout">🚪 Log Keluar</button>
+    <!-- SKRIN LOADING SEMENTARA -->
+    <div id="loading-screen">
+        <h2>⏳ Menyemak pengesahan log masuk...</h2>
+        <p>Sila tunggu sebentar.</p>
     </div>
 
-    <!-- ARAS 1 -->
-    <div class="level-card">
-        <div class="level-header">🏢 ARAS 1</div>
-        <div class="lab-grid">
-            <div class="lab-item">
-                <h4>Makmal Pilot Plant</h4>
-                <p class="pic-info">👤 PIC: <span class="pic-name">Maria Abdul Ghani</span><br><span class="pic-role">(Penolong Jurutera)</span></p>
-            </div>
-            <div class="lab-item">
-                <h4>Makmal Fluid Mechanics</h4>
-                <p class="pic-info">👤 PIC: <span class="pic-name">Maria Abdul Ghani</span><br><span class="pic-role">(Penolong Jurutera)</span></p>
-            </div>
-            <div class="lab-item">
-                <h4>Makmal Process Control 1</h4>
-                <p class="pic-info">👤 PIC: <span class="pic-name">Maria Abdul Ghani</span><br><span class="pic-role">(Penolong Jurutera)</span></p>
-            </div>
-            <div class="lab-item">
-                <h4>Makmal Process Control 2 (Bengkel)</h4>
-                <p class="pic-info">👤 PIC: <span class="pic-name">Maria Abdul Ghani</span><br><span class="pic-role">(Penolong Jurutera)</span></p>
+    <!-- KANDUNGAN UTAMA (HANYA DIPAPARKAN SELEPAS SAH LOG MASUK) -->
+    <div id="main-content">
+
+        <!-- HEADER + BUTANG LOG KELUAR -->
+        <div class="header-top">
+            <h2>🏛️ Senarai Makmal Fakulti Kejuruteraan Kimia UiTM Pasir Gudang</h2>
+            <button id="logout-btn" class="btn-logout">🚪 Log Keluar</button>
+        </div>
+
+        <!-- ARAS 1 -->
+        <div class="level-card">
+            <div class="level-header">🏢 ARAS 1</div>
+            <div class="lab-grid">
+                <div class="lab-item">
+                    <h4>Makmal Pilot Plant</h4>
+                    <p class="pic-info">👤 PIC: <span class="pic-name">Maria Abdul Ghani</span><br><span class="pic-role">(Penolong Jurutera)</span></p>
+                </div>
+                <div class="lab-item">
+                    <h4>Makmal Fluid Mechanics</h4>
+                    <p class="pic-info">👤 PIC: <span class="pic-name">Maria Abdul Ghani</span><br><span class="pic-role">(Penolong Jurutera)</span></p>
+                </div>
+                <div class="lab-item">
+                    <h4>Makmal Process Control 1</h4>
+                    <p class="pic-info">👤 PIC: <span class="pic-name">Maria Abdul Ghani</span><br><span class="pic-role">(Penolong Jurutera)</span></p>
+                </div>
+                <div class="lab-item">
+                    <h4>Makmal Process Control 2 (Bengkel)</h4>
+                    <p class="pic-info">👤 PIC: <span class="pic-name">Maria Abdul Ghani</span><br><span class="pic-role">(Penolong Jurutera)</span></p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- ARAS 2 -->
-    <div class="level-card">
-        <div class="level-header">🏢 ARAS 2</div>
-        <div class="lab-grid">
-            <div class="lab-item">
-                <h4>Makmal Heat Transfer and Thermodynamics</h4>
-                <p class="pic-info">👤 PIC: <span class="pic-name">Aliah Ahmad Shahrudin</span><br><span class="pic-role">(Penolong Jurutera)</span></p>
-            </div>
-            <div class="lab-item">
-                <h4>Makmal Chemistry 1</h4>
-                <p class="pic-info">👤 PIC: <span class="pic-name">Mohd Redzuan Mohd Yusof</span><br><span class="pic-role">(Pembantu Makmal Kanan)</span></p>
-            </div>
-            <div class="lab-item">
-                <h4>Makmal Chemistry 2</h4>
-                <p class="pic-info">👤 PIC: <span class="pic-name">Mohd Redzuan Mohd Yusof</span><br><span class="pic-role">(Pembantu Makmal Kanan)</span></p>
-            </div>
-            <div class="lab-item">
-                <h4>Makmal Analytical and Analysis</h4>
-                <p class="pic-info">👤 PIC: <span class="pic-name">Penolong Pegawai Sains</span></p>
-            </div>
-            <div class="lab-item">
-                <h4>Makmal Computer</h4>
-                <p class="pic-info">👤 PIC: <span class="pic-name">Aliah Ahmad Shahrudin</span><br><span class="pic-role">(Penolong Jurutera)</span></p>
+        <!-- ARAS 2 -->
+        <div class="level-card">
+            <div class="level-header">🏢 ARAS 2</div>
+            <div class="lab-grid">
+                <div class="lab-item">
+                    <h4>Makmal Heat Transfer and Thermodynamics</h4>
+                    <p class="pic-info">👤 PIC: <span class="pic-name">Aliah Ahmad Shahrudin</span><br><span class="pic-role">(Penolong Jurutera)</span></p>
+                </div>
+                <div class="lab-item">
+                    <h4>Makmal Chemistry 1</h4>
+                    <p class="pic-info">👤 PIC: <span class="pic-name">Mohd Redzuan Mohd Yusof</span><br><span class="pic-role">(Pembantu Makmal Kanan)</span></p>
+                </div>
+                <div class="lab-item">
+                    <h4>Makmal Chemistry 2</h4>
+                    <p class="pic-info">👤 PIC: <span class="pic-name">Mohd Redzuan Mohd Yusof</span><br><span class="pic-role">(Pembantu Makmal Kanan)</span></p>
+                </div>
+                <div class="lab-item">
+                    <h4>Makmal Analytical and Analysis</h4>
+                    <p class="pic-info">👤 PIC: <span class="pic-name">Penolong Pegawai Sains</span></p>
+                </div>
+                <div class="lab-item">
+                    <h4>Makmal Computer</h4>
+                    <p class="pic-info">👤 PIC: <span class="pic-name">Aliah Ahmad Shahrudin</span><br><span class="pic-role">(Penolong Jurutera)</span></p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- ARAS 3 -->
-    <div class="level-card">
-        <div class="level-header">🏢 ARAS 3</div>
-        <div class="lab-grid">
-            <div class="lab-item">
-                <h4>Makmal Bio Process</h4>
-                <p class="pic-info">👤 PIC: <span class="pic-name">Penolong Pegawai Sains</span></p>
-            </div>
-            <div class="lab-item">
-                <h4>Makmal Environment</h4>
-                <p class="pic-info">👤 PIC: <span class="pic-name">Penolong Pegawai Sains</span></p>
-            </div>
-            <div class="lab-item">
-                <h4>Makmal Reaction Engineering</h4>
-                <p class="pic-info">👤 PIC: <span class="pic-name">Aliah Ahmad Shahrudin</span><br><span class="pic-role">(Penolong Jurutera)</span></p>
-            </div>
-            <div class="lab-item">
-                <h4>Makmal Physics</h4>
-                <p class="pic-info">👤 PIC: <span class="pic-name">Nama PIC</span></p>
+        <!-- ARAS 3 -->
+        <div class="level-card">
+            <div class="level-header">🏢 ARAS 3</div>
+            <div class="lab-grid">
+                <div class="lab-item">
+                    <h4>Makmal Bio Process</h4>
+                    <p class="pic-info">👤 PIC: <span class="pic-name">Penolong Pegawai Sains</span></p>
+                </div>
+                <div class="lab-item">
+                    <h4>Makmal Environment</h4>
+                    <p class="pic-info">👤 PIC: <span class="pic-name">Penolong Pegawai Sains</span></p>
+                </div>
+                <div class="lab-item">
+                    <h4>Makmal Reaction Engineering</h4>
+                    <p class="pic-info">👤 PIC: <span class="pic-name">Aliah Ahmad Shahrudin</span><br><span class="pic-role">(Penolong Jurutera)</span></p>
+                </div>
+                <div class="lab-item">
+                    <h4>Makmal Physics</h4>
+                    <p class="pic-info">👤 PIC: <span class="pic-name">Nama PIC</span></p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- ARAS 4 -->
-    <div class="level-card">
-        <div class="level-header">🏢 ARAS 4</div>
-        <div class="lab-grid">
-            <div class="lab-item">
-                <h4>Makmal Computer 1</h4>
-                <p class="pic-info">👤 PIC: <span class="pic-name">Aliah Ahmad Shahrudin</span><br><span class="pic-role">(Penolong Jurutera)</span></p>
-            </div>
-            <div class="lab-item">
-                <h4>Makmal Computer 2</h4>
-                <p class="pic-info">👤 PIC: <span class="pic-name">Aliah Ahmad Shahrudin</span><br><span class="pic-role">(Penolong Jurutera)</span></p>
+        <!-- ARAS 4 -->
+        <div class="level-card">
+            <div class="level-header">🏢 ARAS 4</div>
+            <div class="lab-grid">
+                <div class="lab-item">
+                    <h4>Makmal Computer 1</h4>
+                    <p class="pic-info">👤 PIC: <span class="pic-name">Aliah Ahmad Shahrudin</span><br><span class="pic-role">(Penolong Jurutera)</span></p>
+                </div>
+                <div class="lab-item">
+                    <h4>Makmal Computer 2</h4>
+                    <p class="pic-info">👤 PIC: <span class="pic-name">Aliah Ahmad Shahrudin</span><br><span class="pic-role">(Penolong Jurutera)</span></p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- BUTANG NAVIGASI UTAMA (SERAGAM 6 BUTTON DENGAN WARNA BERBEZA) -->
-    <div class="nav-container">
-        <a href="senarai-peralatan.html" class="btn-nav" style="background-color: #d35400;">🔬 Senarai Peralatan Makmal</a>
-        <a href="inventori.html" class="btn-nav" style="background-color: #27ae60;">🧪 Inventori Bahan Kimia</a>
-        <a href="tempahan.html" class="btn-nav" style="background-color: #2980b9;">📋 Borang Tempahan Peralatan</a>
-        <a href="bahan-radas.html" class="btn-nav" style="background-color: #16a085;">🧪 Permohonan Bahan & Radas (Online)</a>
-        <a href="borang.html" class="btn-nav" style="background-color: #8e44ad;">📁 Muat Turun Borang</a>
-        <a href="fasililiti-keselamatan.html" class="btn-nav" style="background-color: #c0392b;">🛡️ Fasiliti Keselamatan</a>
-        <a href="admin.html" class="btn-nav" style="background-color: #34495e;">⚙️ Panel Admin</a>
+        <!-- BUTANG NAVIGASI UTAMA -->
+        <div class="nav-container">
+            <a href="senarai-peralatan.html" class="btn-nav" style="background-color: #d35400;">🔬 Senarai Peralatan Makmal</a>
+            <a href="inventori.html" class="btn-nav" style="background-color: #27ae60;">🧪 Inventori Bahan Kimia</a>
+            <a href="tempahan.html" class="btn-nav" style="background-color: #2980b9;">📋 Borang Tempahan Peralatan</a>
+            <a href="bahan-radas.html" class="btn-nav" style="background-color: #16a085;">🧪 Permohonan Bahan & Radas (Online)</a>
+            <a href="borang.html" class="btn-nav" style="background-color: #8e44ad;">📁 Muat Turun Borang</a>
+            <a href="fasililiti-keselamatan.html" class="btn-nav" style="background-color: #c0392b;">🛡️ Fasiliti Keselamatan</a>
+            <a href="admin.html" class="btn-nav" style="background-color: #34495e;">⚙️ Panel Admin</a>
+        </div>
+
     </div>
 
     <!-- SKRIP FIREBASE (KESELAMATAN & LOG KELUAR) -->
@@ -242,15 +264,21 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // KAWALAN KESELAMATAN: Tendang pengguna jika belum log masuk
+        // KAWALAN KESELAMATAN KETAT
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                const email = user.email;
-                if (!email.endsWith('@uitm.edu.my') && !email.endsWith('@student.uitm.edu.my')) {
+                const email = user.email || '';
+                if (email.endsWith('@uitm.edu.my') || email.endsWith('@student.uitm.edu.my')) {
+                    // Pengguna Sah: Paparkan kandungan & hilangkan skrin loading
+                    document.getElementById('loading-screen').style.display = 'none';
+                    document.getElementById('main-content').style.display = 'block';
+                } else {
+                    // E-mel bukan UiTM: Tendang serta-merta ke index.html
                     signOut(auth);
                     window.location.href = "index.html";
                 }
             } else {
+                // Belum log masuk: Tendang terus ke index.html
                 window.location.href = "index.html";
             }
         });
