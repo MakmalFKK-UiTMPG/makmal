@@ -34,8 +34,8 @@
 
         /* WARNA STATUS */
         .status-menunggu { color: #d35400; font-weight: bold; }
-        .status-belum-disahkan { color: #d35400; font-weight: bold; }
-        .status-disahkan { color: #27ae60; font-weight: bold; }
+        .status-belum-disemak { color: #d35400; font-weight: bold; }
+        .status-disemak { color: #27ae60; font-weight: bold; }
         .status-lulus { color: #27ae60; font-weight: bold; }
         .status-tolak, .status-ditolak { color: #c0392b; font-weight: bold; }
         .status-batal { color: #7f8c8d; font-weight: bold; font-style: italic; }
@@ -66,7 +66,7 @@
         </div>
 
         <h2>⚙️ Panel Admin & Pegawai Makmal</h2>
-        <p>Uruskan kelulusan tempahan peralatan, permohonan bahan/radas, dan pengesahan sisa kimia di sini.</p>
+        <p>Uruskan kelulusan tempahan peralatan, permohonan bahan/radas, dan semakan sisa kimia di sini.</p>
 
         <!-- TAB NAVIGATION -->
         <div class="tab-container">
@@ -105,7 +105,7 @@
             </table>
         </div>
 
-        <!-- 3. SEKSYEN SISA KIMIA (BAHARU) -->
+        <!-- 3. SEKSYEN SISA KIMIA -->
         <div id="sekSyenSisa" style="display:none;">
             <table>
                 <thead>
@@ -274,7 +274,7 @@
             }
         }
 
-        // 3. DATA JANAAN SISA KIMIA (STATUS LALAI: Belum Disahkan)
+        // 3. DATA JANAAN SISA KIMIA (STATUS LALAI: Belum Disemak)
         async function dapatkanJanaanSisa() {
             const { data, error } = await supabaseClient
                 .from('janaan_sisa')
@@ -303,6 +303,7 @@
                 }
                 htmlKomposisi += '</ul>';
 
+                // 🛠️ TUKAR KEPADA 'Belum Disemak' / 'Disemak'
                 const statusPapar = r.status || 'Belum Disemak';
                 const statusClass = (statusPapar === 'Disemak') ? 'status-disemak' : 'status-belum-disemak';
                 const beratPaparan = r.berat_kasar ? `${r.berat_kasar}` : '-';
@@ -391,7 +392,7 @@
             dapatkanBahanRadas();
         }
 
-        // TUKAR STATUS SISA KIMIA KEPADA 'Disahkan' / 'Batal'
+        // TUKAR STATUS SISA KIMIA KEPADA 'Disemak' / 'Batal'
         async function tukarStatusSisa(id, status) {
             const { error } = await supabaseClient
                 .from('janaan_sisa')
