@@ -6,8 +6,8 @@
     <title>Borang Pemberitahuan Sisa Kimia (FKK-SW-F01)</title>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: auto; background-color: #f4f6f9; }
-        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 950px; margin: auto; background-color: #f4f6f9; }
+        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 30px; }
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         h2 { color: #2c3e50; margin-top: 0; }
         h3 { color: #16a085; border-bottom: 2px solid #16a085; padding-bottom: 5px; font-size: 16px; margin-top: 20px; }
@@ -22,6 +22,13 @@
         .btn-add { background: #27ae60; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .btn-submit { background: #2980b9; color: white; border: none; padding: 12px 20px; width: 100%; border-radius: 5px; cursor: pointer; font-size: 15px; font-weight: bold; margin-top: 20px; }
         .btn-print { background: #27ae60; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-bottom: 15px; }
+        
+        /* Lencana Status */
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; color: white; display: inline-block; }
+        .badge-menunggu { background-color: #f39c12; }
+        .badge-disahkan { background-color: #27ae60; }
+        
+        .komposisi-list { margin: 0; padding-left: 15px; font-size: 12px; }
 
         @media print {
             body { background: white; padding: 0; }
@@ -34,10 +41,11 @@
 <body>
 
     <div class="header-top no-print">
-        <a href="sisa.html" style="color:#2980b9; text-decoration:none; font-weight:bold;">⬅️ Kembali ke Hab Sisa</a>
+        <a href="sisa.html" style="color:#2980b9; text-decoration:none; font-weight:bold;">⬅️ Kembali ke Pengurusan Sisa Terjadual</a>
         <button id="logout-btn" style="background:#e74c3c; color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer;">🚪 Log Keluar</button>
     </div>
 
+    <!-- SEKSYEN 1: BORANG ISI ONLINE -->
     <div class="card">
         <button type="button" class="btn-print no-print" onclick="window.print()">🖨️ Cetak Borang Ini</button>
         <h2>🧪 BORANG PEMBERITAHUAN SISA KIMIA (FKK-SW-F01)</h2>
@@ -72,7 +80,6 @@
                         <label><input type="radio" name="fizikal_sisa" value="Pepejal Tercemar"> Pepejal Tercemar</label>
                     </div>
                 </div>
-                <!-- 📅 TARIKH MULA SISA DIJANA -->
                 <div class="form-group">
                     <label>Tarikh Mula Sisa Dijana:</label>
                     <input type="date" id="tarikh_penstoran" required>
@@ -115,6 +122,36 @@
         </form>
     </div>
 
+    <!-- SEKSYEN 2: SENARAI REKOD SISA DIHANTAR (MEMBERIKAN TRANSPARENSI & INVENTORI) -->
+    <div class="card no-print">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin:0; border:none; color:#2c3e50;">📊 Rekod Pemberitahuan Sisa Kimia Dihantar</h3>
+            <button onclick="muatTurunRekodSisa()" style="background:#16a085; color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-size:12px; font-weight:bold;">🔄 Muat Semula Rekod</button>
+        </div>
+        <p style="font-size:13px; color:#7f8c8d; margin-top:5px;">Senarai sisa kimia yang telah didaftarkan ke dalam sistem:</p>
+
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th width="5%">ID</th>
+                        <th width="12%">Tarikh Dijana</th>
+                        <th width="20%">Pemohon / Makmal</th>
+                        <th width="15%">Fizikal Sisa</th>
+                        <th>Komposisi Bahan Kimia</th>
+                        <th width="10%">Berat (kg)</th>
+                        <th width="10%">Status</th>
+                    </tr>
+                </thead>
+                <tbody id="senaraiRekodSisa">
+                    <tr>
+                        <td colspan="7" style="text-align:center; color:#7f8c8d;">Sedang memuatkan rekod...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <!-- FIREBASE AUTH -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -131,8 +168,17 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        onAuthStateChanged(auth, (user) => { if (!user) window.location.href = "index.html"; });
-        document.getElementById('logout-btn').addEventListener('click', () => { signOut(auth).then(() => window.location.href = "index.html"); });
+        onAuthStateChanged(auth, (user) => { 
+            if (!user) {
+                window.location.href = "index.html";
+            } else {
+                muatTurunRekodSisa();
+            }
+        });
+        
+        document.getElementById('logout-btn').addEventListener('click', () => { 
+            signOut(auth).then(() => window.location.href = "index.html"); 
+        });
     </script>
 
     <!-- SUPABASE LOGIK -->
@@ -157,6 +203,54 @@
             tbody.appendChild(tr);
         }
 
+        // FUNGSI UNTUK MEMUAT TURUN & MENAMPILKAN REKOD DARI SUPABASE
+        async function muatTurunRekodSisa() {
+            const tbody = document.getElementById('senaraiRekodSisa');
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#7f8c8d;">Sedang memuatkan rekod terkini...</td></tr>`;
+
+            const { data, error } = await supabaseClient
+                .from('janaan_sisa')
+                .select('*')
+                .order('id', { ascending: false });
+
+            if (error) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#e74c3c;">Gagal memuatkan rekod: ${error.message}</td></tr>`;
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#7f8c8d;">Tiada rekod janaan sisa dijumpai.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = '';
+            data.forEach(item => {
+                // Formatkan senarai komposisi
+                let htmlKomposisi = '<ul class="komposisi-list">';
+                if (Array.isArray(item.komposisi_sisa)) {
+                    item.komposisi_sisa.forEach(k => {
+                        htmlKomposisi += `<li><b>${k.nama}:</b> ${k.peratus}</li>`;
+                    });
+                }
+                htmlKomposisi += '</ul>';
+
+                const badgeClass = (item.status === 'Disahkan') ? 'badge-disahkan' : 'badge-menunggu';
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><b>#${item.id}</b></td>
+                    <td>${item.tarikh_penstoran || '-'}</td>
+                    <td><b>${item.nama_pemohon}</b><br><small style="color:#7f8c8d;">${item.nama_makmal}</small></td>
+                    <td>${item.fizikal_sisa}</td>
+                    <td>${htmlKomposisi}</td>
+                    <td>${item.berat_kasar} kg</td>
+                    <td><span class="badge ${badgeClass}">${item.status || 'Menunggu'}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // PROSES HANTAR BORANG
         document.getElementById('formJanaanSisa').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -179,7 +273,7 @@
                 nama_penyelia: document.getElementById('nama_penyelia').value,
                 kategori_pengguna: document.querySelector('input[name="kategori"]:checked').value,
                 fizikal_sisa: document.querySelector('input[name="fizikal_sisa"]:checked').value,
-                tarikh_penstoran: document.getElementById('tarikh_penstoran').value, // Kekal simpan dalam medan tarikh_penstoran Supabase
+                tarikh_penstoran: document.getElementById('tarikh_penstoran').value,
                 komposisi_sisa: senaraiKomposisi,
                 berat_kasar: parseFloat(document.getElementById('berat_kasar').value),
                 sw_code: document.getElementById('sw_code').value || null,
@@ -193,7 +287,8 @@
                 alert("❌ Ralat: " + error.message);
             } else {
                 alert("✅ Borang Pemberitahuan Sisa Kimia berjaya dihantar!");
-                window.location.href = "sisa.html";
+                document.getElementById('formJanaanSisa').reset(); // Reset form
+                muatTurunRekodSisa(); // Refresh jadual senarai rekod di bawah
             }
         });
     </script>
