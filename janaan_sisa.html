@@ -12,7 +12,7 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script type="text/javascript">
        (function(){
-          // ⚠️ Gantikan YOUR_PUBLIC_KEY dengan Public Key dari akaun EmailJS anda
+          // ✅ Public Key EmailJS anda
           emailjs.init("lIkOzetAaOEcNlzA2");
        })();
     </script>
@@ -43,7 +43,8 @@
         .btn-print { background: #27ae60; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-bottom: 15px; }
         
         .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; color: white; display: inline-block; }
-        .badge-menunggu { background-color: #f39c12; }
+        /* 🛠️ GAYA BADGE DIKEMASKINI DARI 'MENUNGGU' KE 'BELUM DISAHKAN' */
+        .badge-belum-disahkan { background-color: #f39c12; }
         .badge-disahkan { background-color: #27ae60; }
         .komposisi-list { margin: 0; padding-left: 15px; font-size: 12px; }
 
@@ -167,7 +168,7 @@
                         <th width="15%">Fizikal Sisa</th>
                         <th>Komposisi Bahan Kimia</th>
                         <th width="12%">Berat / Isipadu</th>
-                        <th width="10%">Status</th>
+                        <th width="12%">Status</th>
                     </tr>
                 </thead>
                 <tbody id="senaraiRekodSisa">
@@ -249,7 +250,6 @@
             };
 
             try {
-                // ⚠️ Gantikan YOUR_SERVICE_ID dan YOUR_TEMPLATE_ID dari Dashboard EmailJS anda
                 await emailjs.send('service_ntay5sf', 'template_st7rmts', templateParams);
                 console.log("✅ E-mel notifikasi berjaya dihantar ke nurha1559@uitm.edu.my!");
             } catch (err) {
@@ -286,7 +286,9 @@
                 }
                 htmlKomposisi += '</ul>';
 
-                const badgeClass = (item.status === 'Disahkan') ? 'badge-disahkan' : 'badge-menunggu';
+                // 🛠️ KEMASKINI LABEL STATUS & BADGE UNTUK PAPARAN LALAI
+                const statusPapar = item.status || 'Belum Disahkan';
+                const badgeClass = (statusPapar === 'Disahkan') ? 'badge-disahkan' : 'badge-belum-disahkan';
                 const beratPaparan = item.berat_kasar ? `${item.berat_kasar}` : '-';
 
                 const tr = document.createElement('tr');
@@ -297,7 +299,7 @@
                     <td>${item.fizikal_sisa}</td>
                     <td>${htmlKomposisi}</td>
                     <td><b>${beratPaparan}</b></td>
-                    <td><span class="badge ${badgeClass}">${item.status || 'Menunggu'}</span></td>
+                    <td><span class="badge ${badgeClass}">${statusPapar}</span></td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -338,7 +340,7 @@
                 berat_kasar: beratKasarGabung,
                 sw_code: document.getElementById('sw_code').value || null,
                 perakuan_pengguna: document.getElementById('perakuan_pengguna').checked,
-                status: 'Menunggu'
+                status: 'Belum Disahkan' // 🛠️ DITUKAR STATUS LALAI KEPADA 'Belum Disahkan'
             };
 
             // 1. Simpan Rekod Dalam Supabase
