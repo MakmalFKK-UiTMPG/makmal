@@ -2,33 +2,31 @@
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
-    <title>Sistem Makmal UiTM - Tempahan Peralatan</title>
+    <title>Sistem Makmal FKK</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: auto; }
         table { border-collapse: collapse; width: 100%; margin-top: 20px; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
         th { background-color: #f2f2f2; }
-        .card { border: 1px solid #ccc; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
-        input { padding: 10px; margin: 10px 0; width: 90%; }
-        button { padding: 10px 15px; background-color: #007bff; color: white; border: none; cursor: pointer; border-radius: 4px; }
-        button:hover { background-color: #0056b3; }
-        .logout-btn { background-color: #dc3545; float: right; }
+        .card { border: 1px solid #ccc; padding: 30px; border-radius: 8px; text-align: center; max-width: 400px; margin: 50px auto; }
+        .btn-google { background-color: #1557bf; color: white; border: none; padding: 12px 20px; font-size: 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .btn-google:hover { background-color: #0d3c8a; }
+        .logout-btn { background-color: #dc3545; color: white; border: none; padding: 8px 12px; border-radius: 4px; float: right; cursor: pointer; }
         #appContent { display: none; }
     </style>
 </head>
 <body>
 
-    <!-- BORANG LOG MASUK E-MEL UITM -->
-    <div id="loginForm" class="card">
-        <h2>Log Masuk Staff / Pelajar UiTM</h2>
-        <p>Masukkan e-mel rasmi UiTM anda (mesti berakhir dengan <strong>@uitm.edu.my</strong>):</p>
-        <input type="email" id="email" placeholder="contoh@uitm.edu.my"><br>
-        <button onclick="logMasukGunaEmail()">Hantar Pautan Log Masuk</button>
-        <p id="statusMsg" style="font-weight: bold;"></p>
+    <!-- KAD LOG MASUK GOOGLE -->
+    <div id="loginCard" class="card">
+        <h2>🏛️ Sistem Makmal FKK</h2>
+        <p style="color: #666;">Sila log masuk menggunakan e-mel rasmi UiTM untuk mengakses senarai makmal.</p>
+        <button class="btn-google" onclick="logMasukGoogle()">🔑 Log Masuk dengan Google</button>
+        <p id="errMsg" style="color: red; margin-top: 15px;"></p>
     </div>
 
-    <!-- KANDUNGAN JADUAL TEMPAHAN -->
+    <!-- JADUAL TEMPAHAN (Keluar selepas Google Auth berjaya) -->
     <div id="appContent">
         <button class="logout-btn" onclick="logKeluar()">Log Keluar</button>
         <h2>Senarai Tempahan Peralatan</h2>
@@ -52,57 +50,52 @@
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
         const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        // 1. Semak sesi pengguna apabila laman dibolehkan
+        // 1. Semak sesi log masuk apabila pengguna selesai redirect dari Google
         async function semakSesi() {
-            const { data: { session } } = await supabase.auth.getSession();
+            const { data: { session }, error } = await supabase.auth.getSession();
 
             if (session) {
-                document.getElementById('loginForm').style.display = 'none';
+                // Semak jika e-mel bukan uitm.edu.my
+                if (!session.user.email.endsWith('@uitm.edu.my')) {
+                    alert('Hanya e-mel rasmi UiTM sahaja dibenarkan!');
+                    await supabase.auth.signOut();
+                    window.location.reload();
+                    return;
+                }
+
+                document.getElementById('loginCard').style.display = 'none';
                 document.getElementById('appContent').style.display = 'block';
                 document.getElementById('userInfo').innerText = `Log masuk sebagai: ${session.user.email}`;
+                
+                // Panggil data tempahan
                 dapatkanData();
             } else {
-                document.getElementById('loginForm').style.display = 'block';
+                document.getElementById('loginCard').style.display = 'block';
                 document.getElementById('appContent').style.display = 'none';
             }
         }
 
-        // 2. Log masuk menggunakan E-mel UiTM sahaja
-        async function logMasukGunaEmail() {
-            const email = document.getElementById('email').value.trim();
-            const msg = document.getElementById('statusMsg');
-
-            // Semak domain e-mel
-            if (!email.endsWith('@uitm.edu.my')) {
-                msg.style.color = 'red';
-                msg.innerText = 'Sila gunakan e-mel rasmi UiTM sahaja (@uitm.edu.my)!';
-                return;
-            }
-
-            msg.style.color = 'blue';
-            msg.innerText = 'Sedang menghantar pautan pengesahan ke e-mel anda...';
-
-            // Hantar Magic Link ke e-mel
-            const { error } = await supabase.auth.signInWithOtp({
-                email: email
+        // 2. Fungsi Panggil Google OAuth Supabase
+        async function logMasukGoogle() {
+            const { error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: window.location.href // Redirect kembali ke URL halaman semasa
+                }
             });
 
             if (error) {
-                msg.style.color = 'red';
-                msg.innerText = 'Ralat: ' + error.message;
-            } else {
-                msg.style.color = 'green';
-                msg.innerText = 'Pautan log masuk telah dihantar! Sila semak kotak masuk e-mel UiTM anda dan tekan pautan tersebut.';
+                document.getElementById('errMsg').innerText = "Ralat Google Auth: " + error.message;
             }
         }
 
         // 3. Log Keluar
         async function logKeluar() {
             await supabase.auth.signOut();
-            semakSesi();
+            window.location.reload();
         }
 
-        // 4. Tarik data dari Supabase (Hanya berjalan untuk user authenticated)
+        // 4. Tarik data tempahan dari Supabase
         async function dapatkanData() {
             const tbody = document.querySelector('#jadualTempahan tbody');
             tbody.innerHTML = '';
@@ -112,12 +105,12 @@
                 .select('*');
 
             if (error) {
-                alert('Ralat mengambil data: ' + error.message);
+                alert('Ralat mengambil data tempahan: ' + error.message);
                 return;
             }
 
             if (data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4">Tiada rekod tempahan.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="4">Tiada rekod tempahan ditemui.</td></tr>';
                 return;
             }
 
@@ -130,6 +123,7 @@
             });
         }
 
+        // Jalankan semakan sesi pada permulaan
         semakSesi();
     </script>
 </body>
