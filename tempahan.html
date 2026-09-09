@@ -12,6 +12,7 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script type="text/javascript">
        (function(){
+          // ✅ Public Key EmailJS anda
           emailjs.init("lIkOzetAaOEcNlzA2");
        })();
     </script>
@@ -56,8 +57,6 @@
         
         .status-menunggu { color: #d35400; font-weight: bold; }
         .status-lulus { color: #27ae60; font-weight: bold; }
-        .status-tolak { color: #c0392b; font-weight: bold; }
-        .status-batal { color: #7f8c8d; font-weight: bold; text-decoration: line-through; }
     </style>
 </head>
 <body>
@@ -73,21 +72,25 @@
         <div class="form-card">
             <h3>Langkah 1: Isi Maklumat Pemohon & Pilih Peralatan</h3>
             
+            <!-- 1. NAMA PEMOHON -->
             <div class="input-group">
                 <label>Nama Pemohon:</label>
                 <input type="text" id="nama_pemohon" required placeholder="Contoh: Ahmad Bin Ali">
             </div>
 
+            <!-- 2. NOMBOR TELEFON -->
             <div class="input-group">
                 <label>Nombor Telefon:</label>
                 <input type="tel" id="no_telefon" required placeholder="Contoh: 012-3456789">
             </div>
 
+            <!-- 3. TUJUAN PENGGUNAAN -->
             <div class="input-group">
                 <label>Tujuan Penggunaan:</label>
                 <textarea id="tujuan" rows="2" placeholder="Tujuan penggunaan..."></textarea>
             </div>
 
+            <!-- 4. PILIH PERALATAN -->
             <div class="filter-card">
                 <label>🔍 Pilih Peralatan Untuk Lihat Ketersediaan Slot:</label>
                 <select id="nama_peralatan" required onchange="kemaskiniStatusTimetable()">
@@ -148,7 +151,7 @@
     </form>
 
     <!-- JADUAL AWAM PELAJAR -->
-    <h3>Status Tempahan Semasa</h3>
+    <h3>Status Tempahan Semasa (Aktif)</h3>
     <table class="status-table">
         <thead>
             <tr>
@@ -181,6 +184,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
+        // KAWALAN KESELAMATAN: Tendang pengguna jika belum log masuk
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 const email = user.email;
@@ -193,6 +197,7 @@
             }
         });
 
+        // FUNGSI LOG KELUAR
         document.getElementById('logout-btn').addEventListener('click', () => {
             signOut(auth).then(() => {
                 window.location.href = "index.html";
@@ -217,6 +222,7 @@
             return `${yyyy}-${mm}-${dd}`;
         }
 
+        // ✉️ FUNGSI UNTUK MENGHANTAR EMEL NOTIFIKASI TEMPAHAN PERALATAN
         async function hantarNotifikasiTempahan(dataTempahan) {
             const templateParams = {
                 to_email: 'nurha1559@uitm.edu.my',
@@ -298,7 +304,7 @@
             await muatTurunTempahan();
 
             senaraiTempahanSediaAda.forEach(rekod => {
-                // 🛠️ KEMASKINI LOGIK: Mengabaikan status 'Ditolak', 'Batal', dan 'Dibatalkan'
+                // 🛠️ ABAIKAN REKOD BERSTATUS DITOLAK ATAU BATAL SUPAYA SLOT KEMBALI KOSONG
                 const st = String(rekod.status || '').toLowerCase();
                 const adakahDibatalkan = (st === 'ditolak' || st === 'batal' || st === 'dibatalkan');
 
@@ -378,7 +384,7 @@
                     return;
                 }
 
-                // 🛠️ KEMASKINI LOGIK SEMAKAN BERTINDIH: Mengabaikan status Batal/Ditolak
+                // 🛠️ SEMAK BERTINDIH: Abaikan rekod yang telah Ditolak / Batal
                 const { data: senaraiSemak, error: ralatSemak } = await supabaseClient
                     .from('tempahan_peralatan')
                     .select('*')
@@ -417,6 +423,7 @@
                     status: 'Menunggu'
                 };
 
+                // 1. Simpan Rekod Ke Supabase
                 const { data, error } = await supabaseClient
                     .from('tempahan_peralatan')
                     .insert([formData]);
@@ -426,6 +433,7 @@
                     btnHantar.disabled = false;
                     btnHantar.innerText = "Hantar Tempahan";
                 } else {
+                    // 2. Hantar E-mel Notifikasi
                     await hantarNotifikasiTempahan(formData);
 
                     alert('✅ Tempahan berjaya dihantar!');
@@ -439,6 +447,7 @@
                 }
             });
 
+            // 🛠️ FUNGSI UNTUK PAPARAN JADUAL PELAJAR (REKOD BATAL/DITOLAK DIALINKAN)
             async function paparkanTempahanPelajar() {
                 const tbody = document.getElementById('isiJadualPelajar');
                 
@@ -452,23 +461,25 @@
                     return;
                 }
 
-                if (!data || data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Tiada rekod tempahan ditemui.</td></tr>';
+                // Tapis rekod aktif sahaja (Sembunyikan Batal dan Ditolak)
+                const rekodAktif = data ? data.filter(item => {
+                    const st = String(item.status || '').toLowerCase();
+                    return (st !== 'ditolak' && st !== 'batal' && st !== 'dibatalkan');
+                }) : [];
+
+                if (rekodAktif.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Tiada rekod tempahan aktif ditemui.</td></tr>';
                     return;
                 }
 
                 tbody.innerHTML = '';
 
-                data.forEach(rekod => {
+                rekodAktif.forEach(rekod => {
                     const row = tbody.insertRow();
 
                     let statusSemasa = rekod.status || 'Menunggu';
                     let statusClass = 'status-menunggu';
-                    
-                    const st = String(statusSemasa).toLowerCase();
-                    if (st === 'lulus') statusClass = 'status-lulus';
-                    if (st === 'ditolak') statusClass = 'status-tolak';
-                    if (st === 'batal' || st === 'dibatalkan') statusClass = 'status-batal';
+                    if (statusSemasa === 'Lulus') statusClass = 'status-lulus';
 
                     const namaPemohon = rekod.nama_pemohon || rekod['Name: nama_pemohon'] || '-';
                     const namaPeralatan = rekod.nama_peralatan || '-';
