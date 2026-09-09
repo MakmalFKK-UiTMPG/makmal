@@ -45,7 +45,7 @@
 <body>
 
     <div class="header-top no-print">
-        <a href="sisa.html" style="color:#2980b9; text-decoration:none; font-weight:bold;">⬅️ Kembali ke Hab Sisa</a>
+        <a href="sisa.html" style="color:#2980b9; text-decoration:none; font-weight:bold;">⬅️ Kembali ke Pengurusan Sisa Terjadual</a>
         <button id="logout-btn" style="background:#e74c3c; color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer;">🚪 Log Keluar</button>
     </div>
 
@@ -71,6 +71,7 @@
                 <div class="radio-group">
                     <label><input type="radio" name="kategori" value="FYP/LI" checked onchange="tukarKategori()"> Pelajar FYP / LI</label>
                     <label><input type="radio" name="kategori" value="Postgrad" onchange="tukarKategori()"> Pascasiswazah (Master/PhD)</label>
+                    <label><input type="radio" name="kategori" value="Pihak Luar" onchange="tukarKategori()"> Pihak Luar</label>
                 </div>
             </div>
 
@@ -117,8 +118,8 @@
                     <input type="number" step="0.01" id="nilaimuka_kasar" required placeholder="Contoh: 2.5">
                     <select id="unit_kasar" required>
                         <option value="kg" selected>kg</option>
-                        <option value="g">g</option>
-                        <option value="L">L (Liter)</option>
+                        <option value="gram">g</option>
+                        <option value="Liter">Liter</option>
                         <option value="mL">mL</option>
                     </select>
                 </div>
