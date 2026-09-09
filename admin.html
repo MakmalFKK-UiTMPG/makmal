@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Admin - Pengurusan Tempahan & Permohonan Makmal</title>
-    
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: Arial, sans-serif; padding: 20px; max-width: 1200px; margin: auto; background-color: #f9f9f9; }
         
+        /* SEMBUNYIKAN KANDUNGAN PADA AWALNYA UNTUK KESELAMATAN */
+        #main-admin-content { display: none; }
+        #loading-admin { text-align: center; padding: 80px 20px; color: #2c3e50; }
+
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         h2 { color: #2c3e50; margin: 0; }
         
@@ -32,7 +35,7 @@
 
         .status-menunggu { color: #d35400; font-weight: bold; }
         .status-lulus { color: #27ae60; font-weight: bold; }
-        .status-tolak { color: #c0392b; font-weight: bold; }
+        .status-tolak, .status-ditolak { color: #c0392b; font-weight: bold; }
 
         .btn-lulus { background-color: #27ae60; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; }
         .btn-tolak { background-color: #c0392b; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; margin-left: 3px; }
@@ -47,56 +50,65 @@
 </head>
 <body>
 
-    <div class="header-top">
-        <a href="makmal.html" class="back-btn">⬅️ Kembali ke Senarai Makmal</a>
-        <button id="logout-btn" class="btn-logout">🚪 Log Keluar</button>
+    <!-- SKRIN TUNGGU / LOADING -->
+    <div id="loading-admin">
+        <h2>🔒 Menyemak Kawalan Keselamatan Admin...</h2>
+        <p>Sila tunggu sebentar.</p>
     </div>
 
-    <h2>⚙️ Panel Admin & Pegawai Makmal</h2>
-    <p>Uruskan kelulusan tempahan peralatan dan permohonan bahan kimia/radas di sini.</p>
-
-    <!-- MENU TAB -->
-    <div class="tab-container">
-        <button class="tab-btn active" onclick="tukarTab('tempahan')">📅 Tempahan Slot Peralatan</button>
-        <button class="tab-btn" onclick="tukarTab('bahan')">🧪 Permohonan Bahan Kimia & Radas</button>
-    </div>
-
-    <!-- SEKSYEN 1: TEMPAHAN SLOT -->
-    <div id="sekSyenTempahan">
-        <div class="summary-container">
-            <div class="summary-card"><h4>JUMLAH TEMPAHAN</h4><p id="totalTempahan">0</p></div>
-            <div class="summary-card" style="border-left-color: #27ae60;"><h4>LULUS</h4><p id="totalLulus">0</p></div>
-            <div class="summary-card" style="border-left-color: #d35400;"><h4>MENUNGGU</h4><p id="totalMenunggu">0</p></div>
+    <!-- KANDUNGAN UTAMA ADMIN -->
+    <div id="main-admin-content">
+        <div class="header-top">
+            <a href="makmal.html" class="back-btn">⬅️ Kembali ke Senarai Makmal</a>
+            <button id="logout-btn" class="btn-logout">🚪 Log Keluar</button>
         </div>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Pemohon</th><th>No. Tel</th><th>Peralatan</th><th>Tarikh</th><th>Masa</th><th>Status</th><th>Tindakan</th>
-                </tr>
-            </thead>
-            <tbody id="isiJadualTempahan"><tr><td colspan="7" style="text-align:center;">Memuatkan...</td></tr></tbody>
-        </table>
-    </div>
+        <h2>⚙️ Panel Admin & Pegawai Makmal</h2>
+        <p>Uruskan kelulusan tempahan peralatan dan permohonan bahan kimia/radas di sini.</p>
 
-    <!-- SEKSYEN 2: PERMOHONAN BAHAN KIMIA & RADAS -->
-    <div id="sekSyenBahan" style="display:none;">
-        <table>
-            <thead>
-                <tr>
-                    <th>Tarikh Pohon</th><th>Nama Pemohon</th><th>No. ID</th><th>Tujuan</th><th>Penyelia</th><th>Status</th><th>Tindakan</th>
-                </tr>
-            </thead>
-            <tbody id="isiJadualBahan"><tr><td colspan="7" style="text-align:center;">Memuatkan...</td></tr></tbody>
-        </table>
-    </div>
+        <!-- MENU TAB -->
+        <div class="tab-container">
+            <button class="tab-btn active" onclick="tukarTab('tempahan')">📅 Tempahan Slot Peralatan</button>
+            <button class="tab-btn" onclick="tukarTab('bahan')">🧪 Permohonan Bahan Kimia & Radas</button>
+        </div>
 
-    <!-- MODAL POPUP PERINCIAN BAHAN/RADAS -->
-    <div id="modalDetail" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="tutupModal()">&times;</span>
-            <h3 style="color:#2c3e50; border-bottom:2px solid #16a085; padding-bottom:5px; margin-top:0;">📋 Perincian Permohonan Bahan & Radas</h3>
-            <div id="isiModal"></div>
+        <!-- SEKSYEN 1: TEMPAHAN SLOT -->
+        <div id="sekSyenTempahan">
+            <div class="summary-container">
+                <div class="summary-card"><h4>JUMLAH TEMPAHAN</h4><p id="totalTempahan">0</p></div>
+                <div class="summary-card" style="border-left-color: #27ae60;"><h4>LULUS</h4><p id="totalLulus">0</p></div>
+                <div class="summary-card" style="border-left-color: #d35400;"><h4>MENUNGGU</h4><p id="totalMenunggu">0</p></div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Pemohon</th><th>No. Tel</th><th>Peralatan</th><th>Tarikh</th><th>Masa</th><th>Status</th><th>Tindakan</th>
+                    </tr>
+                </thead>
+                <tbody id="isiJadualTempahan"><tr><td colspan="7" style="text-align:center;">Memuatkan...</td></tr></tbody>
+            </table>
+        </div>
+
+        <!-- SEKSYEN 2: PERMOHONAN BAHAN KIMIA & RADAS -->
+        <div id="sekSyenBahan" style="display:none;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tarikh Pohon</th><th>Nama Pemohon</th><th>No. ID</th><th>Tujuan</th><th>Penyelia</th><th>Status</th><th>Tindakan</th>
+                    </tr>
+                </thead>
+                <tbody id="isiJadualBahan"><tr><td colspan="7" style="text-align:center;">Memuatkan...</td></tr></tbody>
+            </table>
+        </div>
+
+        <!-- MODAL POPUP PERINCIAN BAHAN/RADAS -->
+        <div id="modalDetail" class="modal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="tutupModal()">&times;</span>
+                <h3 style="color:#2c3e50; border-bottom:2px solid #16a085; padding-bottom:5px; margin-top:0;">📋 Perincian Permohonan Bahan & Radas</h3>
+                <div id="isiModal"></div>
+            </div>
         </div>
     </div>
 
@@ -119,7 +131,22 @@
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                if (!user.email.endsWith('@uitm.edu.my') && !user.email.endsWith('@student.uitm.edu.my')) {
+                const email = user.email || '';
+                if (email.endsWith('@uitm.edu.my') || email.endsWith('@student.uitm.edu.my')) {
+                    // SEKATAN LAPIS 2: PROMPT KATA LALUAN ADMIN
+                    const KATA_LALUAN_ADMIN = "FKK@20160901";
+                    const inputPassword = prompt("🔒 KAWALAN ADMIN:\nSila masukkan kata laluan:");
+
+                    if (inputPassword === KATA_LALUAN_ADMIN) {
+                        // Kata laluan betul -> Buka paparan admin & panggil data Supabase
+                        document.getElementById('loading-admin').style.display = 'none';
+                        document.getElementById('main-admin-content').style.display = 'block';
+                        window.muatTurunSemuaData();
+                    } else {
+                        alert("❌ Kata laluan salah atau dibatalkan!");
+                        window.location.href = "makmal.html";
+                    }
+                } else {
                     signOut(auth);
                     window.location.href = "index.html";
                 }
@@ -134,22 +161,17 @@
     </script>
 
     <script>
-        const KATA_LALUAN_ADMIN = "FKK@20160901";
-        if (prompt("🔒 KAWALAN ADMIN:\nSila masukkan kata laluan:") !== KATA_LALUAN_ADMIN) {
-            alert("❌ Kata laluan salah!");
-            window.location.href = "makmal.html";
-        }
-
         const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
         const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
         let dataBahanGlobal = [];
 
-        document.addEventListener("DOMContentLoaded", function() {
+        // Ditembak secara automatik dari skrip Firebase selepas kata laluan betul
+        window.muatTurunSemuaData = function() {
             dapatkanTempahan();
             dapatkanBahanRadas();
-        });
+        };
 
         function tukarTab(tab) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
