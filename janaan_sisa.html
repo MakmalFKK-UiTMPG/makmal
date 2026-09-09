@@ -43,9 +43,9 @@
         .btn-print { background: #27ae60; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-bottom: 15px; }
         
         .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; color: white; display: inline-block; }
-        /* 🛠️ GAYA BADGE DIKEMASKINI DARI 'MENUNGGU' KE 'BELUM DISAHKAN' */
-        .badge-belum-disahkan { background-color: #f39c12; }
-        .badge-disahkan { background-color: #27ae60; }
+        /* 🛠️ GAYA BADGE STATUS: BELUM DISEMAK & DISEMAK */
+        .badge-belum-disemak { background-color: #f39c12; }
+        .badge-disemak { background-color: #27ae60; }
         .komposisi-list { margin: 0; padding-left: 15px; font-size: 12px; }
 
         @media print {
@@ -236,7 +236,7 @@
             let teksKomposisi = dataSisa.komposisi_sisa.map(k => `${k.nama}: ${k.peratus}`).join(', ');
 
             const templateParams = {
-                to_email: 'nurha1559@uitm.edu.my', // E-mel penerima yang telah ditetapkan
+                to_email: 'nurha1559@uitm.edu.my',
                 nama_pemohon: dataSisa.nama_pemohon,
                 no_id: dataSisa.no_id,
                 no_tel: dataSisa.no_tel,
@@ -286,7 +286,7 @@
                 }
                 htmlKomposisi += '</ul>';
 
-                // 🛠️ KEMASKINI LABEL STATUS & BADGE UNTUK PAPARAN LALAI
+                // 🛠️ STATUS LALAI: 'Belum Disemak' / STATUS DISEMAK: 'Disemak'
                 const statusPapar = item.status || 'Belum Disemak';
                 const badgeClass = (statusPapar === 'Disemak') ? 'badge-disemak' : 'badge-belum-disemak';
                 const beratPaparan = item.berat_kasar ? `${item.berat_kasar}` : '-';
@@ -310,7 +310,7 @@
             
             const btnHantar = document.getElementById('btnHantar');
             btnHantar.disabled = true;
-            btnHantar.innerText = "⏳ Sedang Menghantar & Notifikasi...";
+            btnHantar.innerText = "⏳ Sedang Menghantar & Hantar Emel...";
 
             const namas = document.querySelectorAll('.komponen-nama');
             const peratuss = document.querySelectorAll('.komponen-peratus');
