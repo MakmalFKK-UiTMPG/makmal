@@ -61,7 +61,7 @@
 
     <div id="main-admin-content">
         <div class="header-top">
-            <a href="makmal.html" class="back-btn">⬅️ Kembali ke Senarai Makmal</a>
+            <a href="makmal.html" class="back-btn">⬅️ Kembali ke Menu Utama</a>
             <button id="logout-btn" class="btn-logout">🚪 Log Keluar</button>
         </div>
 
@@ -133,6 +133,7 @@
         </div>
     </div>
 
+    <!-- KAWALAN KESELAMATAN BERASASKAN E-MEL RASMI ADMIN -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -149,24 +150,27 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
+        // 🛡️ MASUKKAN SENARAI E-MEL PEGAWAI & PENSYARAH YANG DIBENARKAN JADI ADMIN
+        const ADMIN_EMAILS = [
+            "nurha1559@uitm.edu.my",        // Tukar kepada e-mel UiTM anda
+            "pegawai1@uitm.edu.my",       // Tukar kepada e-mel pegawai makmal 1
+            "pensyarah1@uitm.edu.my"      // Tambah e-mel admin lain di sini
+        ];
+
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                const email = user.email || '';
-                if (email.endsWith('@uitm.edu.my') || email.endsWith('@student.uitm.edu.my')) {
-                    const KATA_LALUAN_ADMIN = "FKK@20160901";
-                    const inputPassword = prompt("🔒 KAWALAN ADMIN:\nSila masukkan kata laluan:");
+                const userEmail = (user.email || '').toLowerCase();
+                
+                // Semak jika e-mel log masuk ada dalam senarai WHITELIST ADMIN
+                const isAdmin = ADMIN_EMAILS.some(email => email.toLowerCase() === userEmail);
 
-                    if (inputPassword === KATA_LALUAN_ADMIN) {
-                        document.getElementById('loading-admin').style.display = 'none';
-                        document.getElementById('main-admin-content').style.display = 'block';
-                        window.muatTurunSemuaData();
-                    } else {
-                        alert("❌ Kata laluan salah atau dibatalkan!");
-                        window.location.href = "makmal.html";
-                    }
+                if (isAdmin) {
+                    document.getElementById('loading-admin').style.display = 'none';
+                    document.getElementById('main-admin-content').style.display = 'block';
+                    window.muatTurunSemuaData();
                 } else {
-                    signOut(auth);
-                    window.location.href = "index.html";
+                    alert(`❌ AKSES DITOLAK!\nAkaun (${userEmail}) tiada kebenaran Admin.`);
+                    window.location.href = "makmal.html";
                 }
             } else {
                 window.location.href = "index.html";
@@ -178,6 +182,7 @@
         });
     </script>
 
+    <!-- FUNGSI PEMPROSESAN DATA SUPABASE -->
     <script>
         const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
@@ -274,7 +279,7 @@
             }
         }
 
-        // 3. DATA JANAAN SISA KIMIA (STATUS LALAI: Belum Disemak)
+        // 3. DATA JANAAN SISA KIMIA
         async function dapatkanJanaanSisa() {
             const { data, error } = await supabaseClient
                 .from('janaan_sisa')
@@ -303,7 +308,6 @@
                 }
                 htmlKomposisi += '</ul>';
 
-                // 🛠️ TUKAR KEPADA 'Belum Disemak' / 'Disemak'
                 const statusPapar = r.status || 'Belum Disemak';
                 const statusClass = (statusPapar === 'Disemak') ? 'status-disemak' : 'status-belum-disemak';
                 const beratPaparan = r.berat_kasar ? `${r.berat_kasar}` : '-';
@@ -392,7 +396,6 @@
             dapatkanBahanRadas();
         }
 
-        // TUKAR STATUS SISA KIMIA KEPADA 'Disemak' / 'Batal'
         async function tukarStatusSisa(id, status) {
             const { error } = await supabaseClient
                 .from('janaan_sisa')
@@ -407,7 +410,6 @@
             }
         }
 
-        // TUKAR STATUS KEPADA 'Batal'
         async function padamRekod(jadual, id) {
             if(confirm("Pasti mahu menukar status rekod ini kepada 'Batal'?")) {
                 const { error } = await supabaseClient
