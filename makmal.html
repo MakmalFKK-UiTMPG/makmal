@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal Makmal FKK UiTM Pasir Gudang</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         /* Smooth tab animation */
@@ -25,17 +23,14 @@
 </head>
 <body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen">
 
-    <!-- SKRIN LOADING SEMENTARA -->
     <div id="loading-screen" class="flex flex-col items-center justify-center min-h-screen p-6 text-center">
         <div class="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-4"></div>
         <h2 class="text-xl font-bold text-slate-800">Menyemak Pengesahan Log Masuk...</h2>
         <p class="text-sm text-slate-500 mt-1">Sila tunggu sebentar.</p>
     </div>
 
-    <!-- KANDUNGAN UTAMA -->
     <div id="main-content" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        <!-- HEADER TOP BAR -->
         <header class="flex flex-col md:flex-row md:items-center md:justify-between bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mb-8 gap-4">
             <div class="flex items-center space-x-4">
                 <div class="p-3 bg-indigo-50 text-indigo-600 rounded-xl">
@@ -43,7 +38,15 @@
                 </div>
                 <div>
                     <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">UiTM Cawangan Johor • Kampus Pasir Gudang</span>
-                    <h1 class="text-xl md:text-2xl font-bold text-slate-900">Portal Makmal Fakulti Kejuruteraan Kimia</h1>
+                    
+                    <div class="flex flex-wrap items-center gap-3 mt-0.5">
+                        <h1 class="text-xl md:text-2xl font-bold text-slate-900">Portal Makmal Fakulti Kejuruteraan Kimia</h1>
+                        
+                        <a href="carta-organisasi.html" class="inline-flex items-center space-x-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-3 py-1 rounded-xl text-xs font-bold transition border border-indigo-200 shadow-sm">
+                            <i data-lucide="users" class="w-3.5 h-3.5"></i>
+                            <span>Tentang Kami</span>
+                        </a>
+                    </div>
                 </div>
             </div>
             <button id="logout-btn" class="inline-flex items-center justify-center space-x-2 bg-slate-100 hover:bg-red-50 text-slate-700 hover:text-red-600 px-4 py-2.5 rounded-xl font-semibold text-sm transition border border-slate-200 hover:border-red-200 self-start md:self-auto cursor-pointer">
@@ -52,7 +55,6 @@
             </button>
         </header>
 
-        <!-- MENU UTAMA / DASHBOARD QUICK LINKS -->
         <section class="mb-10">
             <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4 px-1">Menu Utama & Perkhidmatan</h2>
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -100,7 +102,7 @@
                 </a>
 
                 <a href="sisa.html" class="flex flex-col p-4 bg-white border border-slate-200 rounded-xl hover:border-indigo-500 hover:shadow-md transition group">
-                    <div class="p-2.5 rounded-lg bg-bio-50 text-emerald-600 bg-emerald-50 w-fit group-hover:bg-indigo-600 group-hover:text-white transition">
+                    <div class="p-2.5 rounded-lg bg-emerald-50 text-emerald-600 w-fit group-hover:bg-indigo-600 group-hover:text-white transition">
                         <i data-lucide="biohazard" class="w-5 h-5"></i>
                     </div>
                     <span class="mt-3 text-sm font-semibold text-slate-800">Sisa Terjadual</span>
@@ -116,7 +118,6 @@
             </div>
         </section>
 
-        <!-- SEKSYEN SENARAI MAKMAL (TAB SYSTEM) -->
         <section class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-slate-100 gap-4">
                 <div>
@@ -124,7 +125,6 @@
                     <p class="text-xs text-slate-500">Pilih aras untuk melihat makmal dan Pegawai Bertanggungjawab (PIC).</p>
                 </div>
 
-                <!-- NAVIGATION TABS -->
                 <div class="inline-flex p-1 bg-slate-100 rounded-xl">
                     <button onclick="openLevel(event, 'aras-1')" class="tab-btn active px-4 py-2 rounded-lg text-xs font-bold transition text-indigo-600 bg-white shadow-sm">Aras 1</button>
                     <button onclick="openLevel(event, 'aras-2')" class="tab-btn px-4 py-2 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">Aras 2</button>
@@ -134,7 +134,6 @@
             </div>
 
             <div class="pt-6">
-                <!-- ARAS 1 CONTENT -->
                 <div id="aras-1" class="tab-content active grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-xl hover:border-slate-300 transition">
                         <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Pilot Plant</h3>
@@ -181,7 +180,6 @@
                     </div>
                 </div>
 
-                <!-- ARAS 2 CONTENT -->
                 <div id="aras-2" class="tab-content grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-xl hover:border-slate-300 transition">
                         <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Chemistry 1</h3>
@@ -222,7 +220,7 @@
                             <i data-lucide="user" class="w-4 h-4 text-slate-400 mt-0.5"></i>
                             <div>
                                 <p class="font-semibold text-slate-900">Aliah Ahmad Shahrudin</p>
-                                 <p class="text-slate-500">Penolong Jurutera</p>
+                                <p class="text-slate-500">Penolong Jurutera</p>
                             </div>
                         </div>
                     </div>
@@ -239,7 +237,6 @@
                     </div>
                 </div>
 
-                <!-- ARAS 3 CONTENT -->
                 <div id="aras-3" class="tab-content grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-xl hover:border-slate-300 transition">
                         <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Bio Process</h3>
@@ -284,7 +281,6 @@
                     </div>
                 </div>
 
-                <!-- ARAS 4 CONTENT -->
                 <div id="aras-4" class="tab-content grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-xl hover:border-slate-300 transition">
                         <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Computer 1</h3>
@@ -312,14 +308,12 @@
             </div>
         </section>
 
-        <!-- FOOTER SIMPLE -->
         <footer class="mt-12 text-center text-xs text-slate-400">
             &copy; Hak Cipta Terpelihara Fakulti Kejuruteraan Kimia UiTM Pasir Gudang.
         </footer>
 
     </div>
 
-    <!-- SKRIP TAB NAVIGATION -->
     <script>
         function openLevel(evt, levelId) {
             const tabContents = document.getElementsByClassName("tab-content");
@@ -339,7 +333,6 @@
         }
     </script>
 
-    <!-- SKRIP FIREBASE (KESELAMATAN & LOG KELUAR) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
