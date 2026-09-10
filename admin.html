@@ -150,19 +150,19 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // 🛡️ MASUKKAN SENARAI E-MEL PEGAWAI & PENSYARAH YANG DIBENARKAN JADI ADMIN
+        // 🛡️ SENARAI E-MEL PEGAWAI & PENSYARAH YANG DIBENARKAN JADI ADMIN
         const ADMIN_EMAILS = [
-            "nurha1559@uitm.edu.my",        // Tukar kepada e-mel UiTM anda
-            "pegawai1@uitm.edu.my",       // Tukar kepada e-mel pegawai makmal 1
-            "pensyarah1@uitm.edu.my"      // Tambah e-mel admin lain di sini
+            "nurha1559@uitm.edu.my",        // E-mel rasmi anda
+            "pegawai1@uitm.edu.my",         // Masukkan e-mel pegawai lain di sini
+            "pensyarah1@uitm.edu.my"        // Tambah e-mel admin lain jika ada
         ];
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                const userEmail = (user.email || '').toLowerCase();
+                const userEmail = (user.email || '').toLowerCase().trim();
                 
                 // Semak jika e-mel log masuk ada dalam senarai WHITELIST ADMIN
-                const isAdmin = ADMIN_EMAILS.some(email => email.toLowerCase() === userEmail);
+                const isAdmin = ADMIN_EMAILS.some(email => email.toLowerCase().trim() === userEmail);
 
                 if (isAdmin) {
                     document.getElementById('loading-admin').style.display = 'none';
