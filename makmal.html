@@ -356,34 +356,40 @@
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
         const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-      // FUNGSI SIMPAN LAST SEEN (WAKTU MALAYSIA UTC+8 TEPAT)
-        async function kemaskiniLastSeen(user) {
-            try {
-                const userEmail = user.email || '';
-                const userName = user.displayName || userEmail.split('@')[0];
+     // FUNGSI SIMPAN LAST SEEN (WAKTU MALAYSIA UTC+8 TEPAT)
+async function kemaskiniLastSeen(user) {
+    try {
+        const userEmail = user.email || '';
+        const userName = user.displayName || userEmail.split('@')[0];
 
-                // KIRA MASA MALAYSIA (DENGAN OFFSET UTC+8)
-                const now = new Date();
-                const offsetMs = now.getTimezoneOffset() * 60000;
-                const localISOTime = (new Date(now.getTime() - offsetMs)).toISOString();
+        // Dapatkan format YYYY-MM-DD HH:MM:SS waktu tempatan Malaysia
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
 
-                const { data, error } = await supabaseClient
-                    .from('kehadiran_pengguna')
-                    .upsert({ 
-                        email: userEmail, 
-                        nama: userName,
-                        last_online: localISOTime 
-                    }, { onConflict: 'email' });
+        const localFormattedTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 
-                if (error) {
-                    console.error("❌ Ralat Supabase:", error.message);
-                } else {
-                    console.log("✅ Berjaya simpan Last Seen Waktu Malaysia:", localISOTime);
-                }
-            } catch (err) {
-                console.error("❌ Ralat Kod:", err);
-            }
+        const { data, error } = await supabaseClient
+            .from('kehadiran_pengguna')
+            .upsert({ 
+                email: userEmail, 
+                nama: userName,
+                last_online: localFormattedTime 
+            }, { onConflict: 'email' });
+
+        if (error) {
+            console.error("❌ Ralat Supabase:", error.message);
+        } else {
+            console.log("✅ Berjaya simpan Last Seen Waktu Malaysia:", localFormattedTime);
         }
+    } catch (err) {
+        console.error("❌ Ralat Kod:", err);
+    }
+}
         // KAWALAN KESELAMATAN KETAT
         onAuthStateChanged(auth, (user) => {
             if (user) {
