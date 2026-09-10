@@ -3,8 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Borang Tempahan Peralatan Makmal</title>
+    <title>Borang Tempahan Peralatan Makmal FKK</title>
     
+    <!-- TAILWIND CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- LUCIDE ICONS CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
     <!-- SUPABASE SDK -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     
@@ -18,154 +23,211 @@
     </script>
 
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; max-width: 1100px; margin: auto; background-color: #f9f9f9; }
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
         
-        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        h2, h3 { color: #2c3e50; margin-top: 0; }
-        .back-btn { display: inline-block; color: #2980b9; text-decoration: none; font-weight: bold; font-size: 15px; }
-        .back-btn:hover { text-decoration: underline; }
-        
-        .btn-logout { background: #e74c3c; color: white; border: none; padding: 8px 14px; border-radius: 5px; cursor: pointer; font-size: 13px; font-weight: bold; }
-        .btn-logout:hover { background: #c0392b; }
-
-        .form-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 25px; }
-        .input-group { margin-bottom: 15px; }
-        .input-group label { display: block; font-weight: bold; margin-bottom: 5px; }
-        .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        
-        .filter-card { background: #eef2f7; border-left: 5px solid #2980b9; padding: 15px 20px; border-radius: 6px; margin-bottom: 20px; }
-        .filter-card label { font-weight: bold; font-size: 15px; color: #2c3e50; display: block; margin-bottom: 8px; }
-        .filter-card select { width: 100%; padding: 10px; font-weight: bold; border: 1px solid #2980b9; border-radius: 5px; }
-
-        .timetable-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 25px; overflow-x: auto; }
-        .timetable { width: 100%; border-collapse: collapse; min-width: 900px; }
-        .timetable th, .timetable td { border: 1px solid #ddd; padding: 6px; text-align: center; font-size: 12px; }
-        .timetable th { background-color: #2c3e50; color: white; }
-        .timetable th.week-header { background-color: #34495e; font-size: 13px; text-align: left; padding-left: 15px; }
-        
-        .slot-available { background-color: #e8f8f5; color: #27ae60; font-weight: bold; cursor: pointer; border-radius: 4px; font-size: 11px; padding: 8px 4px; }
-        .slot-available:hover { background-color: #d4efdf; border: 1px solid #27ae60; }
-        .slot-booked { background-color: #fce8e6; color: #c0392b; font-weight: bold; cursor: not-allowed; border-radius: 4px; font-size: 11px; padding: 8px 4px; }
-
-        .btn-submit { background-color: #2980b9; color: white; border: none; padding: 12px 15px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 10px; }
-        .btn-submit:hover { background-color: #3498db; }
-        .btn-submit:disabled { background-color: #7f8c8d; cursor: not-allowed; }
-        
-        table.status-table { border-collapse: collapse; width: 100%; margin-top: 20px; background: white; }
-        table.status-table th, table.status-table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-        table.status-table th { background-color: #2c3e50; color: white; }
-        
-        .status-menunggu { color: #d35400; font-weight: bold; }
-        .status-lulus { color: #27ae60; font-weight: bold; }
+        .slot-available { 
+            background-color: #ecfdf5; 
+            color: #047857; 
+            font-weight: 600; 
+            cursor: pointer; 
+            border-radius: 8px; 
+            font-size: 11px; 
+            padding: 8px 6px;
+            border: 1px solid #a7f3d0;
+            transition: all 0.2s;
+        }
+        .slot-available:hover { 
+            background-color: #d1fae5; 
+            border-color: #10b981; 
+            transform: translateY(-1px);
+        }
+        .slot-booked { 
+            background-color: #fff1f2; 
+            color: #be123c; 
+            font-weight: 600; 
+            cursor: not-allowed; 
+            border-radius: 8px; 
+            font-size: 11px; 
+            padding: 8px 6px;
+            border: 1px solid #fecdd3;
+        }
     </style>
 </head>
-<body>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen">
 
-    <div class="header-top">
-        <a href="makmal.html" class="back-btn">⬅️ Kembali ke Senarai Makmal</a>
-        <button id="logout-btn" class="btn-logout">🚪 Log Keluar</button>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- HEADER NAVIGASI / TOP BAR -->
+        <div class="flex items-center justify-between gap-4 mb-6">
+            <a href="makmal.html" class="inline-flex items-center space-x-2 text-sm font-semibold text-slate-600 hover:text-indigo-600 transition group">
+                <i data-lucide="arrow-left" class="w-4 h-4 transition-transform group-hover:-translate-x-1"></i>
+                <span>Kembali ke Senarai Makmal</span>
+            </a>
+            <button id="logout-btn" class="inline-flex items-center justify-center space-x-2 bg-white hover:bg-rose-50 text-slate-700 hover:text-rose-600 px-4 py-2 rounded-xl font-semibold text-sm transition border border-slate-200 hover:border-rose-200 cursor-pointer shadow-sm">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+                <span>Log Keluar</span>
+            </button>
+        </div>
+
+        <!-- TAJUK UTAMA -->
+        <header class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">Sistem Pengurusan Makmal</span>
+                <h1 class="text-xl sm:text-2xl font-bold text-slate-900 mt-0.5">Borang & Jadual Tempahan Peralatan</h1>
+                <p class="text-xs sm:text-sm text-slate-500 mt-1">Sila lengkapkan maklumat dan pilih slot masa ketersediaan instrumen.</p>
+            </div>
+            <div class="p-3 bg-indigo-50 text-indigo-600 rounded-2xl hidden sm:block">
+                <i data-lucide="calendar-range" class="w-8 h-8"></i>
+            </div>
+        </header>
+
+        <form id="formTempahan" class="space-y-8">
+            <!-- LANGKAH 1 -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                <div class="flex items-center space-x-3 pb-4 mb-6 border-b border-slate-100">
+                    <span class="flex items-center justify-center w-7 h-7 bg-indigo-600 text-white rounded-lg text-xs font-bold">1</span>
+                    <h2 class="text-base font-bold text-slate-900">Maklumat Pemohon & Pilihan Peralatan</h2>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <!-- 1. NAMA PEMOHON -->
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Nama Pemohon</label>
+                        <input type="text" id="nama_pemohon" required placeholder="Contoh: Ahmad Bin Ali" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
+                    </div>
+
+                    <!-- 2. NOMBOR TELEFON -->
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Nombor Telefon</label>
+                        <input type="tel" id="no_telefon" required placeholder="Contoh: 012-3456789" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
+                    </div>
+                </div>
+
+                <!-- 3. TUJUAN PENGGUNAAN -->
+                <div class="mb-6">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Tujuan Penggunaan</label>
+                    <textarea id="tujuan" rows="2" placeholder="Sebutkan tujuan ujian/eksperimen..." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition"></textarea>
+                </div>
+
+                <!-- 4. PILIH PERALATAN -->
+                <div class="p-4 bg-indigo-50/60 border border-indigo-100 rounded-xl">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-indigo-900 mb-2">🔍 Pilih Peralatan Untuk Lihat Ketersediaan Slot</label>
+                    <select id="nama_peralatan" required onchange="kemaskiniStatusTimetable()" class="w-full px-4 py-2.5 bg-white border border-indigo-200 rounded-xl text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition cursor-pointer">
+                        <option value="">-- Sila Pilih Peralatan --</option>
+                        <option value="Vacuum Furnace">Vacuum Furnace</option>
+                        <option value="Muffle Furnace">Muffle Furnace</option>
+                        <option value="UV-VIS">UV-VIS</option>
+                        <option value="FTIR">FTIR</option>
+                        <option value="SEM">SEM</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- LANGKAH 2 -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm overflow-hidden">
+                <div class="flex items-center space-x-3 pb-4 mb-4 border-b border-slate-100">
+                    <span class="flex items-center justify-center w-7 h-7 bg-indigo-600 text-white rounded-lg text-xs font-bold">2</span>
+                    <h2 class="text-base font-bold text-slate-900">Pilih Slot Masa Pada Jadual</h2>
+                </div>
+
+                <div id="peneranganJadual" class="p-3 mb-6 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-600 text-center">
+                    ⚠️ Sila pilih peralatan di Langkah 1 dahulu untuk melihat status ketersediaan slot.
+                </div>
+
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left border-collapse min-w-[950px]">
+                        <thead>
+                            <tr class="bg-slate-900 text-white text-xs font-semibold">
+                                <th class="p-3 border-b border-slate-800 text-center w-36">Tarikh / Hari</th>
+                                <th class="p-3 border-b border-slate-800 text-center">Pagi<br><span class="text-[10px] text-slate-400 font-normal">(08:00 - 09:00)</span></th>
+                                <th class="p-3 border-b border-slate-800 text-center">Pagi<br><span class="text-[10px] text-slate-400 font-normal">(09:00 - 10:00)</span></th>
+                                <th class="p-3 border-b border-slate-800 text-center">Pagi<br><span class="text-[10px] text-slate-400 font-normal">(10:00 - 11:00)</span></th>
+                                <th class="p-3 border-b border-slate-800 text-center">Tengah Hari<br><span class="text-[10px] text-slate-400 font-normal">(11:00 - 12:00)</span></th>
+                                <th class="p-3 border-b border-slate-800 text-center">Tengah Hari<br><span class="text-[10px] text-slate-400 font-normal">(12:00 - 01:00)</span></th>
+                                <th class="p-3 border-b border-slate-800 text-center">Petang 1<br><span class="text-[10px] text-slate-400 font-normal">(02:00 - 03:00)</span></th>
+                                <th class="p-3 border-b border-slate-800 text-center">Petang 1<br><span class="text-[10px] text-slate-400 font-normal">(03:00 - 04:00)</span></th>
+                                <th class="p-3 border-b border-slate-800 text-center">Petang 2<br><span class="text-[10px] text-slate-400 font-normal">(04:00 - 05:00)</span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="isiTimetable2Minggu" class="divide-y divide-slate-100 text-xs">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- LANGKAH 3 -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm" id="bahagianBorangPengesahan">
+                <div class="flex items-center space-x-3 pb-4 mb-6 border-b border-slate-100">
+                    <span class="flex items-center justify-center w-7 h-7 bg-indigo-600 text-white rounded-lg text-xs font-bold">3</span>
+                    <h2 class="text-base font-bold text-slate-900">Sahkan Tarikh & Masa Tempahan</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Tarikh Guna Dipilih</label>
+                        <input type="date" id="tarikh_guna" required readonly class="w-full px-4 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 cursor-not-allowed">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Masa Mula</label>
+                        <input type="text" id="masa_mula" required readonly placeholder="Pilih dari jadual" class="w-full px-4 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 cursor-not-allowed">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Masa Tamat</label>
+                        <input type="text" id="masa_tamat" required readonly placeholder="Pilih dari jadual" class="w-full px-4 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 cursor-not-allowed">
+                    </div>
+                </div>
+
+                <button type="submit" id="btnHantar" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-6 rounded-xl shadow-md transition duration-200 flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i data-lucide="send" class="w-4 h-4"></i>
+                    <span>Hantar Tempahan</span>
+                </button>
+            </div>
+        </form>
+
+        <!-- JADUAL AWAM PELAJAR -->
+        <section class="mt-10 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+            <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
+                <div>
+                    <h3 class="text-base font-bold text-slate-900">Status Tempahan Semasa (Aktif)</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Senarai permohonan tempahan instrumen yang sedang diproses atau telah diluluskan.</p>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto custom-scrollbar">
+                <table class="w-full text-left border-collapse min-w-[650px]">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            <th class="py-3 px-4">Nama Pemohon</th>
+                            <th class="py-3 px-4">Peralatan</th>
+                            <th class="py-3 px-4">Tarikh Guna</th>
+                            <th class="py-3 px-4">Masa</th>
+                            <th class="py-3 px-4 w-32">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="isiJadualPelajar" class="divide-y divide-slate-100 text-sm">
+                        <tr><td colspan="5" class="py-6 text-center text-slate-400 text-xs">Memuatkan data...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="mt-12 text-center text-xs text-slate-400">
+            &copy; Hak Cipta Terpelihara Fakulti Kejuruteraan Kimia UiTM Pasir Gudang.
+        </footer>
+
     </div>
-
-    <h2 style="text-align: center;">📋 Borang & Jadual Tempahan Peralatan</h2>
-
-    <form id="formTempahan">
-        <div class="form-card">
-            <h3>Langkah 1: Isi Maklumat Pemohon & Pilih Peralatan</h3>
-            
-            <!-- 1. NAMA PEMOHON -->
-            <div class="input-group">
-                <label>Nama Pemohon:</label>
-                <input type="text" id="nama_pemohon" required placeholder="Contoh: Ahmad Bin Ali">
-            </div>
-
-            <!-- 2. NOMBOR TELEFON -->
-            <div class="input-group">
-                <label>Nombor Telefon:</label>
-                <input type="tel" id="no_telefon" required placeholder="Contoh: 012-3456789">
-            </div>
-
-            <!-- 3. TUJUAN PENGGUNAAN -->
-            <div class="input-group">
-                <label>Tujuan Penggunaan:</label>
-                <textarea id="tujuan" rows="2" placeholder="Tujuan penggunaan..."></textarea>
-            </div>
-
-            <!-- 4. PILIH PERALATAN -->
-            <div class="filter-card">
-                <label>🔍 Pilih Peralatan Untuk Lihat Ketersediaan Slot:</label>
-                <select id="nama_peralatan" required onchange="kemaskiniStatusTimetable()">
-                    <option value="">-- Sila Pilih Peralatan --</option>
-                    <option value="Vacuum Furnace">Vacuum Furnace</option>
-                    <option value="Muffle Furnace">Muffle Furnace</option>
-                    <option value="UV-VIS">UV-VIS</option>
-                    <option value="FTIR">FTIR</option>
-                    <option value="SEM">SEM</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="timetable-card">
-            <h3>Langkah 2: Pilih Slot Masa Pada Jadual</h3>
-            <p id="peneranganJadual" style="text-align: center; color: #7f8c8d; margin-top: 0; font-weight: bold;">
-                ⚠️ Sila pilih peralatan di Langkah 1 dahulu untuk melihat status ketersediaan slot.
-            </p>
-            <table class="timetable">
-                <thead>
-                    <tr>
-                        <th>Tarikh / Hari</th>
-                        <th>Pagi<br>(08:00 - 09:00)</th>
-                        <th>Pagi<br>(09:00 - 10:00)</th>
-                        <th>Pagi<br>(10:00 - 11:00)</th>
-                        <th>Tengah Hari<br>(11:00 - 12:00)</th>
-                        <th>Tengah Hari<br>(12:00 - 01:00)</th>
-                        <th>Petang 1<br>(02:00 - 03:00)</th>
-                        <th>Petang 1<br>(03:00 - 04:00)</th>
-                        <th>Petang 2<br>(04:00 - 05:00)</th>
-                    </tr>
-                </thead>
-                <tbody id="isiTimetable2Minggu">
-                </tbody>
-            </table>
-        </div>
-
-        <div class="form-card" id="bahagianBorangPengesahan">
-            <h3>Langkah 3: Sahkan Tarikh & Masa Tempahan</h3>
-            
-            <div class="input-group">
-                <label>Tarikh Guna Dipilih:</label>
-                <input type="date" id="tarikh_guna" required readonly style="background-color: #eef2f5; font-weight: bold;">
-            </div>
-
-            <div class="input-group">
-                <label>Masa Mula:</label>
-                <input type="text" id="masa_mula" required readonly style="background-color: #eef2f5; font-weight: bold;" placeholder="Pilih dari jadual">
-            </div>
-
-            <div class="input-group">
-                <label>Masa Tamat:</label>
-                <input type="text" id="masa_tamat" required readonly style="background-color: #eef2f5; font-weight: bold;" placeholder="Pilih dari jadual">
-            </div>
-
-            <button type="submit" id="btnHantar" class="btn-submit">Hantar Tempahan</button>
-        </div>
-    </form>
-
-    <!-- JADUAL AWAM PELAJAR -->
-    <h3>Status Tempahan Semasa (Aktif)</h3>
-    <table class="status-table">
-        <thead>
-            <tr>
-                <th>Nama Pemohon</th>
-                <th>Peralatan</th>
-                <th>Tarikh Guna</th>
-                <th>Masa</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody id="isiJadualPelajar">
-            <tr><td colspan="5" style="text-align:center;">Memuatkan data...</td></tr>
-        </tbody>
-    </table>
 
     <!-- SKRIP FIREBASE (KESELAMATAN & LOG KELUAR) -->
     <script type="module">
@@ -252,7 +314,8 @@
             let hariDijana = 0;
 
             let rowMinggu1 = tbody.insertRow();
-            rowMinggu1.innerHTML = `<td colspan="9" class="week-header">📅 <strong>MINGGU 1 (Hari Bekerja)</strong></td>`;
+            rowMinggu1.className = "bg-slate-100 font-bold text-slate-700 text-xs";
+            rowMinggu1.innerHTML = `<td colspan="9" class="p-2.5 border-b border-slate-200">📅 MINGGU 1 (Hari Bekerja)</td>`;
 
             while (hariDijana < 10) {
                 let tarikh = new Date();
@@ -265,20 +328,22 @@
 
                     if (hariDijana === 5) {
                         let rowMinggu2 = tbody.insertRow();
-                        rowMinggu2.innerHTML = `<td colspan="9" class="week-header">📅 <strong>MINGGU 2 (Hari Bekerja)</strong></td>`;
+                        rowMinggu2.className = "bg-slate-100 font-bold text-slate-700 text-xs";
+                        rowMinggu2.innerHTML = `<td colspan="9" class="p-2.5 border-b border-slate-200">📅 MINGGU 2 (Hari Bekerja)</td>`;
                     }
 
                     let row = tbody.insertRow();
+                    row.className = "hover:bg-slate-50/80 transition";
                     row.innerHTML = `
-                        <td><strong>${formatPapar}</strong></td>
-                        <td id="slot_${formatTarikhISO}_08:00" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '08:00', '09:00')">🟢 Kosong</td>
-                        <td id="slot_${formatTarikhISO}_09:00" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '09:00', '10:00')">🟢 Kosong</td>
-                        <td id="slot_${formatTarikhISO}_10:00" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '10:00', '11:00')">🟢 Kosong</td>
-                        <td id="slot_${formatTarikhISO}_11:00" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '11:00', '12:00')">🟢 Kosong</td>
-                        <td id="slot_${formatTarikhISO}_12:00" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '12:00', '13:00')">🟢 Kosong</td>
-                        <td id="slot_${formatTarikhISO}_14:00" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '14:00', '15:00')">🟢 Kosong</td>
-                        <td id="slot_${formatTarikhISO}_15:00" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '15:00', '16:00')">🟢 Kosong</td>
-                        <td id="slot_${formatTarikhISO}_16:00" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '16:00', '17:00')">🟢 Kosong</td>
+                        <td class="p-2.5 font-bold text-slate-800 text-center border-b border-slate-100">${formatPapar}</td>
+                        <td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_08:00" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '08:00', '09:00')">🟢 Kosong</div></td>
+                        <td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_09:00" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '09:00', '10:00')">🟢 Kosong</div></td>
+                        <td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_10:00" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '10:00', '11:00')">🟢 Kosong</div></td>
+                        <td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_11:00" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '11:00', '12:00')">🟢 Kosong</div></td>
+                        <td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_12:00" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '12:00', '13:00')">🟢 Kosong</div></td>
+                        <td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_14:00" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '14:00', '15:00')">🟢 Kosong</div></td>
+                        <td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_15:00" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '15:00', '16:00')">🟢 Kosong</div></td>
+                        <td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_16:00" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '16:00', '17:00')">🟢 Kosong</div></td>
                     `;
                     hariDijana++;
                 }
@@ -298,7 +363,7 @@
             }
 
             if(penerangan) {
-                penerangan.innerHTML = `Paparan Ketersediaan Slot Bagi Peralatan: <span style="color:#2980b9;">${peralatanDipilih}</span>`;
+                penerangan.innerHTML = `Paparan Ketersediaan Slot Bagi Peralatan: <span class="text-indigo-600 font-bold">${peralatanDipilih}</span>`;
             }
 
             await muatTurunTempahan();
@@ -358,6 +423,7 @@
         }
 
         document.addEventListener("DOMContentLoaded", async function() {
+            lucide.createIcons();
             janaTimetable2Minggu();
             await muatTurunTempahan();
             paparkanTempahanPelajar();
@@ -457,7 +523,7 @@
                     .order('id', { ascending: false });
 
                 if (error) {
-                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:red;">Gagal memuatkan data.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="5" class="py-4 text-center text-rose-500 font-semibold">Gagal memuatkan data.</td></tr>';
                     return;
                 }
 
@@ -468,7 +534,7 @@
                 }) : [];
 
                 if (rekodAktif.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Tiada rekod tempahan aktif ditemui.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="5" class="py-6 text-center text-slate-400">Tiada rekod tempahan aktif ditemui.</td></tr>';
                     return;
                 }
 
@@ -476,23 +542,34 @@
 
                 rekodAktif.forEach(rekod => {
                     const row = tbody.insertRow();
+                    row.className = "hover:bg-slate-50/80 transition";
 
                     let statusSemasa = rekod.status || 'Menunggu';
-                    let statusClass = 'status-menunggu';
-                    if (statusSemasa === 'Lulus') statusClass = 'status-lulus';
+                    let statusBadge = '<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">Menunggu</span>';
+                    if (statusSemasa === 'Lulus') {
+                        statusBadge = '<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Lulus</span>';
+                    }
 
                     const namaPemohon = rekod.nama_pemohon || rekod['Name: nama_pemohon'] || '-';
                     const namaPeralatan = rekod.nama_peralatan || '-';
                     const tarikhGuna = rekod.tarikh_guna || '-';
                     const masaDisplay = (rekod.masa_mula && rekod.masa_tamat) ? `${rekod.masa_mula} - ${rekod.masa_tamat}` : '-';
 
-                    row.insertCell(0).innerText = namaPemohon;
-                    row.insertCell(1).innerText = namaPeralatan;
-                    row.insertCell(2).innerText = tarikhGuna;
-                    row.insertCell(3).innerText = masaDisplay;
+                    row.insertCell(0).className = "py-3.5 px-4 font-semibold text-slate-800";
+                    row.cells[0].innerText = namaPemohon;
+
+                    row.insertCell(1).className = "py-3.5 px-4 text-slate-600";
+                    row.cells[1].innerText = namaPeralatan;
+
+                    row.insertCell(2).className = "py-3.5 px-4 text-slate-600 font-mono text-xs";
+                    row.cells[2].innerText = tarikhGuna;
+
+                    row.insertCell(3).className = "py-3.5 px-4 text-slate-600 font-mono text-xs";
+                    row.cells[3].innerText = masaDisplay;
                     
                     const cellStatus = row.insertCell(4);
-                    cellStatus.innerHTML = `<span class="${statusClass}">${statusSemasa}</span>`;
+                    cellStatus.className = "py-3.5 px-4";
+                    cellStatus.innerHTML = statusBadge;
                 });
             }
         });
