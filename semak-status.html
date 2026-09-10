@@ -4,58 +4,90 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Semakan Status Permohonan Bahan & Radas</title>
+    
+    <!-- TAILWIND CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- LUCIDE ICONS CDN -->
+    <script src="https://unpkg.com/@lucide/web"></script>
+    <!-- SUPABASE SDK -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <style>
-        body { font-family: Arial, sans-serif; padding: 20px; max-width: 1000px; margin: auto; background-color: #f9f9f9; }
-        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .back-btn { color: #2980b9; text-decoration: none; font-weight: bold; font-size: 14px; }
-        .back-btn:hover { text-decoration: underline; }
-        
-        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
-        
-        .search-box { display: flex; gap: 10px; margin: 20px 0; }
-        input[type="text"] { flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; }
-        .btn-search { background: #16a085; color: white; border: none; padding: 12px 24px; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 15px; }
-        .btn-search:hover { background: #117a65; }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; }
-        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; font-size: 13px; vertical-align: top; }
-        th { background: #2c3e50; color: white; }
-        
-        .status-menunggu { color: #d35400; font-weight: bold; background: #fef5e7; padding: 4px 8px; border-radius: 4px; display: inline-block; }
-        .status-lulus { color: #27ae60; font-weight: bold; background: #eafaf1; padding: 4px 8px; border-radius: 4px; display: inline-block; }
-        .status-tolak { color: #c0392b; font-weight: bold; background: #fdedec; padding: 4px 8px; border-radius: 4px; display: inline-block; }
-        
-        .catatan-box { background: #eef9f6; border-left: 4px solid #16a085; padding: 8px 12px; font-size: 13px; color: #2c3e50; margin-top: 5px; border-radius: 0 4px 4px 0; }
-        
-        .item-group { margin-bottom: 8px; }
-        .item-title { font-weight: bold; color: #2c3e50; font-size: 12px; margin-bottom: 2px; }
-        .item-list { font-size: 12px; color: #444; margin: 0 0 5px 15px; padding: 0; }
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
     </style>
 </head>
-<body>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen">
 
-    <div class="header-top">
-        <a href="bahan-radas.html" class="back-btn">⬅️ Kembali ke Borang Permohonan</a>
-        <a href="makmal.html" class="back-btn" style="color: #7f8c8d;">🏠 Menu Utama Makmal</a>
-    </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-    <div class="card">
-        <h2 style="color:#2c3e50; margin-top:0;">🔍 Semakan Status Permohonan Bahan & Radas</h2>
-        <p style="color:#7f8c8d; font-size:14px;">Masukkan No. ID (Pelajar / Staf) anda untuk melihat keseluruhan perincian permohonan dan catatan Pegawai Makmal:</p>
-
-        <div class="search-box">
-            <input type="text" id="noIdCarian" placeholder="Masukkan No. ID (Contoh: 2023123456)">
-            <button class="btn-search" onclick="semakStatus()">🔍 Cari Permohonan</button>
+        <!-- HEADER NAVIGASI / TOP BAR -->
+        <div class="flex items-center justify-between gap-4 mb-6">
+            <a href="bahan-radas.html" class="inline-flex items-center space-x-2 text-sm font-semibold text-slate-600 hover:text-emerald-600 transition group">
+                <i data-lucide="arrow-left" class="w-4 h-4 transition-transform group-hover:-translate-x-1"></i>
+                <span>Kembali ke Borang Permohonan</span>
+            </a>
+            <a href="makmal.html" class="inline-flex items-center space-x-2 text-sm font-semibold text-slate-500 hover:text-slate-800 transition">
+                <i data-lucide="home" class="w-4 h-4"></i>
+                <span>Menu Utama Makmal</span>
+            </a>
         </div>
 
+        <!-- TAJUK UTAMA & CARIAN -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm mb-8">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-600">Portals Semakan Digital</span>
+                    <h1 class="text-xl sm:text-2xl font-bold text-slate-900 mt-0.5">Semakan Status Permohonan Bahan & Radas</h1>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1">Masukkan No. ID (Pelajar / Staf) anda untuk melihat keseluruhan perincian permohonan dan catatan Pegawai Makmal.</p>
+                </div>
+                <div class="p-3 bg-emerald-50 text-emerald-600 rounded-2xl hidden sm:block">
+                    <i data-lucide="file-search" class="w-8 h-8"></i>
+                </div>
+            </div>
+
+            <!-- KOTAK CARIAN -->
+            <div class="mt-6 flex flex-col sm:flex-row gap-3">
+                <div class="relative flex-1">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <i data-lucide="id-card" class="w-5 h-5"></i>
+                    </div>
+                    <input type="text" id="noIdCarian" placeholder="Masukkan No. ID (Contoh: 2023123456)" class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition">
+                </div>
+                <button onclick="semakStatus()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-xl shadow-md transition duration-200 flex items-center justify-center space-x-2 cursor-pointer text-sm">
+                    <i data-lucide="search" class="w-4 h-4"></i>
+                    <span>Cari Permohonan</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- BEKAS KEPUTUSAN HASIL CARIAN -->
         <div id="hasilKeputusan"></div>
+
+        <!-- FOOTER -->
+        <footer class="mt-12 text-center text-xs text-slate-400">
+            &copy; Hak Cipta Terpelihara Fakulti Kejuruteraan Kimia UiTM Pasir Gudang.
+        </footer>
+
     </div>
 
+    <!-- SKRIP SUPABASE & CARIAN STATUS -->
     <script>
         const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
         const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        window.onload = function() {
+            lucide.createIcons();
+        };
 
         async function semakStatus() {
             const noId = document.getElementById('noIdCarian').value.trim();
@@ -66,7 +98,12 @@
                 return;
             }
 
-            divHasil.innerHTML = '<p style="color:#7f8c8d;">🔄 Sedang mencari rekod...</p>';
+            divHasil.innerHTML = `
+                <div class="flex items-center justify-center space-x-2 p-8 bg-white border border-slate-200 rounded-2xl shadow-sm text-slate-500 text-sm">
+                    <div class="w-5 h-5 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
+                    <span>Sedang mencari rekod permohonan...</span>
+                </div>
+            `;
 
             const { data, error } = await supabaseClient
                 .from('permohonan_bahan_radas')
@@ -75,95 +112,138 @@
                 .order('id', { ascending: false });
 
             if (error) {
-                divHasil.innerHTML = `<p style="color:red;">❌ Ralat carian: ${error.message}</p>`;
+                divHasil.innerHTML = `
+                    <div class="p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-sm font-semibold flex items-center space-x-2">
+                        <i data-lucide="alert-circle" class="w-5 h-5"></i>
+                        <span>Ralat carian: ${error.message}</span>
+                    </div>
+                `;
+                lucide.createIcons();
                 return;
             }
 
             if (!data || data.length === 0) {
-                divHasil.innerHTML = '<p style="color:#c0392b; font-weight:bold; background:#fdedec; padding:10px; border-radius:5px;">❌ Tiada rekod permohonan dijumpai untuk No. ID ini.</p>';
+                divHasil.innerHTML = `
+                    <div class="p-6 bg-rose-50 border border-rose-200 text-rose-700 rounded-2xl text-sm font-semibold text-center flex flex-col items-center justify-center space-y-2">
+                        <i data-lucide="file-x-2" class="w-10 h-10 text-rose-500"></i>
+                        <p>Tiada rekod permohonan dijumpai untuk No. ID ini.</p>
+                    </div>
+                `;
+                lucide.createIcons();
                 return;
             }
 
             let html = `
-                <table>
-                    <thead>
-                        <tr>
-                            <th width="100">Tarikh</th>
-                            <th width="200">Pemohon & Projek</th>
-                            <th>Senarai Keseluruhan Item Dipohon</th>
-                            <th width="100">Status</th>
-                            <th width="220">Catatan Admin / Kelulusan Separa</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+                    <div class="p-4 bg-slate-900 text-white font-bold text-sm flex items-center space-x-2">
+                        <i data-lucide="list-checks" class="w-4 h-4 text-emerald-400"></i>
+                        <span>Keputusan Carian Permohonan</span>
+                    </div>
+                    <div class="overflow-x-auto custom-scrollbar">
+                        <table class="w-full text-left border-collapse min-w-[850px]">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                                    <th class="py-3 px-4 w-28">Tarikh</th>
+                                    <th class="py-3 px-4 w-52">Pemohon & Projek</th>
+                                    <th class="py-3 px-4">Senarai Item Dipohon</th>
+                                    <th class="py-3 px-4 w-32">Status</th>
+                                    <th class="py-3 px-4 w-60">Catatan Pegawai</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-sm">
             `;
 
             data.forEach(r => {
                 const tarikh = new Date(r.created_at).toLocaleDateString('ms-MY');
                 const statusTxt = r.status || 'Menunggu';
                 
-                let statusClass = 'status-menunggu';
-                if (statusTxt.toLowerCase().includes('lulus')) statusClass = 'status-lulus';
-                if (statusTxt.toLowerCase().includes('tolak')) statusClass = 'status-tolak';
+                let statusBadge = '<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">Menunggu</span>';
+                if (statusTxt.toLowerCase().includes('lulus')) {
+                    statusBadge = '<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Lulus</span>';
+                }
+                if (statusTxt.toLowerCase().includes('tolak')) {
+                    statusBadge = '<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">Ditolak</span>';
+                }
 
                 // Bina Senarai Penuh Bahan Kimia
                 let bahanHTML = '';
                 if (r.senarai_bahan_kimia && r.senarai_bahan_kimia.length > 0) {
-                    bahanHTML = `<div class="item-group"><div class="item-title">🧪 Bahan Kimia:</div><ul class="item-list">` +
-                        r.senarai_bahan_kimia.map(b => `<li><strong>${b.nama}</strong> (${b.kuantiti})</li>`).join('') +
-                        `</ul></div>`;
+                    bahanHTML = `
+                        <div class="mb-2">
+                            <span class="font-bold text-slate-800 text-xs block mb-1">🧪 Bahan Kimia:</span>
+                            <ul class="list-disc list-inside text-xs text-slate-600 space-y-0.5 pl-1">
+                                ${r.senarai_bahan_kimia.map(b => `<li><strong class="text-slate-700">${b.nama}</strong> (${b.kuantiti})</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
                 }
 
                 // Bina Senarai Penuh Alat Radas
                 let radasHTML = '';
                 if (r.senarai_radas && r.senarai_radas.length > 0) {
-                    radasHTML = `<div class="item-group"><div class="item-title">🔬 Alat Radas:</div><ul class="item-list">` +
-                        r.senarai_radas.map(rad => `<li><strong>${rad.nama}</strong> (${rad.kuantiti} unit)</li>`).join('') +
-                        `</ul></div>`;
+                    radasHTML = `
+                        <div class="mb-2">
+                            <span class="font-bold text-slate-800 text-xs block mb-1">🔬 Alat Radas:</span>
+                            <ul class="list-disc list-inside text-xs text-slate-600 space-y-0.5 pl-1">
+                                ${r.senarai_radas.map(rad => `<li><strong class="text-slate-700">${rad.nama}</strong> (${rad.kuantiti} unit)</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
                 }
 
                 // Bina Senarai Penuh Peralatan
                 let peralatanHTML = '';
                 if (r.senarai_peralatan && r.senarai_peralatan.length > 0) {
-                    peralatanHTML = `<div class="item-group"><div class="item-title">⚙️ Peralatan Makmal:</div><ul class="item-list">` +
-                        r.senarai_peralatan.map(p => `<li><strong>${p.nama}</strong> (${p.kuantiti} unit)</li>`).join('') +
-                        `</ul></div>`;
+                    peralatanHTML = `
+                        <div class="mb-2">
+                            <span class="font-bold text-slate-800 text-xs block mb-1">⚙️ Peralatan Makmal:</span>
+                            <ul class="list-disc list-inside text-xs text-slate-600 space-y-0.5 pl-1">
+                                ${r.senarai_peralatan.map(p => `<li><strong class="text-slate-700">${p.nama}</strong> (${p.kuantiti} unit)</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
                 }
 
                 // Ahli Kumpulan
                 let ahliHTML = '';
                 if (r.ahli_kumpulan && r.ahli_kumpulan.length > 0) {
-                    ahliHTML = `<br><small style="color:#555;"><b>Ahli:</b> ${r.ahli_kumpulan.map(a => a.nama).join(', ')}</small>`;
+                    ahliHTML = `<div class="mt-2 pt-2 border-t border-slate-100 text-xs text-slate-500"><strong>Ahli:</strong> ${r.ahli_kumpulan.map(a => a.nama).join(', ')}</div>`;
                 }
 
                 html += `
-                    <tr>
-                        <td>${tarikh}</td>
-                        <td>
-                            <strong>${r.nama_pemohon}</strong><br>
-                            <small style="color:#7f8c8d;">ID: ${r.no_id}</small><br>
-                            <small style="color:#7f8c8d;">Tujuan: ${r.tujuan}</small><br>
-                            <small style="color:#7f8c8d;">Penyelia: ${r.nama_penyelia || '-'}</small>
+                    <tr class="hover:bg-slate-50/80 transition align-top">
+                        <td class="py-3.5 px-4 font-mono text-xs text-slate-600">${tarikh}</td>
+                        <td class="py-3.5 px-4">
+                            <div class="font-bold text-slate-900">${r.nama_pemohon}</div>
+                            <div class="text-xs text-slate-500 mt-0.5">ID: ${r.no_id}</div>
+                            <div class="text-xs text-slate-500 mt-0.5">Tujuan: ${r.tujuan}</div>
+                            <div class="text-xs text-slate-500 mt-0.5">Penyelia: ${r.nama_penyelia || '-'}</div>
                             ${ahliHTML}
                         </td>
-                        <td>
+                        <td class="py-3.5 px-4">
                             ${bahanHTML}
                             ${radasHTML}
                             ${peralatanHTML}
-                            ${(!bahanHTML && !radasHTML && !peralatanHTML) ? '<i>Tiada item direkodkan</i>' : ''}
+                            ${(!bahanHTML && !radasHTML && !peralatanHTML) ? '<i class="text-xs text-slate-400">Tiada item direkodkan</i>' : ''}
                         </td>
-                        <td><span class="${statusClass}">${statusTxt}</span></td>
-                        <td>
+                        <td class="py-3.5 px-4">${statusBadge}</td>
+                        <td class="py-3.5 px-4">
                             ${r.catatan_admin 
-                                ? `<div class="catatan-box"><strong>Catatan Pegawai:</strong><br>${r.catatan_admin}</div>` 
-                                : '<i style="color:#95a5a6; font-size:12px;">Belum ada catatan dari admin</i>'}
+                                ? `<div class="p-3 bg-emerald-50/80 border border-emerald-200 rounded-xl text-xs text-slate-700"><strong class="text-emerald-800 block mb-1">Catatan Pegawai:</strong>${r.catatan_admin}</div>` 
+                                : '<span class="text-xs text-slate-400 italic">Belum ada catatan dari admin</span>'}
                         </td>
                     </tr>
                 `;
             });
 
-            html += '</tbody></table>';
+            html += `
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
             divHasil.innerHTML = html;
+            lucide.createIcons();
         }
     </script>
 </body>
