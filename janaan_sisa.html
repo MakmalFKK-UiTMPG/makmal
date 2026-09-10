@@ -59,7 +59,7 @@
                 <div>
                     <span class="text-xs font-bold uppercase tracking-wider text-amber-600">Pemberitahuan Digital</span>
                     <h1 class="text-xl sm:text-2xl font-bold text-slate-900 mt-0.5">BORANG PEMBERITAHUAN SISA KIMIA (FKK-SW-F01)</h1>
-                    <p class="text-xs sm:text-sm text-slate-500 mt-1">Sila lengkapi maklumat janaan sisa kimia untuk semakan Pegawai Makmal.</p>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1">Sila lengkapi maklumat janaan sisa kimia untuk pendaftaran ke Stor Sisa Terjadual.</p>
                 </div>
                 <button type="button" onclick="window.print()" class="no-print inline-flex items-center space-x-2 bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition shadow-sm cursor-pointer">
                     <i data-lucide="printer" class="w-4 h-4"></i>
@@ -153,23 +153,28 @@
                     </div>
 
                     <div class="mb-6">
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Komposisi Bahan Kimia Dalam Campuran Sisa</label>
-                        <div class="overflow-x-auto custom-scrollbar">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Komposisi Bahan Kimia Dalam Campuran Sisa *</label>
+                        <div class="overflow-x-auto custom-scrollbar bg-slate-50 p-4 border border-slate-200 rounded-xl">
                             <table class="w-full text-left border-collapse min-w-[550px]">
                                 <thead>
-                                    <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                                    <tr class="border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-600">
                                         <th class="py-2.5 px-3">Nama Penuh Komponen Kimia</th>
                                         <th class="py-2.5 px-3 w-48">Peratus (%) / Isipadu / Berat</th>
                                         <th class="py-2.5 px-3 w-20 text-center no-print">Tindakan</th>
                                     </tr>
                                 </thead>
-                                <tbody id="jadualKomposisi" class="divide-y divide-slate-100 text-sm">
-                                    <tr class="hover:bg-slate-50/80 transition">
-                                        <td class="py-2 px-3"><input type="text" class="komponen-nama w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-amber-500 focus:bg-white" required placeholder="Contoh: Methanol"></td>
-                                        <td class="py-2 px-3"><input type="text" class="komponen-peratus w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-amber-500 focus:bg-white" required placeholder="Contoh: 70% / 500 mL"></td>
+                                <tbody id="jadualKomposisi" class="divide-y divide-slate-200 text-sm">
+                                    <tr>
+                                        <td class="py-2 px-3">
+                                            <input type="text" class="komponen-nama w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-amber-500" required placeholder="Contoh: Methanol / Hydrochloric Acid">
+                                        </td>
+                                        <td class="py-2 px-3">
+                                            <input type="text" class="komponen-peratus w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-amber-500" required placeholder="Contoh: 70% / 500 mL">
+                                        </td>
                                         <td class="py-2 px-3 text-center no-print">
-                                            <button type="button" onclick="tambahBarisKomposisi()" class="p-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 rounded-lg border border-amber-200 text-xs font-semibold transition cursor-pointer">
+                                            <button type="button" onclick="tambahBarisKomposisi()" class="p-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold transition cursor-pointer flex items-center justify-center space-x-1 mx-auto">
                                                 <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                                                <span>Tambah</span>
                                             </button>
                                         </td>
                                     </tr>
@@ -179,7 +184,7 @@
                     </div>
 
                     <div class="mb-6">
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Anggaran Berat / Isipadu Kasar Termasuk Bekas *</label>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Anggaran Berat / Isipadu *</label>
                         <div class="flex space-x-2">
                             <input type="number" step="0.01" id="nilaimuka_kasar" required placeholder="Contoh: 2.5" class="flex-1 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition">
                             <select id="unit_kasar" required class="w-28 px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer">
@@ -211,3 +216,255 @@
 
             </form>
         </div>
+
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm no-print">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 mb-4 border-b border-slate-100">
+                <div>
+                    <h2 class="text-base font-bold text-slate-900">📊 Rekod Pemberitahuan Sisa Kimia Dihantar</h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Senarai sisa kimia yang telah didaftarkan ke dalam sistem:</p>
+                </div>
+                <button onclick="muatTurunRekodSisa()" class="inline-flex items-center space-x-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3.5 py-2 rounded-xl text-xs font-bold border border-emerald-200 transition cursor-pointer">
+                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                    <span>Muat Semula Rekod</span>
+                </button>
+            </div>
+
+            <div class="overflow-x-auto custom-scrollbar">
+                <table class="w-full text-left border-collapse min-w-[850px]">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            <th class="py-3 px-4 w-16">ID</th>
+                            <th class="py-3 px-4 w-32">Tarikh Dijana</th>
+                            <th class="py-3 px-4">Pemohon / Makmal</th>
+                            <th class="py-3 px-4 w-32">Fizikal Sisa</th>
+                            <th class="py-3 px-4">Komposisi Bahan Kimia</th>
+                            <th class="py-3 px-4 w-32">Berat / Isipadu</th>
+                            <th class="py-3 px-4 w-32">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="senaraiRekodSisa" class="divide-y divide-slate-100 text-sm">
+                        <tr>
+                            <td colspan="7" class="py-6 text-center text-slate-400 text-xs">Sedang memuatkan rekod...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <footer class="mt-12 text-center text-xs text-slate-400 no-print">
+            &copy; Hak Cipta Terpelihara Fakulti Kejuruteraan Kimia UiTM Pasir Gudang.
+        </footer>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDDC9PLSCOzna4caIsrfPSvfR3A_FczKDc",
+            authDomain: "sistem-makmal-fkkuitmpg.firebaseapp.com",
+            projectId: "sistem-makmal-fkkuitmpg",
+            storageBucket: "sistem-makmal-fkkuitmpg.firebasestorage.app",
+            messagingSenderId: "291806336887",
+            appId: "1:291806336887:web:a0d4fca1866459ead03372"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        onAuthStateChanged(auth, (user) => { 
+            if (!user) {
+                window.location.href = "index.html";
+            } else {
+                muatTurunRekodSisa();
+            }
+        });
+        
+        document.getElementById('logout-btn').addEventListener('click', () => { 
+            signOut(auth).then(() => window.location.href = "index.html"); 
+        });
+
+        window.onload = function() {
+            lucide.createIcons();
+        };
+    </script>
+
+    <script>
+        const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        function tukarKategori() {
+            const kat = document.querySelector('input[name="kategori"]:checked').value;
+            const postgradSec = document.getElementById('seksyenPostgrad');
+            if (kat === 'Postgrad') {
+                postgradSec.classList.remove('hidden');
+            } else {
+                postgradSec.classList.add('hidden');
+            }
+        }
+
+        function tambahBarisKomposisi() {
+            const tbody = document.getElementById('jadualKomposisi');
+            const tr = document.createElement('tr');
+            tr.className = "hover:bg-slate-50 transition";
+            tr.innerHTML = `
+                <td class="py-2 px-3">
+                    <input type="text" class="komponen-nama w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-amber-500" required placeholder="Nama Kimia">
+                </td>
+                <td class="py-2 px-3">
+                    <input type="text" class="komponen-peratus w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-amber-500" required placeholder="Peratus/Isipadu/Berat">
+                </td>
+                <td class="py-2 px-3 text-center no-print">
+                    <button type="button" onclick="this.parentElement.parentElement.remove()" class="p-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg border border-rose-200 text-xs font-semibold transition cursor-pointer mx-auto flex items-center justify-center">
+                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+            lucide.createIcons();
+        }
+
+        // ✉️ FUNGSI UNTUK MENGHANTAR EMEL AUTOMATIK VIA EMAILJS
+        async function hantarNotifikasiEmel(dataSisa) {
+            let teksKomposisi = dataSisa.komposisi_sisa.map(k => `${k.nama}: ${k.peratus}`).join(', ');
+
+            const templateParams = {
+                to_email: 'nurha1559@uitm.edu.my',
+                nama_pemohon: dataSisa.nama_pemohon,
+                no_id: dataSisa.no_id,
+                no_tel: dataSisa.no_tel,
+                nama_makmal: dataSisa.nama_makmal,
+                nama_penyelia: dataSisa.nama_penyelia,
+                kategori_pengguna: dataSisa.kategori_pengguna,
+                fizikal_sisa: dataSisa.fizikal_sisa,
+                tarikh_dijana: dataSisa.tarikh_penstoran,
+                berat_kasar: dataSisa.berat_kasar,
+                komposisi_sisa: teksKomposisi
+            };
+
+            try {
+                await emailjs.send('service_ntay5sf', 'template_st7rmts', templateParams);
+                console.log("✅ E-mel notifikasi berjaya dihantar ke nurha1559@uitm.edu.my!");
+            } catch (err) {
+                console.error("❌ Gagal hantar e-mel notifikasi:", err);
+            }
+        }
+
+        async function muatTurunRekodSisa() {
+            const tbody = document.getElementById('senaraiRekodSisa');
+            tbody.innerHTML = `<tr><td colspan="7" class="py-4 text-center text-slate-400 text-xs">Sedang memuatkan rekod terkini...</td></tr>`;
+
+            const { data, error } = await supabaseClient
+                .from('janaan_sisa')
+                .select('*')
+                .order('id', { ascending: false });
+
+            if (error) {
+                tbody.innerHTML = `<tr><td colspan="7" class="py-4 text-center text-rose-500 font-semibold text-xs">Gagal memuatkan rekod: ${error.message}</td></tr>`;
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-slate-400 text-xs">Tiada rekod janaan sisa dijumpai.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = '';
+            data.forEach(item => {
+                let htmlKomposisi = '<ul class="list-disc list-inside text-xs text-slate-600 space-y-0.5">';
+                if (Array.isArray(item.komposisi_sisa)) {
+                    item.komposisi_sisa.forEach(k => {
+                        htmlKomposisi += `<li><strong class="text-slate-700">${k.nama}:</strong> ${k.peratus}</li>`;
+                    });
+                }
+                htmlKomposisi += '</ul>';
+
+                // 🛠️ STATUS LALAI: 'Belum Disemak' / STATUS DISEMAK: 'Disemak'
+                const statusPapar = item.status || 'Belum Disemak';
+                let badgeBadge = '<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">Belum Disemak</span>';
+                if (statusPapar === 'Disemak') {
+                    badgeBadge = '<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Disemak</span>';
+                }
+
+                const beratPaparan = item.berat_kasar ? `${item.berat_kasar}` : '-';
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/80 transition align-top";
+                tr.innerHTML = `
+                    <td class="py-3.5 px-4 font-mono font-bold text-slate-800 text-xs">#${item.id}</td>
+                    <td class="py-3.5 px-4 font-mono text-xs text-slate-600">${item.tarikh_penstoran || '-'}</td>
+                    <td class="py-3.5 px-4">
+                        <div class="font-bold text-slate-900">${item.nama_pemohon}</div>
+                        <div class="text-xs text-slate-500 mt-0.5">${item.nama_makmal}</div>
+                    </td>
+                    <td class="py-3.5 px-4 text-xs font-medium text-slate-700">${item.fizikal_sisa}</td>
+                    <td class="py-3.5 px-4">${htmlKomposisi}</td>
+                    <td class="py-3.5 px-4 font-semibold text-slate-800 text-xs">${beratPaparan}</td>
+                    <td class="py-3.5 px-4">${badgeBadge}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+            lucide.createIcons();
+        }
+
+        document.getElementById('formJanaanSisa').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const btnHantar = document.getElementById('btnHantar');
+            btnHantar.disabled = true;
+            btnHantar.innerText = "⏳ Sedang Menghantar & Hantar Emel...";
+
+            const namas = document.querySelectorAll('.komponen-nama');
+            const peratuss = document.querySelectorAll('.komponen-peratus');
+            
+            let senaraiKomposisi = [];
+            namas.forEach((input, i) => { 
+                senaraiKomposisi.push({ 
+                    nama: input.value, 
+                    peratus: peratuss[i].value
+                }); 
+            });
+
+            const nilaiAnggaran = document.getElementById('nilaimuka_kasar').value;
+            const unitAnggaran = document.getElementById('unit_kasar').value;
+            const beratKasarGabung = `${nilaiAnggaran} ${unitAnggaran}`;
+
+            const formData = {
+                nama_pemohon: document.getElementById('nama_pemohon').value,
+                no_id: document.getElementById('no_id').value,
+                no_tel: document.getElementById('no_tel').value,
+                nama_makmal: document.getElementById('nama_makmal').value,
+                nama_penyelia: document.getElementById('nama_penyelia').value,
+                kategori_pengguna: document.querySelector('input[name="kategori"]:checked').value,
+                fizikal_sisa: document.querySelector('input[name="fizikal_sisa"]:checked').value,
+                tarikh_penstoran: document.getElementById('tarikh_penstoran').value,
+                komposisi_sisa: senaraiKomposisi,
+                berat_kasar: beratKasarGabung,
+                sw_code: document.getElementById('sw_code').value || null,
+                perakuan_pengguna: document.getElementById('perakuan_pengguna').checked,
+                status: 'Belum Disemak'
+            };
+
+            // 1. Simpan Rekod Dalam Supabase
+            const { data, error } = await supabaseClient.from('janaan_sisa').insert([formData]);
+            
+            if (error) {
+                alert("❌ Ralat Supabase: " + error.message);
+                btnHantar.disabled = false;
+                btnHantar.innerText = "🚀 Hantar Borang Sisa";
+            } else {
+                // 2. Hantar Notifikasi Emel Via EmailJS
+                await hantarNotifikasiEmel(formData);
+
+                alert("✅ Borang Pemberitahuan Sisa Kimia berjaya dihantar!");
+                document.getElementById('formJanaanSisa').reset();
+                btnHantar.disabled = false;
+                btnHantar.innerText = "Hantar Borang Sisa";
+                
+                muatTurunRekodSisa();
+            }
+        });
+    </script>
+</body>
+</html>
