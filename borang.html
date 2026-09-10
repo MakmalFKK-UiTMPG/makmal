@@ -4,56 +4,83 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Muat Turun Borang & SOP Makmal FKK</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@lucide/web"></script>
+
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; max-width: 1100px; margin: auto; background-color: #f9f9f9; }
-
-        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        h2 { color: #2c3e50; margin: 0; }
-        
-        .back-btn { display: inline-block; color: #2980b9; text-decoration: none; font-weight: bold; font-size: 15px; }
-        .back-btn:hover { text-decoration: underline; }
-        
-        .btn-logout { background: #e74c3c; color: white; border: none; padding: 8px 14px; border-radius: 5px; cursor: pointer; font-size: 13px; font-weight: bold; }
-        .btn-logout:hover { background: #c0392b; }
-
-        .drive-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-top: 10px; }
-        .drive-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
-        
-        .btn-drive { background-color: #4285f4; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; }
-        .btn-drive:hover { background-color: #3367d6; }
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
     </style>
 </head>
-<body>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen">
 
-    <!-- HEADER + NAVIGASI -->
-    <div class="header-top">
-        <a href="makmal.html" class="back-btn">⬅️ Kembali ke Senarai Makmal</a>
-        <button id="logout-btn" class="btn-logout">🚪 Log Keluar</button>
-    </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-    <h2>📁 Muat Turun Borang & Dokumen Makmal</h2>
-
-    <!-- CONTAINER GOOGLE DRIVE -->
-    <div class="drive-card">
-        <div class="drive-header">
-            <h3 style="margin: 0; color: #2c3e50;">Muat Turun Borang Rasmi & SOP</h3>
-            
-            <!-- BUTANG BUKA GOOGLE DRIVE SEBENAR -->
-            <a href="https://drive.google.com/drive/folders/1YHAUMxJpxHr4RZXV-PiJrfF0mP4PJelZ" target="_blank" class="btn-drive">
-                📂 Buka Folder Google Drive
+        <div class="flex items-center justify-between gap-4 mb-6">
+            <a href="makmal.html" class="inline-flex items-center space-x-2 text-sm font-semibold text-slate-600 hover:text-indigo-600 transition group">
+                <i data-lucide="arrow-left" class="w-4 h-4 transition-transform group-hover:-translate-x-1"></i>
+                <span>Kembali ke Senarai Makmal</span>
             </a>
+            <button id="logout-btn" class="inline-flex items-center justify-center space-x-2 bg-white hover:bg-rose-50 text-slate-700 hover:text-rose-600 px-4 py-2 rounded-xl font-semibold text-sm transition border border-slate-200 hover:border-rose-200 cursor-pointer shadow-sm">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+                <span>Log Keluar</span>
+            </button>
         </div>
-        
-        <!-- PAPARAN IFRAME GRID (TIDAK MENAMPILKAN LAST MODIFIED) -->
-        <iframe 
-            src="https://drive.google.com/embeddedfolderview?id=1YHAUMxJpxHr4RZXV-PiJrfF0mP4PJelZ#grid" 
-            width="100%" 
-            height="600px" 
-            style="border: 1px solid #ccc; border-radius: 6px; display: block;">
-        </iframe>
+
+        <header class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-purple-600">Pusat Repositori Dokumentasi</span>
+                <h1 class="text-xl sm:text-2xl font-bold text-slate-900 mt-0.5">Muat Turun Borang & Dokumen Makmal</h1>
+                <p class="text-xs sm:text-sm text-slate-500 mt-1">Akses borang-borang rasmi, Prosedur Pengendalian Standard (SOP), dan garis panduan keselamatan makmal FKK.</p>
+            </div>
+            <div class="p-3 bg-purple-50 text-purple-600 rounded-2xl hidden sm:block">
+                <i data-lucide="folder-down" class="w-8 h-8"></i>
+            </div>
+        </header>
+
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-slate-100">
+                <div class="flex items-center space-x-3">
+                    <div class="p-2.5 bg-blue-50 text-blue-600 rounded-xl">
+                        <i data-lucide="hard-drive" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-base font-bold text-slate-900">Muat Turun Borang Rasmi & SOP</h2>
+                        <p class="text-xs text-slate-500">Folder tersemat terus dari Google Drive rasmi makmal.</p>
+                    </div>
+                </div>
+
+                <a href="https://drive.google.com/drive/folders/1YHAUMxJpxHr4RZXV-PiJrfF0mP4PJelZ" target="_blank" class="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition shadow-sm">
+                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                    <span>Buka Folder Google Drive</span>
+                </a>
+            </div>
+
+            <div class="w-full rounded-xl overflow-hidden border border-slate-200 bg-slate-50 shadow-inner">
+                <iframe 
+                    src="https://drive.google.com/embeddedfolderview?id=1YHAUMxJpxHr4RZXV-PiJrfF0mP4PJelZ#grid" 
+                    width="100%" 
+                    height="650px" 
+                    class="w-full border-0">
+                </iframe>
+            </div>
+        </div>
+
+        <footer class="mt-12 text-center text-xs text-slate-400">
+            &copy; Hak Cipta Terpelihara Fakulti Kejuruteraan Kimia UiTM Pasir Gudang.
+        </footer>
+
     </div>
 
-    <!-- SKRIP FIREBASE (KESELAMATAN & LOG KELUAR) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -91,6 +118,10 @@
                 alert("Ralat semasa log keluar: " + error.message);
             });
         });
+
+        window.onload = function() {
+            lucide.createIcons();
+        };
     </script>
 </body>
 </html>
