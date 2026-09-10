@@ -32,22 +32,22 @@
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         <div class="flex items-center justify-between gap-4 mb-8 no-print">
-            <a href="makmal.html" class="inline-flex items-center space-x-2 text-sm font-semibold text-slate-600 hover:text-amber-600 transition group">
+            <a href="makmal.html" class="inline-flex items-center space-x-2 text-sm font-semibold text-slate-600 hover:text-indigo-600 transition group">
                 <i data-lucide="arrow-left" class="w-4 h-4 transition-transform group-hover:-translate-x-1"></i>
                 <span>Kembali ke Menu Utama</span>
             </a>
-            <button onclick="window.print()" class="inline-flex items-center space-x-2 bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-xl font-semibold text-xs sm:text-sm transition shadow-sm cursor-pointer">
-                <i data-lucide="printer" class="w-4 h-4"></i>
-                <span>Cetak Carta Organisasi</span>
+            <button id="logout-btn" class="inline-flex items-center space-x-2 bg-white hover:bg-rose-50 text-slate-700 hover:text-rose-600 px-4 py-2 rounded-xl font-semibold text-xs sm:text-sm transition border border-slate-200 hover:border-rose-200 cursor-pointer shadow-sm">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+                <span>Log Keluar</span>
             </button>
         </div>
 
         <div class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm mb-8 text-center">
-            <div class="inline-flex items-center justify-center p-3 bg-amber-50 text-amber-600 rounded-2xl mb-3">
+            <div class="inline-flex items-center justify-center p-3 bg-indigo-50 text-indigo-600 rounded-2xl mb-3">
                 <i data-lucide="network" class="w-8 h-8"></i>
             </div>
             <h1 class="text-xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">CARTA ORGANISASI MAKMAL</h1>
-            <p class="text-sm sm:text-base font-semibold text-amber-600 uppercase tracking-wider mt-1">FAKULTI KEJURUTERAAN KIMIA</p>
+            <p class="text-sm sm:text-base font-semibold text-indigo-600 uppercase tracking-wider mt-1">FAKULTI KEJURUTERAAN KIMIA</p>
             <p class="text-xs sm:text-sm text-slate-500 mt-1">Universiti Teknologi MARA Cawangan Johor Kampus Pasir Gudang</p>
         </div>
 
@@ -57,9 +57,9 @@
                 <div class="flex flex-col items-center">
                     <div class="w-80 bg-gradient-to-r from-purple-800 to-indigo-900 text-white p-3.5 rounded-2xl shadow-md flex items-center space-x-4 border border-purple-700">
                         <img src="azmi.png" alt="Azmi Bin Roslan" class="w-14 h-16 rounded-xl object-cover border-2 border-white/30 flex-shrink-0 bg-slate-200" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Azmi+Roslan&background=6366f1&color=fff';">
-                        <div>
+                        <div class="min-w-0 flex-1">
                             <span class="text-[10px] uppercase font-extrabold tracking-wider bg-white/20 text-white px-2 py-0.5 rounded-full">DS13</span>
-                            <h3 class="text-xs font-bold mt-1 uppercase">AZMI BIN ROSLAN</h3>
+                            <h3 class="text-xs font-bold mt-1 uppercase truncate">AZMI BIN ROSLAN</h3>
                             <p class="text-[11px] text-purple-200 font-medium">Koordinator Prasiswazah</p>
                         </div>
                     </div>
@@ -71,9 +71,9 @@
                     <div class="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 flex items-center">
                         <div class="w-72 bg-slate-50 border border-slate-300 p-3 rounded-2xl shadow-sm flex items-center space-x-3">
                             <img src="ahmad_ramli.png" alt="Dr. Ahmad Ramli" class="w-12 h-14 rounded-xl object-cover border border-slate-300 flex-shrink-0 bg-slate-200" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Ahmad+Ramli&background=cbd5e1&color=334155';">
-                            <div>
+                            <div class="min-w-0 flex-1">
                                 <span class="text-[9px] uppercase font-bold tracking-wider bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded">DS13</span>
-                                <h4 class="text-xs font-bold text-slate-800 mt-0.5 uppercase">DR. AHMAD RAMLI BIN RASHIDI</h4>
+                                <h4 class="text-xs font-bold text-slate-800 mt-0.5 uppercase leading-tight">DR. AHMAD RAMLI BIN RASHIDI</h4>
                                 <p class="text-[10px] text-slate-500 font-medium leading-tight mt-0.5">Ketua Unit Pembangunan Fasiliti & Penjanaan Pendapatan</p>
                             </div>
                         </div>
@@ -85,7 +85,7 @@
 
                 <div class="flex flex-col items-center">
                     <div class="px-6 py-2 bg-slate-900 text-white rounded-xl shadow-sm border border-slate-800 flex items-center space-x-2 text-xs font-extrabold uppercase tracking-widest">
-                        <i data-lucide="building-2" class="w-4 h-4 text-amber-400"></i>
+                        <i data-lucide="building-2" class="w-4 h-4 text-indigo-400"></i>
                         <span>UNIT MAKMAL FKK</span>
                     </div>
                 </div>
@@ -93,12 +93,12 @@
                 <div class="h-6 tree-line-vertical"></div>
 
                 <div class="flex flex-col items-center">
-                    <div class="w-80 bg-amber-600 text-white p-3.5 rounded-2xl shadow-md flex items-center space-x-4 border border-amber-500">
-                        <img src="haslina.jpg" alt="Nurhaslina Binti Hambari" class="w-14 h-16 rounded-xl object-cover border-2 border-white/30 flex-shrink-0 bg-slate-200" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Nurhaslina+Hambari&background=d97706&color=fff';">
-                        <div>
+                    <div class="w-80 bg-slate-800 text-white p-3.5 rounded-2xl shadow-md flex items-center space-x-4 border border-slate-700">
+                        <img src="haslina.jpg" alt="Nurhaslina Binti Hambari" class="w-14 h-16 rounded-xl object-cover border-2 border-white/30 flex-shrink-0 bg-slate-200" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Nurhaslina+Hambari&background=475569&color=fff';">
+                        <div class="min-w-0 flex-1">
                             <span class="text-[10px] uppercase font-extrabold tracking-wider bg-white/20 text-white px-2 py-0.5 rounded-full">C9</span>
-                            <h3 class="text-xs font-bold mt-1 uppercase">NURHASLINA BINTI HAMBARI</h3>
-                            <p class="text-[11px] text-amber-100 font-medium">Pegawai Sains</p>
+                            <h3 class="text-xs font-bold mt-1 uppercase leading-tight">NURHASLINA BINTI HAMBARI</h3>
+                            <p class="text-[11px] text-slate-300 font-medium">Pegawai Sains</p>
                         </div>
                     </div>
                 </div>
@@ -111,11 +111,11 @@
 
                     <div class="flex flex-col items-center relative">
                         <div class="absolute -top-6 h-6 tree-line-vertical"></div>
-                        <div class="w-full bg-slate-50 border border-slate-200 p-3 rounded-2xl shadow-sm flex items-center space-x-3 hover:border-amber-400 transition">
-                            <img src="maria.png" alt="Maria Binti Abdul Ghani" class="w-12 h-14 rounded-xl object-cover border border-slate-200 flex-shrink-0 bg-slate-200" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Maria+Ghani&background=fef3c7&color=92400e';">
-                            <div>
-                                <span class="text-[9px] uppercase font-bold tracking-wider bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded">JA5</span>
-                                <h4 class="text-xs font-bold text-slate-800 mt-0.5 uppercase">MARIA BINTI ABDUL GHANI</h4>
+                        <div class="w-full bg-slate-50 border border-slate-200 p-3 rounded-2xl shadow-sm flex items-center space-x-3 hover:border-indigo-400 transition min-h-[76px]">
+                            <img src="maria.png" alt="Maria Binti Abdul Ghani" class="w-12 h-14 rounded-xl object-cover border border-slate-200 flex-shrink-0 bg-slate-200" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Maria+Ghani&background=e0e7ff&color=3730a3';">
+                            <div class="min-w-0 flex-1">
+                                <span class="text-[9px] uppercase font-bold tracking-wider bg-indigo-100 text-indigo-800 px-1.5 py-0.5 rounded">JA5</span>
+                                <h4 class="text-[11px] font-bold text-slate-800 mt-0.5 uppercase leading-tight">MARIA BINTI ABDUL GHANI</h4>
                                 <p class="text-[10px] text-slate-500 font-medium">Penolong Jurutera</p>
                             </div>
                         </div>
@@ -123,11 +123,13 @@
 
                     <div class="flex flex-col items-center relative">
                         <div class="absolute -top-6 h-6 tree-line-vertical"></div>
-                        <div class="w-full bg-slate-50 border border-slate-200 p-3 rounded-2xl shadow-sm flex items-center space-x-3 hover:border-amber-400 transition">
-                            <img src="aliah.png" alt="Aliah Binti Ahmad Shahrudin" class="w-12 h-14 rounded-xl object-cover border border-slate-200 flex-shrink-0 bg-slate-200" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Aliah+Shahrudin&background=fef3c7&color=92400e';">
-                            <div>
-                                <span class="text-[9px] uppercase font-bold tracking-wider bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded">JA5</span>
-                                <h4 class="text-xs font-bold text-slate-800 mt-0.5 uppercase">ALIAH BINTI AHMAD SHAHRUDIN</h4>
+                        <div class="w-full bg-slate-50 border border-slate-200 p-3 rounded-2xl shadow-sm flex items-center space-x-3 hover:border-indigo-400 transition min-h-[76px]">
+                            <img src="aliah.png" alt="Aliah Binti Ahmad Shahrudin" class="w-12 h-14 rounded-xl object-cover border border-slate-200 flex-shrink-0 bg-slate-200" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Aliah+Shahrudin&background=e0e7ff&color=3730a3';">
+                            <div class="min-w-0 flex-1">
+                                <span class="text-[9px] uppercase font-bold tracking-wider bg-indigo-100 text-indigo-800 px-1.5 py-0.5 rounded">JA5</span>
+                                <h4 class="text-[11px] font-bold text-slate-800 mt-0.5 uppercase leading-tight">
+                                    ALIAH BINTI<br>AHMAD SHAHRUDIN
+                                </h4>
                                 <p class="text-[10px] text-slate-500 font-medium">Penolong Jurutera</p>
                             </div>
                         </div>
@@ -136,24 +138,24 @@
                     <div class="flex flex-col items-center relative">
                         <div class="absolute -top-6 h-6 tree-line-vertical"></div>
                         
-                        <div class="w-full bg-slate-50 border border-dashed border-slate-300 p-3 rounded-2xl shadow-sm flex items-center space-x-3">
+                        <div class="w-full bg-slate-50 border border-dashed border-slate-300 p-3 rounded-2xl shadow-sm flex items-center space-x-3 min-h-[76px]">
                             <div class="w-12 h-14 bg-slate-200 text-slate-400 rounded-xl flex-shrink-0 flex items-center justify-center">
                                 <i data-lucide="user-minus" class="w-6 h-6"></i>
                             </div>
-                            <div>
+                            <div class="min-w-0 flex-1">
                                 <span class="text-[9px] uppercase font-bold tracking-wider bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded">C5</span>
-                                <h4 class="text-xs font-bold text-slate-400 mt-0.5 uppercase">(KOSONG)</h4>
+                                <h4 class="text-[11px] font-bold text-slate-400 mt-0.5 uppercase">(KOSONG)</h4>
                                 <p class="text-[10px] text-slate-400 font-medium">Penolong Pegawai Sains</p>
                             </div>
                         </div>
 
                         <div class="h-6 tree-line-vertical"></div>
 
-                        <div class="w-full bg-slate-50 border border-slate-200 p-3 rounded-2xl shadow-sm flex items-center space-x-3 hover:border-amber-400 transition">
+                        <div class="w-full bg-slate-50 border border-slate-200 p-3 rounded-2xl shadow-sm flex items-center space-x-3 hover:border-indigo-400 transition min-h-[76px]">
                             <img src="redzuan.png" alt="Mohd Redzuan Mohd Yusof" class="w-12 h-14 rounded-xl object-cover border border-slate-200 flex-shrink-0 bg-slate-200" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Redzuan+Yusof&background=dbeafe&color=1e40af';">
-                            <div>
+                            <div class="min-w-0 flex-1">
                                 <span class="text-[9px] uppercase font-bold tracking-wider bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded">C2</span>
-                                <h4 class="text-xs font-bold text-slate-800 mt-0.5 uppercase">MOHD REDZUAN MOHD YUSOF</h4>
+                                <h4 class="text-[11px] font-bold text-slate-800 mt-0.5 uppercase leading-tight">MOHD REDZUAN MOHD YUSOF</h4>
                                 <p class="text-[10px] text-slate-500 font-medium">Pembantu Makmal Kanan</p>
                             </div>
                         </div>
@@ -171,8 +173,45 @@
 
     </div>
 
-    <script>
-        lucide.createIcons();
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDDC9PLSCOzna4caIsrfPSvfR3A_FczKDc",
+            authDomain: "sistem-makmal-fkkuitmpg.firebaseapp.com",
+            projectId: "sistem-makmal-fkkuitmpg",
+            storageBucket: "sistem-makmal-fkkuitmpg.firebasestorage.app",
+            messagingSenderId: "291806336887",
+            appId: "1:291806336887:web:a0d4fca1866459ead03372"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // KAWALAN KESELAMATAN KETAT
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const email = user.email || '';
+                if (!email.endsWith('@uitm.edu.my') && !email.endsWith('@student.uitm.edu.my')) {
+                    signOut(auth);
+                    window.location.href = "index.html";
+                } else {
+                    lucide.createIcons();
+                }
+            } else {
+                window.location.href = "index.html";
+            }
+        });
+
+        // FUNGSI LOG KELUAR
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            signOut(auth).then(() => {
+                window.location.href = "index.html";
+            }).catch((error) => {
+                alert("Ralat semasa log keluar: " + error.message);
+            });
+        });
     </script>
 </body>
 </html>
