@@ -356,21 +356,27 @@
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
         const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        // FUNGSI SIMPAN KEHADIRAN / LAST SEEN KE SUPABASE
+        // FUNGSI SIMPAN KEHADIRAN / LAST SEEN KE SUPABASE (Standard ISO UTC)
         async function kemaskiniLastSeen(user) {
             try {
                 const userEmail = user.email || '';
                 const userName = user.displayName || userEmail.split('@')[0];
 
-                await supabaseClient
+                const { data, error } = await supabaseClient
                     .from('kehadiran_pengguna')
                     .upsert({ 
                         email: userEmail, 
                         nama: userName,
                         last_online: new Date().toISOString() 
                     }, { onConflict: 'email' });
+
+                if (error) {
+                    console.error("❌ Ralat Supabase:", error.message);
+                } else {
+                    console.log("✅ Berjaya simpan Last Seen ke Supabase!");
+                }
             } catch (err) {
-                console.error("Gagal kemaskini last seen:", err);
+                console.error("❌ Ralat Kod:", err);
             }
         }
 
