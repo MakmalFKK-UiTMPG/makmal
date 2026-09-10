@@ -76,9 +76,16 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">No. Telefon (WhatsApp) *</label>
+                        <input type="tel" id="noTelefon" required placeholder="Contoh: 012-3456789" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition">
+                    </div>
+                    <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Semester / Sesi / Tahun</label>
                         <input type="text" id="semesterSesi" placeholder="Contoh: Sem 5 / 2026" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition">
                     </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Tujuan Penggunaan *</label>
                         <select id="tujuan" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition cursor-pointer">
@@ -87,17 +94,15 @@
                             <option value="Lain-lain">Lain-lain</option>
                         </select>
                     </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Tajuk Projek / Amali</label>
                         <input type="text" id="tajukProjek" placeholder="Tajuk Projek" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition">
                     </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Nama Penyelia Projek</label>
-                        <input type="text" id="namaPenyelia" placeholder="Nama Pensyarah Penyelia" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition">
-                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Nama Penyelia Projek</label>
+                    <input type="text" id="namaPenyelia" placeholder="Nama Pensyarah Penyelia" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition">
                 </div>
 
                 <div class="mt-6 pt-6 border-t border-slate-100">
@@ -346,6 +351,7 @@
             const payload = {
                 nama_pemohon: document.getElementById('namaPemohon').value,
                 no_id: document.getElementById('noId').value,
+                no_telefon: document.getElementById('noTelefon').value,
                 semester_sesi: document.getElementById('semesterSesi').value,
                 tujuan: document.getElementById('tujuan').value,
                 tajuk_projek: document.getElementById('tajukProjek').value,
