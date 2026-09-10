@@ -31,17 +31,20 @@
 
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
+        <!-- HEADER NAVIGASI -->
         <div class="flex items-center justify-between gap-4 mb-8 no-print">
             <a href="makmal.html" class="inline-flex items-center space-x-2 text-sm font-semibold text-slate-600 hover:text-indigo-600 transition group">
                 <i data-lucide="arrow-left" class="w-4 h-4 transition-transform group-hover:-translate-x-1"></i>
                 <span>Kembali ke Menu Utama</span>
             </a>
+            <!-- 🚪 BUTANG LOG KELUAR -->
             <button id="logout-btn" class="inline-flex items-center space-x-2 bg-white hover:bg-rose-50 text-slate-700 hover:text-rose-600 px-4 py-2 rounded-xl font-semibold text-xs sm:text-sm transition border border-slate-200 hover:border-rose-200 cursor-pointer shadow-sm">
                 <i data-lucide="log-out" class="w-4 h-4"></i>
                 <span>Log Keluar</span>
             </button>
         </div>
 
+        <!-- TAJUK UTAMA -->
         <div class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm mb-8 text-center">
             <div class="inline-flex items-center justify-center p-3 bg-indigo-50 text-indigo-600 rounded-2xl mb-3">
                 <i data-lucide="network" class="w-8 h-8"></i>
@@ -51,9 +54,11 @@
             <p class="text-xs sm:text-sm text-slate-500 mt-1">Universiti Teknologi MARA Cawangan Johor Kampus Pasir Gudang</p>
         </div>
 
+        <!-- CARTA ORGANISASI -->
         <div class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-10 shadow-sm overflow-x-auto">
             <div class="min-w-[850px] flex flex-col items-center py-4">
 
+                <!-- ARAS 1: KOORDINATOR PRASISWAZAH -->
                 <div class="flex flex-col items-center">
                     <div class="w-80 bg-gradient-to-r from-purple-800 to-indigo-900 text-white p-3.5 rounded-2xl shadow-md flex items-center space-x-4 border border-purple-700">
                         <img src="azmi.png" alt="Azmi Bin Roslan" class="w-14 h-16 rounded-xl object-cover border-2 border-white/30 flex-shrink-0 bg-slate-200" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Azmi+Roslan&background=6366f1&color=fff';">
@@ -67,6 +72,7 @@
 
                 <div class="h-8 tree-line-vertical"></div>
 
+                <!-- KETUA UNIT PEMBANGUNAN FASILITI -->
                 <div class="relative w-full max-w-3xl flex justify-center items-center my-2">
                     <div class="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 flex items-center">
                         <div class="w-72 bg-slate-50 border border-slate-300 p-3 rounded-2xl shadow-sm flex items-center space-x-3">
@@ -83,6 +89,7 @@
                     <div class="h-28 tree-line-vertical"></div>
                 </div>
 
+                <!-- KOTAK UNIT MAKMAL FKK -->
                 <div class="flex flex-col items-center">
                     <div class="px-6 py-2 bg-slate-900 text-white rounded-xl shadow-sm border border-slate-800 flex items-center space-x-2 text-xs font-extrabold uppercase tracking-widest">
                         <i data-lucide="building-2" class="w-4 h-4 text-indigo-400"></i>
@@ -92,13 +99,14 @@
 
                 <div class="h-6 tree-line-vertical"></div>
 
+                <!-- ARAS 2: PEGAWAI SAINS (WARNA TEKS DIBAIKI) -->
                 <div class="flex flex-col items-center">
                     <div class="w-80 bg-slate-100 text-slate-900 p-3.5 rounded-2xl shadow-md flex items-center space-x-4 border border-slate-300">
-                        <img src="haslina.jpg" alt="Nurhaslina Binti Hambari" class="w-14 h-16 rounded-xl object-cover border-2 border-white/30 flex-shrink-0 bg-slate-200" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Nurhaslina+Hambari&background=475569&color=fff';">
+                        <img src="haslina.jpg" alt="Nurhaslina Binti Hambari" class="w-14 h-16 rounded-xl object-cover border border-slate-300 flex-shrink-0 bg-slate-200" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Nurhaslina+Hambari&background=cbd5e1&color=1e293b';">
                         <div class="min-w-0 flex-1">
-                            <span class="text-[10px] uppercase font-extrabold tracking-wider bg-white/20 text-white px-2 py-0.5 rounded-full">C9</span>
-                            <h3 class="text-xs font-bold mt-1 uppercase leading-tight">NURHASLINA BINTI HAMBARI</h3>
-                            <p class="text-[11px] text-slate-300 font-medium">Pegawai Sains</p>
+                            <span class="text-[10px] uppercase font-bold tracking-wider bg-slate-800 text-white px-2 py-0.5 rounded-full">C9</span>
+                            <h3 class="text-xs font-extrabold mt-1 uppercase leading-tight text-slate-900">NURHASLINA BINTI HAMBARI</h3>
+                            <p class="text-[11px] text-slate-700 font-bold mt-0.5">Pegawai Sains</p>
                         </div>
                     </div>
                 </div>
@@ -107,8 +115,10 @@
 
                 <div class="w-[680px] tree-line-horizontal"></div>
 
+                <!-- ARAS 3: PENOLONG JURUTERA & PASUKAN MAKMAL -->
                 <div class="grid grid-cols-3 gap-6 w-[780px] pt-6 relative">
 
+                    <!-- PENOLONG JURUTERA 1 (MARIA) -->
                     <div class="flex flex-col items-center relative">
                         <div class="absolute -top-6 h-6 tree-line-vertical"></div>
                         <div class="w-full bg-slate-50 border border-slate-200 p-3 rounded-2xl shadow-sm flex items-center space-x-3 hover:border-indigo-400 transition min-h-[76px]">
@@ -121,6 +131,7 @@
                         </div>
                     </div>
 
+                    <!-- PENOLONG JURUTERA 2 (ALIAH) -->
                     <div class="flex flex-col items-center relative">
                         <div class="absolute -top-6 h-6 tree-line-vertical"></div>
                         <div class="w-full bg-slate-50 border border-slate-200 p-3 rounded-2xl shadow-sm flex items-center space-x-3 hover:border-indigo-400 transition min-h-[76px]">
@@ -135,6 +146,7 @@
                         </div>
                     </div>
 
+                    <!-- PENOLONG PEGAWAI SAINS & PEMBANTU MAKMAL KANAN -->
                     <div class="flex flex-col items-center relative">
                         <div class="absolute -top-6 h-6 tree-line-vertical"></div>
                         
@@ -173,6 +185,7 @@
 
     </div>
 
+    <!-- SKRIP FIREBASE (KESELAMATAN & LOG KELUAR) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
