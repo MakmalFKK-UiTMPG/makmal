@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventori Bahan Kimia Makmal FKK UiTM Pasir Gudang</title>
+    <title>Inventori Bahan Kimia Makmal FKK</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Pustaka Supabase untuk fungsi Last Seen -->
@@ -18,35 +18,29 @@
         <p class="text-sm text-slate-500 mt-1">Sila tunggu sebentar.</p>
     </div>
 
-    <!-- KANDUNGAN UTAMA (TERSEMBUNYI SEHINGGA LOG MASUK DISAHKAN) -->
+    <!-- KANDUNGAN UTAMA -->
     <div id="main-content" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        <!-- HEADER TOP -->
-        <header class="flex flex-col md:flex-row md:items-center md:justify-between bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mb-8 gap-4">
-            <div class="flex items-center space-x-4">
-                <div class="p-3 bg-amber-50 text-amber-600 rounded-xl">
-                    <i data-lucide="boxes" class="w-8 h-8"></i>
-                </div>
-                <div>
-                    <span class="text-xs font-bold uppercase tracking-wider text-amber-600">UiTM Cawangan Johor • Kampus Pasir Gudang</span>
-                    <div class="flex flex-wrap items-center gap-3 mt-0.5">
-                        <h1 class="text-xl md:text-2xl font-bold text-slate-900">Inventori Stok Bahan Kimia</h1>
-                    </div>
-                </div>
-            </div>
+        <!-- HEADER TOP (NAVIGASI ATAS MODEN) -->
+        <div class="flex items-center justify-between mb-6">
+            <a href="makmal.html" class="inline-flex items-center space-x-2 text-slate-600 hover:text-indigo-600 font-semibold text-sm transition">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                <span>Kembali ke Senarai Makmal</span>
+            </a>
+            <button id="logout-btn" class="inline-flex items-center justify-center space-x-2 bg-slate-100 hover:bg-red-50 text-slate-700 hover:text-red-600 px-4 py-2 rounded-xl font-semibold text-xs transition border border-slate-200 hover:border-red-200 cursor-pointer">
+                <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                <span>Log Keluar</span>
+            </button>
+        </div>
 
-            <!-- BUTANG NAVIGASI NAV TOP -->
-            <div class="flex items-center space-x-3 self-start md:self-auto">
-                <a href="makmal.html" class="inline-flex items-center space-x-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-xl font-semibold text-sm transition border border-slate-200">
-                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
-                    <span>Utama</span>
-                </a>
-                <button id="logout-btn" class="inline-flex items-center justify-center space-x-2 bg-slate-100 hover:bg-red-50 text-slate-700 hover:text-red-600 px-4 py-2.5 rounded-xl font-semibold text-sm transition border border-slate-200 hover:border-red-200 cursor-pointer">
-                    <i data-lucide="log-out" class="w-4 h-4"></i>
-                    <span>Log Keluar</span>
-                </button>
+        <!-- TAJUK DENGAN REKA BENTUK KEMAS -->
+        <div class="text-center max-w-2xl mx-auto mb-8">
+            <div class="inline-flex items-center justify-center p-3 bg-amber-50 text-amber-600 rounded-2xl mb-3 shadow-sm border border-amber-100">
+                <i data-lucide="boxes" class="w-8 h-8"></i>
             </div>
-        </header>
+            <h1 class="text-2xl sm:text-3xl font-bold text-slate-900">Inventori Bahan Kimia Makmal FKK</h1>
+            <p class="text-sm text-slate-500 mt-1">Semakan stok terkini bahan kimia mengikut lokasi makmal di Fakulti Kejuruteraan Kimia</p>
+        </div>
 
         <!-- KAD UTAMA PAPARAN GOOGLE SHEETS -->
         <section class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden mb-8">
@@ -66,13 +60,13 @@
                 </a>
             </div>
 
-            <!-- CONTAINER IFRAME EMBED -->
-            <div class="w-full bg-white p-2 sm:p-4">
-                <iframe 
-                    src="https://docs.google.com/spreadsheets/d/1dSGbRd96Dbiwxw4Z-wtHo_Oae-jgEHuF2T_7vGU0_K0/htmlembed?widget=true&amp;headers=false" 
-                    class="w-full h-[680px] rounded-xl border border-slate-200 shadow-inner">
-                </iframe>
-            </div>
+           <!-- CONTAINER IFRAME EMBED (DENGAN FUNGSI ROW FREEZE) -->
+<div class="w-full bg-white p-2 sm:p-4">
+    <iframe 
+        src="https://docs.google.com/spreadsheets/d/e/2PACX-1v.../pubhtml?widget=true&amp;headers=false" 
+        class="w-full h-[680px] rounded-xl border border-slate-200 shadow-inner">
+    </iframe>
+</div>
         </section>
 
         <!-- FOOTER -->
