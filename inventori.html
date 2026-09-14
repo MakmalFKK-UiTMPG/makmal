@@ -38,7 +38,7 @@
                 <i data-lucide="boxes" class="w-8 h-8"></i>
             </div>
             <h1 class="text-2xl sm:text-3xl font-bold text-slate-900">Inventori Bahan Kimia Makmal FKK</h1>
-            <p class="text-sm text-slate-500 mt-1">Direktori dan semakan kuantiti stok bahan kimia di makmal</p>
+            <p class="text-sm text-slate-500 mt-1">Stok dikemaskini secara automatik daripada Google Sheets</p>
         </div>
 
         <!-- KOTAK CARIAN PINTAR -->
@@ -47,7 +47,7 @@
                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                     <i data-lucide="search" class="w-5 h-5"></i>
                 </div>
-                <input type="text" id="carianInput" onkeyup="cariBahanKimia()" placeholder="🔍 Cari nama bahan kimia, No. CAS, atau lokasi makmal..." class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition">
+                <input type="text" id="carianInput" onkeyup="cariBahanKimia()" placeholder="🔍 Cari nama bahan kimia, No. CAS, lokasi makmal, atau jenama..." class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition">
             </div>
         </div>
 
@@ -57,14 +57,14 @@
                 <div>
                     <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                         <i data-lucide="flask-round" class="w-5 h-5 text-amber-600"></i>
-                        Senarai Stok Bahan Kimia
+                        Senarai Stok Bahan Kimia Makmal
                     </h2>
-                    <p class="text-xs text-slate-500 mt-1">Menampilkan bahan kimia sedia ada dalam simpanan makmal FKK.</p>
+                    <p class="text-xs text-slate-500 mt-1">Data ditarik secara langsung daripada Master Google Sheets FKK.</p>
                 </div>
 
                 <a href="https://docs.google.com/spreadsheets/d/1dSGbRd96Dbiwxw4Z-wtHo_Oae-jgEHuF2T_7vGU0_K0/edit?usp=sharing" target="_blank" class="inline-flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-bold text-xs transition shadow-sm w-full sm:w-auto">
                     <i data-lucide="external-link" class="w-4 h-4"></i>
-                    <span>Kemaskini Master Sheets (Admin)</span>
+                    <span>Kemaskini Google Sheets (Staf)</span>
                 </a>
             </div>
 
@@ -74,54 +74,20 @@
                     <thead>
                         <tr class="bg-slate-100 text-slate-700 text-xs font-bold uppercase tracking-wider border-b border-slate-200">
                             <th class="py-3.5 px-4 text-center w-12">Bil</th>
-                            <th class="py-3.5 px-4">Nama Bahan Kimia (Chemical Name)</th>
-                            <th class="py-3.5 px-4">Gred / Ketumpatan</th>
+                            <th class="py-3.5 px-4">Nama Bahan Kimia</th>
+                            <th class="py-3.5 px-4">No. CAS</th>
+                            <th class="py-3.5 px-4">Bentuk (Form)</th>
+                            <th class="py-3.5 px-4">Kuantiti Stok</th>
                             <th class="py-3.5 px-4">Lokasi Makmal</th>
-                            <th class="py-3.5 px-4 text-center">Baki Stok</th>
-                            <th class="py-3.5 px-4 text-center">Status</th>
+                            <th class="py-3.5 px-4">Jenama / Catatan</th>
                         </tr>
                     </thead>
                     <tbody id="jadualBahan" class="divide-y divide-slate-100 text-sm">
-                        <!-- DATA BAHAN KIMIA BOLEH DITAMBAH DI SINI -->
-                        <tr class="item-row hover:bg-slate-50/80 transition">
-                            <td class="py-3 px-4 text-center font-bold text-slate-400">1</td>
-                            <td class="py-3 px-4 font-semibold text-slate-800">Acetone <span class="text-xs text-slate-400 block font-normal">CAS: 67-64-1</span></td>
-                            <td class="py-3 px-4 text-slate-600">AR Grade / 99.5%</td>
-                            <td class="py-3 px-4 text-slate-600">Makmal Chemistry 1 (Aras 2)</td>
-                            <td class="py-3 px-4 text-center font-bold text-slate-700">5.0 L</td>
-                            <td class="py-3 px-4 text-center"><span class="bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-full text-xs">Mencukupi</span></td>
-                        </tr>
-                        <tr class="item-row hover:bg-slate-50/80 transition">
-                            <td class="py-3 px-4 text-center font-bold text-slate-400">2</td>
-                            <td class="py-3 px-4 font-semibold text-slate-800">Ethanol Absolute <span class="text-xs text-slate-400 block font-normal">CAS: 64-17-5</span></td>
-                            <td class="py-3 px-4 text-slate-600">99.8% Technical</td>
-                            <td class="py-3 px-4 text-slate-600">Makmal Analitikal (Aras 2)</td>
-                            <td class="py-3 px-4 text-center font-bold text-slate-700">2.5 L</td>
-                            <td class="py-3 px-4 text-center"><span class="bg-amber-100 text-amber-800 font-bold px-2.5 py-1 rounded-full text-xs">Stok Sedikit</span></td>
-                        </tr>
-                        <tr class="item-row hover:bg-slate-50/80 transition">
-                            <td class="py-3 px-4 text-center font-bold text-slate-400">3</td>
-                            <td class="py-3 px-4 font-semibold text-slate-800">Hydrochloric Acid (HCl) <span class="text-xs text-slate-400 block font-normal">CAS: 7647-01-0</span></td>
-                            <td class="py-3 px-4 text-slate-600">37% Synthesis</td>
-                            <td class="py-3 px-4 text-slate-600">Stor Kimia Utama (Aras 1)</td>
-                            <td class="py-3 px-4 text-center font-bold text-slate-700">10.0 L</td>
-                            <td class="py-3 px-4 text-center"><span class="bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-full text-xs">Mencukupi</span></td>
-                        </tr>
-                        <tr class="item-row hover:bg-slate-50/80 transition">
-                            <td class="py-3 px-4 text-center font-bold text-slate-400">4</td>
-                            <td class="py-3 px-4 font-semibold text-slate-800">Sodium Hydroxide Pellets (NaOH) <span class="text-xs text-slate-400 block font-normal">CAS: 1310-73-2</span></td>
-                            <td class="py-3 px-4 text-slate-600">98% AR Grade</td>
-                            <td class="py-3 px-4 text-slate-600">Makmal Chemistry 2 (Aras 2)</td>
-                            <td class="py-3 px-4 text-center font-bold text-slate-700">1.0 kg</td>
-                            <td class="py-3 px-4 text-center"><span class="bg-rose-100 text-rose-800 font-bold px-2.5 py-1 rounded-full text-xs">Habis / Kritik</span></td>
-                        </tr>
-                        <tr class="item-row hover:bg-slate-50/80 transition">
-                            <td class="py-3 px-4 text-center font-bold text-slate-400">5</td>
-                            <td class="py-3 px-4 font-semibold text-slate-800">Methanol <span class="text-xs text-slate-400 block font-normal">CAS: 67-56-1</span></td>
-                            <td class="py-3 px-4 text-slate-600">HPLC Grade</td>
-                            <td class="py-3 px-4 text-slate-600">Makmal Environment (Aras 3)</td>
-                            <td class="py-3 px-4 text-center font-bold text-slate-700">4.0 L</td>
-                            <td class="py-3 px-4 text-center"><span class="bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-full text-xs">Mencukupi</span></td>
+                        <tr>
+                            <td colspan="7" class="py-8 text-center text-slate-400">
+                                <div class="inline-block animate-spin rounded-full h-6 w-6 border-2 border-amber-500 border-t-transparent mb-2"></div>
+                                <p class="text-xs">Memuatkan data bahan kimia dari Google Sheets...</p>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -135,8 +101,62 @@
 
     </div>
 
-    <!-- SKRIP CARIAN + FIREBASE & SUPABASE -->
+    <!-- SKRIP UTAMA: TARIK DATA GOOGLE SHEETS + CARIAN + FIREBASE/SUPABASE -->
     <script>
+        // PAUTAN CSV GOOGLE SHEETS (DITERBITKAN SEBAGAI CSV)
+        const URL_SHEETS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?output=csv';
+
+        async function muatDataGoogleSheets() {
+            try {
+                const response = await fetch(URL_SHEETS_CSV);
+                const csvText = await response.text();
+                const barisData = parseCSV(csvText);
+                
+                let html = '';
+                let bil = 1;
+
+                // Mula dari baris data (Langkah baris tajuk)
+                for (let i = 1; i < barisData.length; i++) {
+                    const row = barisData[i];
+                    if (!row || row.length < 2 || !row[1]) continue; // Langkau jika baris kosong
+
+                    const chemicalName = row[1] || '-';
+                    const casNumber = row[2] || '-';
+                    const form = row[3] || '-';
+                    const quantity = row[4] || row[5] || row[6] || '-';
+                    const location = row[7] || '-';
+                    const brand = row[8] || '-';
+
+                    html += `
+                        <tr class="item-row hover:bg-slate-50/80 transition">
+                            <td class="py-3 px-4 text-center font-bold text-slate-400">${bil++}</td>
+                            <td class="py-3 px-4 font-semibold text-slate-800">${chemicalName}</td>
+                            <td class="py-3 px-4 text-slate-600 font-mono text-xs">${casNumber}</td>
+                            <td class="py-3 px-4 text-slate-600 capitalize">${form}</td>
+                            <td class="py-3 px-4 font-bold text-amber-700">${quantity}</td>
+                            <td class="py-3 px-4 text-slate-600">${location}</td>
+                            <td class="py-3 px-4 text-slate-500 text-xs">${brand}</td>
+                        </tr>
+                    `;
+                }
+
+                document.getElementById('jadualBahan').innerHTML = html || '<tr><td colspan="7" class="py-4 text-center text-slate-400">Tiada rekod bahan kimia dijumpai.</td></tr>';
+            } catch (err) {
+                console.error("Ralat muat Google Sheets CSV:", err);
+                document.getElementById('jadualBahan').innerHTML = '<tr><td colspan="7" class="py-4 text-center text-rose-500">❌ Gagal memuatkan data dari Google Sheets. Sila pastikan sheet terbit sebagai CSV.</td></tr>';
+            }
+        }
+
+        // FUNGSI UTILITI PARSER CSV (BEBAS RLAT TANDA KOMA)
+        function parseCSV(text) {
+            let lines = text.split('\n');
+            return lines.map(line => {
+                let matches = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
+                return matches ? matches.map(m => m.replace(/^"|"$/g, '')) : line.split(',');
+            });
+        }
+
+        // FUNGSI CARIAN LIVE
         function cariBahanKimia() {
             let input = document.getElementById('carianInput').value.toLowerCase();
             let rows = document.querySelectorAll('.item-row');
@@ -148,6 +168,7 @@
         }
     </script>
 
+    <!-- FIREBASE AUTH & SUPABASE LAST SEEN -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -201,6 +222,7 @@
                     document.getElementById('main-content').classList.remove('hidden');
                     kemaskiniLastSeen(user);
                     lucide.createIcons();
+                    muatDataGoogleSheets(); // Panggil fungsi muat data selepas log masuk disahkan
                 } else {
                     signOut(auth);
                     window.location.href = "index.html";
