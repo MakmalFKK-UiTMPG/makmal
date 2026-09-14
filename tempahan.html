@@ -153,7 +153,6 @@
                                 <th class="p-3 border-b border-slate-800 text-center">Pagi<br><span class="text-[10px] text-slate-400 font-normal">(10:00 - 11:00)</span></th>
                                 <th class="p-3 border-b border-slate-800 text-center">Tengah Hari<br><span class="text-[10px] text-slate-400 font-normal">(11:00 - 12:00)</span></th>
                                 <th class="p-3 border-b border-slate-800 text-center">Tengah Hari<br><span class="text-[10px] text-slate-400 font-normal">(12:00 - 01:00)</span></th>
-                                <th class="p-3 border-b border-slate-800 text-center">Petang 1<br><span class="text-[10px] text-slate-400 font-normal">(01:00 - 02:00)</span></th>
                                 <th class="p-3 border-b border-slate-800 text-center">Petang 1<br><span class="text-[10px] text-slate-400 font-normal">(02:00 - 03:00)</span></th>
                                 <th class="p-3 border-b border-slate-800 text-center">Petang 1<br><span class="text-[10px] text-slate-400 font-normal">(03:00 - 04:00)</span></th>
                                 <th class="p-3 border-b border-slate-800 text-center">Petang 2<br><span class="text-[10px] text-slate-400 font-normal">(04:00 - 05:00)</span></th>
@@ -169,7 +168,7 @@
             <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm" id="bahagianBorangPengesahan">
                 <div class="flex items-center space-x-3 pb-4 mb-6 border-b border-slate-100">
                     <span class="flex items-center justify-center w-7 h-7 bg-indigo-600 text-white rounded-lg text-xs font-bold">3</span>
-                    <h2 class="text-base font-bold text-slate-900">Sahkan Tarikh & Masa Tempahan</h2>
+                    <h2 class="text-base font-bold text-slate-900">Sahkan Tarikh & Tempoh Masa (Boleh Pilih Pelbagai Jam)</h2>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
@@ -178,14 +177,35 @@
                         <input type="date" id="tarikh_guna" required readonly class="w-full px-4 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 cursor-not-allowed">
                     </div>
 
+                    <!-- 🛠️ PILIHAN DROPDOWN MASA MULA & TAMAT FLEKSIBEL -->
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Masa Mula</label>
-                        <input type="text" id="masa_mula" required readonly placeholder="Pilih dari jadual" class="w-full px-4 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 cursor-not-allowed">
+                        <select id="masa_mula" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
+                            <option value="">-- Pilih Masa Mula --</option>
+                            <option value="08:00">08:00 AM</option>
+                            <option value="09:00">09:00 AM</option>
+                            <option value="10:00">10:00 AM</option>
+                            <option value="11:00">11:00 AM</option>
+                            <option value="12:00">12:00 PM</option>
+                            <option value="14:00">02:00 PM</option>
+                            <option value="15:00">03:00 PM</option>
+                            <option value="16:00">04:00 PM</option>
+                        </select>
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Masa Tamat</label>
-                        <input type="text" id="masa_tamat" required readonly placeholder="Pilih dari jadual" class="w-full px-4 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 cursor-not-allowed">
+                        <select id="masa_tamat" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
+                            <option value="">-- Pilih Masa Tamat --</option>
+                            <option value="09:00">09:00 AM (1 Jam)</option>
+                            <option value="10:00">10:00 AM (2 Jam)</option>
+                            <option value="11:00">11:00 AM (3 Jam)</option>
+                            <option value="12:00">12:00 PM (4 Jam)</option>
+                            <option value="13:00">01:00 PM (5 Jam)</option>
+                            <option value="15:00">03:00 PM</option>
+                            <option value="16:00">04:00 PM</option>
+                            <option value="17:00">05:00 PM</option>
+                        </select>
                     </div>
                 </div>
 
@@ -270,13 +290,14 @@
         });
     </script>
 
-    <!-- SKRIP SUPABASE & EMAILJS (FUNGSI TEMPAHAN & NOTIFIKASI) -->
+    <!-- SKRIP SUPABASE & LOGIK TEMPAHAN PELBAGAI JAM -->
     <script>
         const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
         const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
         let senaraiTempahanSediaAda = [];
+        const senaraiSlotJam = ["08:00", "09:00", "10:00", "11:00", "12:00", "14:00", "15:00", "16:00"];
 
         function formatTarikhStandard(d) {
             let yyyy = d.getFullYear();
@@ -342,7 +363,6 @@
                         <td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_10:00" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '10:00', '11:00')">🟢 Kosong</div></td>
                         <td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_11:00" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '11:00', '12:00')">🟢 Kosong</div></td>
                         <td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_12:00" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '12:00', '13:00')">🟢 Kosong</div></td>
-                        <td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_12:00" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '13:00', '14:00')">🟢 Kosong</div></td>
                         <td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_14:00" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '14:00', '15:00')">🟢 Kosong</div></td>
                         <td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_15:00" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '15:00', '16:00')">🟢 Kosong</div></td>
                         <td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_16:00" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '16:00', '17:00')">🟢 Kosong</div></td>
@@ -351,6 +371,22 @@
                 }
                 harimaju++;
             }
+        }
+
+        // 🛠️ FUNGSI MENDAPATKAN KESEMUA SLOT TERLIBAT DALAM JULAT MASA
+        function dapatkanSlotDalamJulat(mula, tamat) {
+            let slotTerlibat = [];
+            let iMula = senaraiSlotJam.indexOf(mula);
+            
+            let mapTamat = { "09:00":0, "10:00":1, "11:00":2, "12:00":3, "13:00":4, "15:00":5, "16:00":6, "17:00":7 };
+            let iTamat = mapTamat[tamat];
+
+            if (iMula !== -1 && iTamat !== undefined && iMula <= iTamat) {
+                for (let i = iMula; i <= iTamat; i++) {
+                    slotTerlibat.push(senaraiSlotJam[i]);
+                }
+            }
+            return slotTerlibat;
         }
 
         async function kemaskiniStatusTimetable() {
@@ -371,18 +407,13 @@
             await muatTurunTempahan();
 
             senaraiTempahanSediaAda.forEach(rekod => {
-                // 🛠️ ABAIKAN REKOD BERSTATUS DITOLAK ATAU BATAL SUPAYA SLOT KEMBALI KOSONG
                 const st = String(rekod.status || '').toLowerCase();
                 const adakahDibatalkan = (st === 'ditolak' || st === 'batal' || st === 'dibatalkan');
 
                 if (rekod.nama_peralatan === peralatanDipilih && !adakahDibatalkan) {
-                    let masaStr = String(rekod.masa_mula || '').trim();
-                    let parts = masaStr.split(':');
-                    if (parts.length >= 2) {
-                        let hh = parts[0].padStart(2, '0');
-                        let mm = parts[1].padStart(2, '0');
-                        let masaClean = `${hh}:${mm}`;
-
+                    let slotTerlibat = dapatkanSlotDalamJulat(rekod.masa_mula, rekod.masa_tamat);
+                    
+                    slotTerlibat.forEach(masaClean => {
                         const idSlot = `slot_${rekod.tarikh_guna}_${masaClean}`;
                         const elSlot = document.getElementById(idSlot);
                         
@@ -392,10 +423,10 @@
                             elSlot.innerHTML = `🔴 Ditempah:<br><strong>${namaPemohon}</strong>`;
                             
                             elSlot.onclick = function() {
-                                alert(`❌ Slot ini telah pun ditempah oleh "${namaPemohon}" untuk ${peralatanDipilih} pada tarikh ${rekod.tarikh_guna}. Sila pilih slot lain.`);
+                                alert(`❌ Slot ini telah pun ditempah oleh "${namaPemohon}" (${rekod.masa_mula} - ${rekod.masa_tamat}) untuk ${peralatanDipilih} pada tarikh ${rekod.tarikh_guna}. Sila pilih slot lain.`);
                             };
                         }
-                    }
+                    });
                 }
             });
         }
@@ -445,20 +476,27 @@
                 const masa_mula = document.getElementById('masa_mula').value;
                 const masa_tamat = document.getElementById('masa_tamat').value;
 
-                if (!tarikh_guna || !masa_mula) {
-                    alert("Sila pilih slot tarikh dan masa pada jadual di Langkah 2 terlebih dahulu!");
+                if (!tarikh_guna || !masa_mula || !masa_tamat) {
+                    alert("Sila pilih Tarikh, Masa Mula, dan Masa Tamat dengan lengkap!");
                     btnHantar.disabled = false;
                     btnHantar.innerText = "Hantar Tempahan";
                     return;
                 }
 
-                // 🛠️ SEMAK BERTINDIH: Abaikan rekod yang telah Ditolak / Batal
+                // 🛠️ SEMAKAN BERTINDIH MULTI-SLOT
+                const slotInginDitempah = dapatkanSlotDalamJulat(masa_mula, masa_tamat);
+                if (slotInginDitempah.length === 0) {
+                    alert("❌ Pilihan Masa Tamat mestilah SELEPAS Masa Mula!");
+                    btnHantar.disabled = false;
+                    btnHantar.innerText = "Hantar Tempahan";
+                    return;
+                }
+
                 const { data: senaraiSemak, error: ralatSemak } = await supabaseClient
                     .from('tempahan_peralatan')
                     .select('*')
                     .eq('nama_peralatan', nama_peralatan)
-                    .eq('tarikh_guna', tarikh_guna)
-                    .eq('masa_mula', masa_mula);
+                    .eq('tarikh_guna', tarikh_guna);
 
                 if (ralatSemak) {
                     alert('Ralat semasa menyemak ketersediaan slot: ' + ralatSemak.message);
@@ -467,13 +505,20 @@
                     return;
                 }
 
-                const bertindihAktif = senaraiSemak ? senaraiSemak.filter(item => {
-                    const st = String(item.status || '').toLowerCase();
-                    return (st !== 'ditolak' && st !== 'batal' && st !== 'dibatalkan');
-                }) : [];
+                let adaBertindih = false;
+                if (senaraiSemak) {
+                    senaraiSemak.forEach(rekod => {
+                        const st = String(rekod.status || '').toLowerCase();
+                        if (st !== 'ditolak' && st !== 'batal' && st !== 'dibatalkan') {
+                            let slotRekod = dapatkanSlotDalamJulat(rekod.masa_mula, rekod.masa_tamat);
+                            let bertindih = slotInginDitempah.some(s => slotRekod.includes(s));
+                            if (bertindih) adaBertindih = true;
+                        }
+                    });
+                }
 
-                if (bertindihAktif.length > 0) {
-                    alert(`❌ MAAF! Peralatan (${nama_peralatan}) pada tarikh ${tarikh_guna} (${masa_mula}) telah pun ditempah. Sila pilih slot lain.`);
+                if (adaBertindih) {
+                    alert(`❌ MAAF! Sesetengah/Kesemua slot bagi peralatan (${nama_peralatan}) dari ${masa_mula} hingga ${masa_tamat} pada tarikh ${tarikh_guna} telah pun ditempah. Sila pilih julat masa lain.`);
                     await kemaskiniStatusTimetable();
                     btnHantar.disabled = false;
                     btnHantar.innerText = "Hantar Tempahan";
@@ -504,7 +549,7 @@
                     // 2. Hantar E-mel Notifikasi
                     await hantarNotifikasiTempahan(formData);
 
-                    alert('✅ Tempahan berjaya dihantar!');
+                    alert(`✅ Tempahan berjaya dihantar untuk tempoh ${masa_mula} hingga ${masa_tamat}!`);
                     
                     document.getElementById('formTempahan').reset();
                     btnHantar.disabled = false;
@@ -515,7 +560,6 @@
                 }
             });
 
-            // 🛠️ FUNGSI UNTUK PAPARAN JADUAL PELAJAR (REKOD BATAL/DITOLAK DIALINKAN)
             async function paparkanTempahanPelajar() {
                 const tbody = document.getElementById('isiJadualPelajar');
                 
@@ -529,7 +573,6 @@
                     return;
                 }
 
-                // Tapis rekod aktif sahaja (Sembunyikan Batal dan Ditolak)
                 const rekodAktif = data ? data.filter(item => {
                     const st = String(item.status || '').toLowerCase();
                     return (st !== 'ditolak' && st !== 'batal' && st !== 'dibatalkan');
