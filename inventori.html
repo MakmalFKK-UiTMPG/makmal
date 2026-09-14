@@ -3,57 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventori Bahan Kimia Makmal FKK</title>
-    <style>
-        body { font-family: Arial, sans-serif; padding: 20px; max-width: 1100px; margin: auto; background-color: #f9f9f9; }
-        
-        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        h2 { color: #2c3e50; margin: 0; }
-        
-        .back-btn { display: inline-block; color: #2980b9; text-decoration: none; font-weight: bold; font-size: 15px; }
-        .back-btn:hover { text-decoration: underline; }
-        
-        .btn-logout { background: #e74c3c; color: white; border: none; padding: 8px 14px; border-radius: 5px; cursor: pointer; font-size: 13px; font-weight: bold; }
-        .btn-logout:hover { background: #c0392b; }
-
-        .inventory-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-top: 10px; }
-        .inventory-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
-        
-        .btn-sheets { background-color: #0f9d58; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; }
-        .btn-sheets:hover { background-color: #0b8043; }
-    </style>
+    <title>Inventori Bahan Kimia Makmal FKK UiTM Pasir Gudang</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Pustaka Supabase untuk fungsi Last Seen -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
-<body>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen">
 
-    <!-- HEADER + NAVIGASI -->
-    <div class="header-top">
-        <a href="makmal.html" class="back-btn">⬅️ Kembali ke Menu Utama</a>
-        <button id="logout-btn" class="btn-logout">🚪 Log Keluar</button>
+    <!-- SKRIN LOADING (PENGESAHAN LOG MASUK) -->
+    <div id="loading-screen" class="flex flex-col items-center justify-center min-h-screen p-6 text-center">
+        <div class="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <h2 class="text-xl font-bold text-slate-800">Menyemak Pengesahan Log Masuk...</h2>
+        <p class="text-sm text-slate-500 mt-1">Sila tunggu sebentar.</p>
     </div>
 
-    <h2>🧪 Inventori Bahan Kimia</h2>
+    <!-- KANDUNGAN UTAMA (TERSEMBUNYI SEHINGGA LOG MASUK DISAHKAN) -->
+    <div id="main-content" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-    <!-- CONTAINER GOOGLE SHEETS ANDA -->
-    <div class="inventory-card">
-        <div class="inventory-header">
-            <h3 style="margin: 0; color: #2c3e50;">Paparan Live Inventori (Google Sheets)</h3>
-            
-            <!-- BUTANG EDIT GOOGLE SHEETS -->
-            <a href="https://docs.google.com/spreadsheets/d/1dSGbRd96Dbiwxw4Z-wtHo_Oae-jgEHuF2T_7vGU0_K0/edit?usp=sharing" target="_blank" class="btn-sheets">
-                📊 Buka & Edit Google Sheets
-            </a>
-        </div>
-        
-        <!-- PAPARAN IFRAME GOOGLE SHEETS -->
-        <iframe 
-            src="https://docs.google.com/spreadsheets/d/1dSGbRd96Dbiwxw4Z-wtHo_Oae-jgEHuF2T_7vGU0_K0/htmlembed?widget=true&amp;headers=false" 
-            width="100%" 
-            height="650px" 
-            style="border: 1px solid #ccc; border-radius: 6px; display: block;">
-        </iframe>
+        <!-- HEADER TOP -->
+        <header class="flex flex-col md:flex-row md:items-center md:justify-between bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mb-8 gap-4">
+            <div class="flex items-center space-x-4">
+                <div class="p-3 bg-amber-50 text-amber-600 rounded-xl">
+                    <i data-lucide="boxes" class="w-8 h-8"></i>
+                </div>
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-amber-600">UiTM Cawangan Johor • Kampus Pasir Gudang</span>
+                    <div class="flex flex-wrap items-center gap-3 mt-0.5">
+                        <h1 class="text-xl md:text-2xl font-bold text-slate-900">Inventori Stok Bahan Kimia</h1>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BUTANG NAVIGASI NAV TOP -->
+            <div class="flex items-center space-x-3 self-start md:self-auto">
+                <a href="makmal.html" class="inline-flex items-center space-x-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-xl font-semibold text-sm transition border border-slate-200">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                    <span>Utama</span>
+                </a>
+                <button id="logout-btn" class="inline-flex items-center justify-center space-x-2 bg-slate-100 hover:bg-red-50 text-slate-700 hover:text-red-600 px-4 py-2.5 rounded-xl font-semibold text-sm transition border border-slate-200 hover:border-red-200 cursor-pointer">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                    <span>Log Keluar</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- KAD UTAMA PAPARAN GOOGLE SHEETS -->
+        <section class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden mb-8">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-6 border-b border-slate-100 gap-4 bg-slate-50/50">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <i data-lucide="file-spreadsheet" class="w-5 h-5 text-emerald-600"></i>
+                        Paparan Live Inventori Stok (Google Sheets)
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-1">Maklumat stok disenggarakan terus secara masa nyata (real-time).</p>
+                </div>
+
+                <!-- BUTANG EDIT GOOGLE SHEETS -->
+                <a href="https://docs.google.com/spreadsheets/d/1dSGbRd96Dbiwxw4Z-wtHo_Oae-jgEHuF2T_7vGU0_K0/edit?usp=sharing" target="_blank" class="inline-flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm transition shadow-sm hover:shadow">
+                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                    <span>Buka & Edit Google Sheets</span>
+                </a>
+            </div>
+
+            <!-- CONTAINER IFRAME EMBED -->
+            <div class="w-full bg-white p-2 sm:p-4">
+                <iframe 
+                    src="https://docs.google.com/spreadsheets/d/1dSGbRd96Dbiwxw4Z-wtHo_Oae-jgEHuF2T_7vGU0_K0/htmlembed?widget=true&amp;headers=false" 
+                    class="w-full h-[680px] rounded-xl border border-slate-200 shadow-inner">
+                </iframe>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="mt-12 text-center text-xs text-slate-400">
+            &copy; Hak Cipta Terpelihara Fakulti Kejuruteraan Kimia UiTM Pasir Gudang.
+        </footer>
+
     </div>
 
-    <!-- SKRIP FIREBASE (KESELAMATAN & LOG KELUAR) -->
+    <!-- SKRIP FIREBASE & SUPABASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -70,11 +99,60 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // KAWALAN KESELAMATAN: Tendang jika belum log masuk
+        // TETAPAN SUPABASE UNTUK REKOD LAST SEEN
+        const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        // FUNGSI SIMPAN LAST SEEN (WAKTU MALAYSIA UTC+8 TEPAT)
+        async function kemaskiniLastSeen(user) {
+            try {
+                const userEmail = user.email || '';
+                const userName = user.displayName || userEmail.split('@')[0];
+
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+
+                const localFormattedTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+                const { data, error } = await supabaseClient
+                    .from('kehadiran_pengguna')
+                    .upsert({ 
+                        email: userEmail, 
+                        nama: userName,
+                        last_online: localFormattedTime 
+                    }, { onConflict: 'email' });
+
+                if (error) {
+                    console.error("❌ Ralat Supabase:", error.message);
+                } else {
+                    console.log("✅ Berjaya simpan Last Seen Waktu Malaysia:", localFormattedTime);
+                }
+            } catch (err) {
+                console.error("❌ Ralat Kod:", err);
+            }
+        }
+
+        // KAWALAN KESELAMATAN KETAT FIREBASE
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                const email = user.email;
-                if (!email.endsWith('@uitm.edu.my') && !email.endsWith('@student.uitm.edu.my')) {
+                const email = user.email || '';
+                if (email.endsWith('@uitm.edu.my') || email.endsWith('@student.uitm.edu.my')) {
+                    // Pengguna Sah: Paparkan kandungan & hilangkan skrin loading
+                    document.getElementById('loading-screen').style.display = 'none';
+                    document.getElementById('main-content').classList.remove('hidden');
+                    
+                    // Merekodkan kehadiran pengguna (Last Seen) ke Supabase
+                    kemaskiniLastSeen(user);
+
+                    // Inisialisasi ikon Lucide
+                    lucide.createIcons();
+                } else {
                     signOut(auth);
                     window.location.href = "index.html";
                 }
@@ -94,4 +172,3 @@
     </script>
 </body>
 </html>
-
