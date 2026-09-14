@@ -38,7 +38,7 @@
                 <i data-lucide="boxes" class="w-8 h-8"></i>
             </div>
             <h1 class="text-2xl sm:text-3xl font-bold text-slate-900">Inventori Bahan Kimia Makmal FKK</h1>
-            <p class="text-sm text-slate-500 mt-1">Stok dikemaskini secara automatik daripada Google Sheets</p>
+   
         </div>
 
         <!-- KOTAK CARIAN PINTAR -->
@@ -47,11 +47,11 @@
                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                     <i data-lucide="search" class="w-5 h-5"></i>
                 </div>
-                <input type="text" id="carianInput" onkeyup="cariBahanKimia()" placeholder="Cari nama bahan kimia, No. CAS, atau makmal..." class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition">
+                <input type="text" id="carianInput" onkeyup="cariBahanKimia()" placeholder="Cari nama bahan kimia, No. CAS, jenama, atau sebarang kata kunci..." class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition">
             </div>
         </div>
 
-        <!-- KAD UTAMA JADUAL INVENTORI -->
+        <!-- KAD UTAMA JADUAL INVENTORI DINAMIK -->
         <section class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden mb-8">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-6 border-b border-slate-100 gap-4 bg-slate-50/50">
                 <div>
@@ -59,33 +59,29 @@
                         <i data-lucide="flask-round" class="w-5 h-5 text-amber-600"></i>
                         Senarai Stok Bahan Kimia Makmal
                     </h2>
-                    <p class="text-xs text-slate-500 mt-1">Data ditarik secara langsung daripada Master Google Sheets FKK.</p>
+                    <p class="text-xs text-slate-500 mt-1">.</p>
                 </div>
 
                 <a href="https://docs.google.com/spreadsheets/d/1dSGbRd96Dbiwxw4Z-wtHo_Oae-jgEHuF2T_7vGU0_K0/edit?usp=sharing" target="_blank" class="inline-flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-bold text-xs transition shadow-sm w-full sm:w-auto">
                     <i data-lucide="external-link" class="w-4 h-4"></i>
-                    <span>Kemaskini Google Sheets (Staf)</span>
+                    <span>Kemaskini Master Sheets (Staf Makmal)</span>
                 </a>
             </div>
 
-            <!-- JADUAL RESPONSIP -->
+            <!-- JADUAL RESPONSIP DINAMIK -->
             <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
+                <table class="w-full text-left border-collapse" id="jadualInventoriFull">
+                    <thead id="headJadual">
                         <tr class="bg-slate-100 text-slate-700 text-xs font-bold uppercase tracking-wider border-b border-slate-200">
-                            <th class="py-3.5 px-4 text-center w-12">Bil</th>
-                            <th class="py-3.5 px-4">Nama Bahan Kimia</th>
-                            <th class="py-3.5 px-4">No. CAS</th>
-                            <th class="py-3.5 px-4">Kuantiti / Unit</th>
-                            <th class="py-3.5 px-4">Lokasi Makmal</th>
-                            <th class="py-3.5 px-4">Jenama / Catatan</th>
+                            <th class="py-3.5 px-4 text-center">Bil</th>
+                            <th class="py-3.5 px-4">Memuatkan lajur...</th>
                         </tr>
                     </thead>
                     <tbody id="jadualBahan" class="divide-y divide-slate-100 text-sm">
                         <tr>
-                            <td colspan="6" class="py-12 text-center text-slate-400">
+                            <td colspan="10" class="py-12 text-center text-slate-400">
                                 <div class="inline-block animate-spin rounded-full h-8 w-8 border-3 border-amber-500 border-t-transparent mb-2"></div>
-                                <p class="text-xs font-semibold">Memuatkan data bahan kimia dari Google Sheets...</p>
+                                <p class="text-xs font-semibold">Memuatkan seluruh maklumat dari Google Sheets...</p>
                             </td>
                         </tr>
                     </tbody>
@@ -100,7 +96,7 @@
 
     </div>
 
-    <!-- SKRIP UTAMA: FETCH DATA CSV GOOGLE SHEETS -->
+    <!-- SKRIP DINAMIK READ CSV -->
     <script>
         const URL_SHEETS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?output=csv';
 
@@ -108,63 +104,99 @@
             try {
                 const response = await fetch(URL_SHEETS_CSV);
                 const csvText = await response.text();
-                
-                // Urus pemisahan baris & koma
-                const rows = parseCSVText(csvText);
-                let html = '';
-                let bil = 1;
+                const allRows = parseCSV(csvText);
 
-                // Langkau baris tajuk (row index 0)
-                for (let i = 1; i < rows.length; i++) {
-                    const col = rows[i];
-                    if (!col || col.length < 2 || !col[1]) continue;
+                if (!allRows || allRows.length === 0) return;
 
-                    const namaBahan = col[1] || col[0] || '-';
-                    const casNo = col[2] || '-';
-                    const kuantiti = col[3] || col[4] || col[5] || '-';
-                    const lokasi = col[6] || col[7] || '-';
-                    const catatan = col[8] || col[9] || '-';
-
-                    html += `
-                        <tr class="item-row hover:bg-slate-50/80 transition">
-                            <td class="py-3 px-4 text-center font-bold text-slate-400">${bil++}</td>
-                            <td class="py-3 px-4 font-semibold text-slate-800">${namaBahan}</td>
-                            <td class="py-3 px-4 text-slate-600 font-mono text-xs">${casNo}</td>
-                            <td class="py-3 px-4 font-bold text-amber-700">${kuantiti}</td>
-                            <td class="py-3 px-4 text-slate-600">${lokasi}</td>
-                            <td class="py-3 px-4 text-slate-500 text-xs">${catatan}</td>
-                        </tr>
-                    `;
+                // Cari baris tajuk sebenar (Header) — biasanya baris yang mengandungi 'NAME' atau 'CHEMICAL'
+                let headerRowIndex = 0;
+                for (let i = 0; i < Math.min(allRows.length, 10); i++) {
+                    const rowStr = allRows[i].join(' ').toUpperCase();
+                    if (rowStr.includes('NAME') || rowStr.includes('CHEMICAL') || rowStr.includes('CAS')) {
+                        headerRowIndex = i;
+                        break;
+                    }
                 }
 
-                document.getElementById('jadualBahan').innerHTML = html || '<tr><td colspan="6" class="py-6 text-center text-slate-400">Tiada rekod dijumpai.</td></tr>';
+                const headers = allRows[headerRowIndex];
+
+                // 1. BINA HEADER JADUAL secara Dinamik
+                let headHtml = '<tr class="bg-slate-100 text-slate-700 text-xs font-bold uppercase tracking-wider border-b border-slate-200"><th class="py-3.5 px-4 text-center w-12">Bil</th>';
+                headers.forEach(h => {
+                    headHtml += `<th class="py-3.5 px-4">${h.trim() || 'Maklumat'}</th>`;
+                });
+                headHtml += '</tr>';
+                document.getElementById('headJadual').innerHTML = headHtml;
+
+                // 2. BINA BARIS DATA JADUAL secara Dinamik
+                let bodyHtml = '';
+                let bil = 1;
+
+                for (let i = headerRowIndex + 1; i < allRows.length; i++) {
+                    const row = allRows[i];
+                    
+                    // Semak jika baris kosong
+                    if (!row || row.every(cell => !cell.trim())) continue;
+
+                    bodyHtml += `<tr class="item-row hover:bg-slate-50/80 transition">`;
+                    bodyHtml += `<td class="py-3 px-4 text-center font-bold text-slate-400">${bil++}</td>`;
+
+                    row.forEach((cellValue, idx) => {
+                        let val = cellValue.trim();
+
+                        // Jika mengandungi Pautan URL Google Drive / SDS
+                        if (val.toLowerCase().startsWith('http://') || val.toLowerCase().startsWith('https://')) {
+                            bodyHtml += `<td class="py-3 px-4">
+                                <a href="${val}" target="_blank" class="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-2.5 py-1 rounded-lg border border-indigo-100">
+                                    <span>📄 Lihat Dokumen / SDS</span>
+                                </a>
+                            </td>`;
+                        } else {
+                            // Cetak teks biasa
+                            const isBold = (idx === 0 || idx === 1) ? 'font-semibold text-slate-800' : 'text-slate-600';
+                            bodyHtml += `<td class="py-3 px-4 ${isBold}">${val || '-'}</td>`;
+                        }
+                    });
+
+                    bodyHtml += `</tr>`;
+                }
+
+                document.getElementById('jadualBahan').innerHTML = bodyHtml || '<tr><td colspan="15" class="py-6 text-center text-slate-400">Tiada rekod ditemui.</td></tr>';
+
             } catch (err) {
-                console.error("Ralat muat CSV:", err);
-                document.getElementById('jadualBahan').innerHTML = '<tr><td colspan="6" class="py-6 text-center text-rose-500">❌ Gagal memuatkan data dari Google Sheets.</td></tr>';
+                console.error("Ralat membaca CSV Google Sheets:", err);
+                document.getElementById('jadualBahan').innerHTML = '<tr><td colspan="15" class="py-6 text-center text-rose-500">❌ Gagal memuatkan data dari Google Sheets. Pastikan dokumen telah dipublish sebagai CSV.</td></tr>';
             }
         }
 
-        // CSV Parser Ringkas & Selamat
-        function parseCSVText(text) {
-            const lines = text.split('\n');
-            return lines.map(line => {
-                const result = [];
-                let cell = '';
-                let inQuotes = false;
-                for (let i = 0; i < line.length; i++) {
-                    const c = line[i];
-                    if (c === '"') {
-                        inQuotes = !inQuotes;
-                    } else if (c === ',' && !inQuotes) {
-                        result.push(cell.trim());
-                        cell = '';
+        // Utility Parser CSV (mengendalikan petik & koma)
+        function parseCSV(text) {
+            const lines = text.split(/\r\n|\n/);
+            const result = [];
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                if (!line) continue;
+                
+                const row = [];
+                let insideQuote = false;
+                let entry = '';
+                
+                for (let j = 0; j < line.length; j++) {
+                    const char = line[j];
+                    if (char === '"') {
+                        insideQuote = !insideQuote;
+                    } else if (char === ',' && !insideQuote) {
+                        row.push(entry.replace(/^"|"$/g, ''));
+                        entry = '';
                     } else {
-                        cell += c;
+                        entry += char;
                     }
                 }
-                result.push(cell.trim());
-                return result;
-            });
+                row.push(entry.replace(/^"|"$/g, ''));
+                result.push(row);
+            }
+            return result;
         }
 
         function cariBahanKimia() {
@@ -222,7 +254,7 @@
                     document.getElementById('main-content').classList.remove('hidden');
                     kemaskiniLastSeen(user);
                     lucide.createIcons();
-                    muatDataGoogleSheets(); // Memuatkan data secara automatik dari Google Sheets
+                    muatDataGoogleSheets();
                 } else {
                     signOut(auth);
                     window.location.href = "index.html";
