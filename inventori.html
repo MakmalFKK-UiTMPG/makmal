@@ -7,20 +7,18 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
 <body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen">
 
-    <!-- SKRIN LOADING -->
     <div id="loading-screen" class="flex flex-col items-center justify-center min-h-screen p-6 text-center">
         <div class="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mb-4"></div>
         <h2 class="text-xl font-bold text-slate-800">Menyemak Pengesahan Log Masuk...</h2>
         <p class="text-sm text-slate-500 mt-1">Sila tunggu sebentar.</p>
     </div>
 
-    <!-- KANDUNGAN UTAMA -->
     <div id="main-content" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        <!-- HEADER TOP -->
         <div class="flex items-center justify-between mb-6">
             <a href="makmal.html" class="inline-flex items-center space-x-2 text-slate-600 hover:text-indigo-600 font-semibold text-sm transition">
                 <i data-lucide="arrow-left" class="w-4 h-4"></i>
@@ -32,7 +30,6 @@
             </button>
         </div>
 
-        <!-- TAJUK UTAMA -->
         <div class="text-center max-w-2xl mx-auto mb-8">
             <div class="inline-flex items-center justify-center p-3 bg-amber-50 text-amber-600 rounded-2xl mb-3 shadow-sm border border-amber-100">
                 <i data-lucide="boxes" class="w-8 h-8"></i>
@@ -41,7 +38,6 @@
             <p class="text-sm text-slate-500 mt-1">Stok & dokumen SDS dikemaskini secara langsung daripada Google Sheets</p>
         </div>
 
-        <!-- NOTA PERINGATAN MESRA -->
         <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-2xl mb-6 shadow-sm flex items-start space-x-3">
             <i data-lucide="info" class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5"></i>
             <p class="text-xs sm:text-sm font-semibold text-amber-900 leading-relaxed">
@@ -49,7 +45,6 @@
             </p>
         </div>
 
-        <!-- KOTAK CARIAN PINTAR -->
         <div class="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 shadow-sm mb-6">
             <div class="relative max-w-xl mx-auto">
                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -59,7 +54,6 @@
             </div>
         </div>
 
-        <!-- KAD UTAMA JADUAL INVENTORI -->
         <section class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden mb-8">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-6 border-b border-slate-100 gap-4 bg-slate-50/50">
                 <div>
@@ -76,7 +70,6 @@
                 </a>
             </div>
 
-            <!-- JADUAL RESPONSIP -->
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
@@ -85,7 +78,7 @@
                             <th class="py-3.5 px-4">Nama Bahan Kimia</th>
                             <th class="py-3.5 px-4">No. CAS</th>
                             <th class="py-3.5 px-4 text-center">Bentuk</th>
-                            <th class="py-3.5 px-4 text-center">Kuantiti (Kolum G)</th>
+                            <th class="py-3.5 px-4 text-center">Kuantiti Stok</th>
                             <th class="py-3.5 px-4">Lokasi Makmal</th>
                             <th class="py-3.5 px-4">Jenama / Catatan</th>
                             <th class="py-3.5 px-4 text-center">Dokumen SDS</th>
@@ -103,108 +96,92 @@
             </div>
         </section>
 
-        <!-- FOOTER -->
         <footer class="mt-12 text-center text-xs text-slate-400">
             &copy; Hak Cipta Terpelihara Fakulti Kejuruteraan Kimia UiTM Pasir Gudang.
         </footer>
 
     </div>
 
-    <!-- SKRIP UTAMA PARSING DATA -->
     <script>
         const URL_SHEETS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?output=csv';
 
-        async function muatDataGoogleSheets() {
-            try {
-                const response = await fetch(URL_SHEETS_CSV);
-                const csvText = await response.text();
-                const rows = parseCSV(csvText);
+        function muatDataGoogleSheets() {
+            Papa.parse(URL_SHEETS_CSV, {
+                download: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    const rows = results.data;
+                    let html = '';
 
-                let html = '';
+                    for (let i = 0; i < rows.length; i++) {
+                        const row = rows[i];
+                        if (!row || row.length < 3) continue;
 
-                for (let i = 0; i < rows.length; i++) {
-                    const row = rows[i];
-                    if (!row || row.length < 3) continue;
+                        const bilNo = (row[0] || '').trim();
+                        const namaBahan = (row[1] || '').trim();
 
-                    const bilNo = (row[0] || '').trim();
-                    const namaBahan = (row[1] || '').trim();
+                        // Langkau baris tajuk/nota yang tiada nombor bil valid
+                        if (!bilNo || isNaN(parseInt(bilNo)) || !namaBahan || namaBahan === '-') continue;
 
-                    // Abaikan baris header / nota atas yang tiada nombor bil valid (Contoh: 1, 2, 3...)
-                    if (!bilNo || isNaN(parseInt(bilNo)) || !namaBahan || namaBahan === '-') continue;
+                        const casNo = (row[2] || '-').trim();
+                        const form = (row[3] || '-').trim();
+                        
+                        // Semak Kuantiti: Keutamaan Sept 2026 (col 6), kemudian Jan 2026 (col 5), kemudian June 2025 (col 4)
+                        const qSept2026 = (row[6] || '').trim();
+                        const qJan2026  = (row[5] || '').trim();
+                        const qJune2025 = (row[4] || '').trim();
 
-                    const casNo = (row[2] || '-').trim();
-                    const form = (row[3] || '-').trim();
-                    
-                    // KHAS AMBIL DATA DARI KOLUM G SAHAJA (Index 6)
-                    const kuantitiKolumG = (row[6] && row[6].trim() !== '') ? row[6].trim() : '-';
-
-                    const lokasi = (row[7] || '-').trim();
-                    const brand = (row[8] || '-').trim();
-
-                    // Cari pautan SDS dalam mana-mana lajur baris tersebut
-                    let sdsLink = '';
-                    row.forEach(cell => {
-                        if (cell.includes('http://') || cell.includes('https://')) {
-                            sdsLink = cell.trim();
+                        let kuantiti = '-';
+                        if (qSept2026 && qSept2026 !== '-') {
+                            kuantiti = qSept2026;
+                        } else if (qJan2026 && qJan2026 !== '-') {
+                            kuantiti = qJan2026;
+                        } else if (qJune2025 && qJune2025 !== '-') {
+                            kuantiti = qJune2025;
                         }
-                    });
 
-                    // Format Butang SDS
-                    let sdsHtml = '<span class="text-slate-300 text-xs">-</span>';
-                    if (sdsLink) {
-                        sdsHtml = `<a href="${sdsLink}" target="_blank" class="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg border border-indigo-200 transition">
-                            <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
-                            <span>Lihat SDS</span>
-                        </a>`;
+                        const lokasi = (row[7] || '-').trim();
+                        const brand = (row[8] || '-').trim();
+
+                        // Cari pautan SDS dalam lajur
+                        let sdsLink = '';
+                        row.forEach(cell => {
+                            if (cell && (cell.includes('http://') || cell.includes('https://'))) {
+                                sdsLink = cell.trim();
+                            }
+                        });
+
+                        // Format Butang SDS
+                        let sdsHtml = '<span class="text-slate-300 text-xs">-</span>';
+                        if (sdsLink) {
+                            sdsHtml = `<a href="${sdsLink}" target="_blank" class="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg border border-indigo-200 transition">
+                                <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                                <span>Lihat SDS</span>
+                            </a>`;
+                        }
+
+                        html += `
+                            <tr class="item-row hover:bg-slate-50/80 transition">
+                                <td class="py-3 px-4 text-center font-bold text-slate-400">${bilNo}</td>
+                                <td class="py-3 px-4 font-semibold text-slate-800">${namaBahan}</td>
+                                <td class="py-3 px-4 text-slate-600 font-mono text-xs">${casNo}</td>
+                                <td class="py-3 px-4 text-center text-slate-600 capitalize">${form}</td>
+                                <td class="py-3 px-4 text-center font-bold text-amber-700">${kuantiti}</td>
+                                <td class="py-3 px-4 text-slate-600">${lokasi || '-'}</td>
+                                <td class="py-3 px-4 text-slate-600 text-xs">${brand || '-'}</td>
+                                <td class="py-3 px-4 text-center">${sdsHtml}</td>
+                            </tr>
+                        `;
                     }
 
-                    html += `
-                        <tr class="item-row hover:bg-slate-50/80 transition">
-                            <td class="py-3 px-4 text-center font-bold text-slate-400">${bilNo}</td>
-                            <td class="py-3 px-4 font-semibold text-slate-800">${namaBahan}</td>
-                            <td class="py-3 px-4 text-slate-600 font-mono text-xs">${casNo}</td>
-                            <td class="py-3 px-4 text-center text-slate-600 capitalize">${form}</td>
-                            <td class="py-3 px-4 text-center font-bold text-amber-700">${kuantitiKolumG}</td>
-                            <td class="py-3 px-4 text-slate-600">${lokasi}</td>
-                            <td class="py-3 px-4 text-slate-600 text-xs">${brand}</td>
-                            <td class="py-3 px-4 text-center">${sdsHtml}</td>
-                        </tr>
-                    `;
+                    document.getElementById('jadualBahan').innerHTML = html || '<tr><td colspan="8" class="py-6 text-center text-slate-400">Tiada rekod bahan kimia dijumpai.</td></tr>';
+                    if (window.lucide) { lucide.createIcons(); }
+                },
+                error: function(err) {
+                    console.error("Ralat PapaParse:", err);
+                    document.getElementById('jadualBahan').innerHTML = '<tr><td colspan="8" class="py-6 text-center text-rose-500">❌ Gagal memuatkan data dari Google Sheets.</td></tr>';
                 }
-
-                document.getElementById('jadualBahan').innerHTML = html || '<tr><td colspan="8" class="py-6 text-center text-slate-400">Tiada rekod bahan kimia dijumpai.</td></tr>';
-                if (window.lucide) { lucide.createIcons(); }
-            } catch (err) {
-                console.error("Ralat muat CSV:", err);
-                document.getElementById('jadualBahan').innerHTML = '<tr><td colspan="8" class="py-6 text-center text-rose-500">❌ Gagal memuatkan data dari Google Sheets.</td></tr>';
-            }
-        }
-
-        // CSV Parser Bersih & Bebas Ralat Sintaks
-        function parseCSV(text) {
-            const lines = text.split(/\r\n|\n/);
-            const result = [];
-            for (let i = 0; i < lines.length; i++) {
-                const line = lines[i];
-                if (!line.trim()) continue;
-                const row = [];
-                let insideQuote = false;
-                let entry = '';
-                for (let j = 0; j < line.length; j++) {
-                    const char = line[j];
-                    if (char === '"') {
-                        insideQuote = !insideQuote;
-                    } else if (char === ',' && !insideQuote) {
-                        row.push(entry.trim());
-                        entry = '';
-                    } else {
-                        entry += char;
-                    }
-                }
-                row.push(entry.trim());
-                result.push(row);
-            }
-            return result;
+            });
         }
 
         function cariBahanKimia() {
@@ -218,7 +195,6 @@
         }
     </script>
 
-    <!-- FIREBASE AUTH & SUPABASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
