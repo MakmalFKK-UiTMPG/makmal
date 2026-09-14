@@ -7,22 +7,26 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <!-- Pustaka PapaParse untuk membaca CSV Google Sheets dengan Tepat -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
 <body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen">
 
+    <!-- SKRIN LOADING -->
     <div id="loading-screen" class="flex flex-col items-center justify-center min-h-screen p-6 text-center">
         <div class="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mb-4"></div>
         <h2 class="text-xl font-bold text-slate-800">Menyemak Pengesahan Log Masuk...</h2>
         <p class="text-sm text-slate-500 mt-1">Sila tunggu sebentar.</p>
     </div>
 
+    <!-- KANDUNGAN UTAMA -->
     <div id="main-content" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
+        <!-- HEADER TOP -->
         <div class="flex items-center justify-between mb-6">
             <a href="makmal.html" class="inline-flex items-center space-x-2 text-slate-600 hover:text-indigo-600 font-semibold text-sm transition">
                 <i data-lucide="arrow-left" class="w-4 h-4"></i>
-                <span>Kembali ke Menu Utama</span>
+                <span>Kembali ke Senarai Makmal</span>
             </a>
             <button id="logout-btn" class="inline-flex items-center justify-center space-x-2 bg-slate-100 hover:bg-red-50 text-slate-700 hover:text-red-600 px-4 py-2 rounded-xl font-semibold text-xs transition border border-slate-200 hover:border-red-200 cursor-pointer">
                 <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
@@ -30,14 +34,16 @@
             </button>
         </div>
 
+        <!-- TAJUK UTAMA -->
         <div class="text-center max-w-2xl mx-auto mb-8">
             <div class="inline-flex items-center justify-center p-3 bg-amber-50 text-amber-600 rounded-2xl mb-3 shadow-sm border border-amber-100">
                 <i data-lucide="boxes" class="w-8 h-8"></i>
             </div>
             <h1 class="text-2xl sm:text-3xl font-bold text-slate-900">Inventori Bahan Kimia Makmal FKK</h1>
-            <p class="text-sm text-slate-500 mt-1"></p>
+            <p class="text-sm text-slate-500 mt-1">Stok & dokumen SDS dikemaskini secara langsung daripada Google Sheets</p>
         </div>
 
+        <!-- NOTA PERINGATAN MESRA -->
         <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-2xl mb-6 shadow-sm flex items-start space-x-3">
             <i data-lucide="info" class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5"></i>
             <p class="text-xs sm:text-sm font-semibold text-amber-900 leading-relaxed">
@@ -45,6 +51,7 @@
             </p>
         </div>
 
+        <!-- KOTAK CARIAN PINTAR -->
         <div class="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 shadow-sm mb-6">
             <div class="relative max-w-xl mx-auto">
                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -54,6 +61,7 @@
             </div>
         </div>
 
+        <!-- KAD UTAMA JADUAL INVENTORI -->
         <section class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden mb-8">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-6 border-b border-slate-100 gap-4 bg-slate-50/50">
                 <div>
@@ -61,7 +69,7 @@
                         <i data-lucide="flask-round" class="w-5 h-5 text-amber-600"></i>
                         Senarai Stok Bahan Kimia Makmal
                     </h2>
-                    <p class="text-xs text-slate-500 mt-1"></p>
+                    <p class="text-xs text-slate-500 mt-1">Paparan rekod rasmi inventori makmal FKK Pasir Gudang.</p>
                 </div>
 
                 <a href="https://docs.google.com/spreadsheets/d/1dSGbRd96Dbiwxw4Z-wtHo_Oae-jgEHuF2T_7vGU0_K0/edit?usp=sharing" target="_blank" class="inline-flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-bold text-xs transition shadow-sm w-full sm:w-auto">
@@ -70,6 +78,7 @@
                 </a>
             </div>
 
+            <!-- JADUAL RESPONSIP -->
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
@@ -96,16 +105,17 @@
             </div>
         </section>
 
+        <!-- FOOTER -->
         <footer class="mt-12 text-center text-xs text-slate-400">
             &copy; Hak Cipta Terpelihara Fakulti Kejuruteraan Kimia UiTM Pasir Gudang.
         </footer>
 
     </div>
 
+    <!-- SKRIP UTAMA PARSING DATA -->
     <script>
         const URL_SHEETS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?output=csv';
 
-        // FUNGSI UTK FORMAT TEKS MULTILINE JADI BERKOMA (,)
         function formatTeksBersamaKoma(str) {
             if (!str) return '-';
             let cleaned = str.split(/\r?\n/).map(s => s.trim()).filter(Boolean).join(', ');
@@ -119,16 +129,26 @@
                 complete: function(results) {
                     const rows = results.data;
                     let html = '';
+                    let autoBil = 1;
 
                     for (let i = 0; i < rows.length; i++) {
                         const row = rows[i];
-                        if (!row || row.length < 3) continue;
+                        if (!row || row.length < 2) continue;
 
-                        const bilNo = (row[0] || '').trim();
-                        const namaBahan = formatTeksBersamaKoma(row[1]);
+                        const rawNama = (row[1] || '').trim();
+                        const namaBahan = formatTeksBersamaKoma(rawNama);
 
-                        // Langkau baris tajuk/nota yang tiada nombor bil valid
-                        if (!bilNo || isNaN(parseInt(bilNo)) || !namaBahan || namaBahan === '-') continue;
+                        // ABAIKAN BARIS HEADER ATAS SAHAJA (Abaikan jika nama bahan kosong, nama header, atau tajuk fakulti)
+                        if (!namaBahan || namaBahan === '-' || 
+                            namaBahan.toUpperCase().includes('CHEMICAL NAME') || 
+                            namaBahan.toUpperCase().includes('FAKULTI KEJURUTERAAN') || 
+                            namaBahan.toUpperCase().includes('NAME')) {
+                            continue;
+                        }
+
+                        // Guna nombor Bil asal dari Sheet, jika tiada/invalid guna auto increment
+                        const rawBil = (row[0] || '').trim();
+                        const displayBil = (rawBil && !isNaN(parseInt(rawBil))) ? rawBil : autoBil++;
 
                         const casNo = formatTeksBersamaKoma(row[2]);
                         const form = formatTeksBersamaKoma(row[3]);
@@ -169,7 +189,7 @@
 
                         html += `
                             <tr class="item-row hover:bg-slate-50/80 transition">
-                                <td class="py-3 px-4 text-center font-bold text-slate-400">${bilNo}</td>
+                                <td class="py-3 px-4 text-center font-bold text-slate-400">${displayBil}</td>
                                 <td class="py-3 px-4 font-semibold text-slate-800">${namaBahan}</td>
                                 <td class="py-3 px-4 text-slate-600 font-mono text-xs">${casNo}</td>
                                 <td class="py-3 px-4 text-center text-slate-600 capitalize">${form}</td>
@@ -202,6 +222,7 @@
         }
     </script>
 
+    <!-- FIREBASE AUTH & SUPABASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
