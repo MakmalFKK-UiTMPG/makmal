@@ -43,7 +43,8 @@
         .btn-lulus { background-color: #27ae60; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; }
         .btn-tolak { background-color: #c0392b; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; margin-left: 3px; }
         .btn-detail { background-color: #2980b9; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-weight: bold; margin-left: 3px; }
-        .btn-padam { background-color: #7f8c8d; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-weight: bold; margin-left: 3px; }
+        .btn-batal { background-color: #f39c12; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-weight: bold; margin-left: 3px; }
+        .btn-padam { background-color: #c0392b; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-weight: bold; margin-left: 3px; }
 
         .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
         .modal-content { background-color: white; margin: 3% auto; padding: 20px; border-radius: 8px; width: 85%; max-width: 750px; max-height: 85vh; overflow-y: auto; }
@@ -116,8 +117,8 @@
                         <th width="15%">Fizikal Sisa</th>
                         <th>Komposisi Bahan Kimia</th>
                         <th width="12%">Berat / Isipadu</th>
-                        <th width="12%">Status</th>
-                        <th width="15%">Tindakan</th>
+                        <th width="10%">Status</th>
+                        <th width="18%">Tindakan</th>
                     </tr>
                 </thead>
                 <tbody id="isiJadualSisa"><tr><td colspan="8" style="text-align:center;">Memuatkan...</td></tr></tbody>
@@ -150,18 +151,15 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // 🛡️ SENARAI E-MEL PEGAWAI & PENSYARAH YANG DIBENARKAN JADI ADMIN
         const ADMIN_EMAILS = [
-            "nurha1559@uitm.edu.my",        // E-mel rasmi anda
-            "pegawai1@uitm.edu.my",         // Masukkan e-mel pegawai lain di sini
-            "pensyarah1@uitm.edu.my"        // Tambah e-mel admin lain jika ada
+            "nurha1559@uitm.edu.my",
+            "pegawai1@uitm.edu.my",
+            "pensyarah1@uitm.edu.my"
         ];
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 const userEmail = (user.email || '').toLowerCase().trim();
-                
-                // Semak jika e-mel log masuk ada dalam senarai WHITELIST ADMIN
                 const isAdmin = ADMIN_EMAILS.some(email => email.toLowerCase().trim() === userEmail);
 
                 if (isAdmin) {
@@ -241,7 +239,8 @@
                         <td>
                             <button class="btn-lulus" onclick="tukarStatus('tempahan_peralatan', ${r.id}, 'Lulus')">Lulus</button>
                             <button class="btn-tolak" onclick="tukarStatus('tempahan_peralatan', ${r.id}, 'Ditolak')">Tolak</button>
-                            <button class="btn-padam" onclick="padamRekod('tempahan_peralatan', ${r.id})">🗑️ Batal</button>
+                            <button class="btn-batal" onclick="batalRekod('tempahan_peralatan', ${r.id})">Batal</button>
+                            <button class="btn-padam" onclick="padamRekodKekal('tempahan_peralatan', ${r.id})">🗑️ Padam</button>
                         </td>
                     `;
                 });
@@ -272,7 +271,8 @@
                         <td><span class="status-${(r.status||'menunggu').toLowerCase()}">${r.status||'Menunggu'}</span></td>
                         <td>
                             <button class="btn-detail" onclick="paparkanDetail(${r.id})">🔍 Lihat / Semak</button>
-                            <button class="btn-padam" onclick="padamRekod('permohonan_bahan_radas', ${r.id})">🗑️ Batal</button>
+                            <button class="btn-batal" onclick="batalRekod('permohonan_bahan_radas', ${r.id})">Batal</button>
+                            <button class="btn-padam" onclick="padamRekodKekal('permohonan_bahan_radas', ${r.id})">🗑️ Padam</button>
                         </td>
                     `;
                 });
@@ -323,7 +323,8 @@
                     <td><span class="${statusClass}">${statusPapar}</span></td>
                     <td>
                         <button class="btn-lulus" onclick="tukarStatusSisa(${r.id}, 'Disemak')">Disemak</button>
-                        <button class="btn-padam" onclick="tukarStatusSisa(${r.id}, 'Batal')">🗑️ Batal</button>
+                        <button class="btn-batal" onclick="tukarStatusSisa(${r.id}, 'Batal')">Batal</button>
+                        <button class="btn-padam" onclick="padamRekodKekal('janaan_sisa', ${r.id})">🗑️ Padam</button>
                     </td>
                 `;
             });
@@ -410,7 +411,8 @@
             }
         }
 
-        async function padamRekod(jadual, id) {
+        // TUKAR STATUS KEPADA 'Batal' (Soft Delete)
+        async function batalRekod(jadual, id) {
             if(confirm("Pasti mahu menukar status rekod ini kepada 'Batal'?")) {
                 const { error } = await supabaseClient
                     .from(jadual)
@@ -423,6 +425,25 @@
                     alert("✅ Status rekod telah dikemaskini kepada 'Batal'.");
                     dapatkanTempahan();
                     dapatkanBahanRadas();
+                }
+            }
+        }
+
+        // 🛠️ PADAM REKOD TERUS DARI DATABASE (Hard Delete)
+        async function padamRekodKekal(jadual, id) {
+            if(confirm("⚠️ AMARAN: Rekod ini akan DIPADAM KEKAL dari pangkalan data!\nAdakah anda pasti mahu memadam rekod ini?")) {
+                const { error } = await supabaseClient
+                    .from(jadual)
+                    .delete()
+                    .eq('id', id);
+
+                if (error) {
+                    alert("❌ Ralat semasa memadam: " + error.message);
+                } else {
+                    alert("🗑️ Rekod telah berjaya dipadam secara kekal!");
+                    dapatkanTempahan();
+                    dapatkanBahanRadas();
+                    dapatkanJanaanSisa();
                 }
             }
         }
