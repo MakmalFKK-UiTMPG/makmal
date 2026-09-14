@@ -35,7 +35,7 @@
                 <i data-lucide="boxes" class="w-8 h-8"></i>
             </div>
             <h1 class="text-2xl sm:text-3xl font-bold text-slate-900">Inventori Bahan Kimia Makmal FKK</h1>
-            <p class="text-sm text-slate-500 mt-1">Stok & dokumen SDS dikemaskini secara langsung daripada Google Sheets</p>
+            <p class="text-sm text-slate-500 mt-1"></p>
         </div>
 
         <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-2xl mb-6 shadow-sm flex items-start space-x-3">
@@ -61,7 +61,7 @@
                         <i data-lucide="flask-round" class="w-5 h-5 text-amber-600"></i>
                         Senarai Stok Bahan Kimia Makmal
                     </h2>
-                    <p class="text-xs text-slate-500 mt-1">Paparan rekod rasmi inventori makmal FKK Pasir Gudang.</p>
+                    <p class="text-xs text-slate-500 mt-1"></p>
                 </div>
 
                 <a href="https://docs.google.com/spreadsheets/d/1dSGbRd96Dbiwxw4Z-wtHo_Oae-jgEHuF2T_7vGU0_K0/edit?usp=sharing" target="_blank" class="inline-flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-bold text-xs transition shadow-sm w-full sm:w-auto">
@@ -78,7 +78,7 @@
                             <th class="py-3.5 px-4">Nama Bahan Kimia</th>
                             <th class="py-3.5 px-4">No. CAS</th>
                             <th class="py-3.5 px-4 text-center">Bentuk</th>
-                            <th class="py-3.5 px-4 text-center">Kuantiti Stok</th>
+                            <th class="py-3.5 px-4 text-center">Kuantiti Stok (SEPT 2026)</th>
                             <th class="py-3.5 px-4">Lokasi Makmal</th>
                             <th class="py-3.5 px-4">Jenama / Catatan</th>
                             <th class="py-3.5 px-4 text-center">Dokumen SDS</th>
@@ -105,6 +105,13 @@
     <script>
         const URL_SHEETS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?output=csv';
 
+        // FUNGSI UTK FORMAT TEKS MULTILINE JADI BERKOMA (,)
+        function formatTeksBersamaKoma(str) {
+            if (!str) return '-';
+            let cleaned = str.split(/\r?\n/).map(s => s.trim()).filter(Boolean).join(', ');
+            return cleaned || '-';
+        }
+
         function muatDataGoogleSheets() {
             Papa.parse(URL_SHEETS_CSV, {
                 download: true,
@@ -118,18 +125,18 @@
                         if (!row || row.length < 3) continue;
 
                         const bilNo = (row[0] || '').trim();
-                        const namaBahan = (row[1] || '').trim();
+                        const namaBahan = formatTeksBersamaKoma(row[1]);
 
                         // Langkau baris tajuk/nota yang tiada nombor bil valid
                         if (!bilNo || isNaN(parseInt(bilNo)) || !namaBahan || namaBahan === '-') continue;
 
-                        const casNo = (row[2] || '-').trim();
-                        const form = (row[3] || '-').trim();
+                        const casNo = formatTeksBersamaKoma(row[2]);
+                        const form = formatTeksBersamaKoma(row[3]);
                         
                         // Semak Kuantiti: Keutamaan Sept 2026 (col 6), kemudian Jan 2026 (col 5), kemudian June 2025 (col 4)
-                        const qSept2026 = (row[6] || '').trim();
-                        const qJan2026  = (row[5] || '').trim();
-                        const qJune2025 = (row[4] || '').trim();
+                        const qSept2026 = formatTeksBersamaKoma(row[6]);
+                        const qJan2026  = formatTeksBersamaKoma(row[5]);
+                        const qJune2025 = formatTeksBersamaKoma(row[4]);
 
                         let kuantiti = '-';
                         if (qSept2026 && qSept2026 !== '-') {
@@ -140,8 +147,8 @@
                             kuantiti = qJune2025;
                         }
 
-                        const lokasi = (row[7] || '-').trim();
-                        const brand = (row[8] || '-').trim();
+                        const lokasi = formatTeksBersamaKoma(row[7]);
+                        const brand = formatTeksBersamaKoma(row[8]);
 
                         // Cari pautan SDS dalam lajur
                         let sdsLink = '';
@@ -167,8 +174,8 @@
                                 <td class="py-3 px-4 text-slate-600 font-mono text-xs">${casNo}</td>
                                 <td class="py-3 px-4 text-center text-slate-600 capitalize">${form}</td>
                                 <td class="py-3 px-4 text-center font-bold text-amber-700">${kuantiti}</td>
-                                <td class="py-3 px-4 text-slate-600">${lokasi || '-'}</td>
-                                <td class="py-3 px-4 text-slate-600 text-xs">${brand || '-'}</td>
+                                <td class="py-3 px-4 text-slate-600">${lokasi}</td>
+                                <td class="py-3 px-4 text-slate-600 text-xs">${brand}</td>
                                 <td class="py-3 px-4 text-center">${sdsHtml}</td>
                             </tr>
                         `;
