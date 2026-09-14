@@ -47,7 +47,7 @@
                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                     <i data-lucide="search" class="w-5 h-5"></i>
                 </div>
-                <input type="text" id="carianInput" onkeyup="cariBahanKimia()" placeholder="🔍 Cari nama bahan kimia, No. CAS, lokasi makmal, atau jenama..." class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition">
+                <input type="text" id="carianInput" onkeyup="cariBahanKimia()" placeholder="Cari nama bahan kimia, No. CAS, atau makmal..." class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition">
             </div>
         </div>
 
@@ -76,17 +76,16 @@
                             <th class="py-3.5 px-4 text-center w-12">Bil</th>
                             <th class="py-3.5 px-4">Nama Bahan Kimia</th>
                             <th class="py-3.5 px-4">No. CAS</th>
-                            <th class="py-3.5 px-4">Bentuk (Form)</th>
-                            <th class="py-3.5 px-4">Kuantiti Stok</th>
+                            <th class="py-3.5 px-4">Kuantiti / Unit</th>
                             <th class="py-3.5 px-4">Lokasi Makmal</th>
                             <th class="py-3.5 px-4">Jenama / Catatan</th>
                         </tr>
                     </thead>
                     <tbody id="jadualBahan" class="divide-y divide-slate-100 text-sm">
                         <tr>
-                            <td colspan="7" class="py-8 text-center text-slate-400">
-                                <div class="inline-block animate-spin rounded-full h-6 w-6 border-2 border-amber-500 border-t-transparent mb-2"></div>
-                                <p class="text-xs">Memuatkan data bahan kimia dari Google Sheets...</p>
+                            <td colspan="6" class="py-12 text-center text-slate-400">
+                                <div class="inline-block animate-spin rounded-full h-8 w-8 border-3 border-amber-500 border-t-transparent mb-2"></div>
+                                <p class="text-xs font-semibold">Memuatkan data bahan kimia dari Google Sheets...</p>
                             </td>
                         </tr>
                     </tbody>
@@ -101,62 +100,73 @@
 
     </div>
 
-    <!-- SKRIP UTAMA: TARIK DATA GOOGLE SHEETS + CARIAN + FIREBASE/SUPABASE -->
+    <!-- SKRIP UTAMA: FETCH DATA CSV GOOGLE SHEETS -->
     <script>
-        // PAUTAN CSV GOOGLE SHEETS (DITERBITKAN SEBAGAI CSV)
         const URL_SHEETS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?output=csv';
 
         async function muatDataGoogleSheets() {
             try {
                 const response = await fetch(URL_SHEETS_CSV);
                 const csvText = await response.text();
-                const barisData = parseCSV(csvText);
                 
+                // Urus pemisahan baris & koma
+                const rows = parseCSVText(csvText);
                 let html = '';
                 let bil = 1;
 
-                // Mula dari baris data (Langkah baris tajuk)
-                for (let i = 1; i < barisData.length; i++) {
-                    const row = barisData[i];
-                    if (!row || row.length < 2 || !row[1]) continue; // Langkau jika baris kosong
+                // Langkau baris tajuk (row index 0)
+                for (let i = 1; i < rows.length; i++) {
+                    const col = rows[i];
+                    if (!col || col.length < 2 || !col[1]) continue;
 
-                    const chemicalName = row[1] || '-';
-                    const casNumber = row[2] || '-';
-                    const form = row[3] || '-';
-                    const quantity = row[4] || row[5] || row[6] || '-';
-                    const location = row[7] || '-';
-                    const brand = row[8] || '-';
+                    const namaBahan = col[1] || col[0] || '-';
+                    const casNo = col[2] || '-';
+                    const kuantiti = col[3] || col[4] || col[5] || '-';
+                    const lokasi = col[6] || col[7] || '-';
+                    const catatan = col[8] || col[9] || '-';
 
                     html += `
                         <tr class="item-row hover:bg-slate-50/80 transition">
                             <td class="py-3 px-4 text-center font-bold text-slate-400">${bil++}</td>
-                            <td class="py-3 px-4 font-semibold text-slate-800">${chemicalName}</td>
-                            <td class="py-3 px-4 text-slate-600 font-mono text-xs">${casNumber}</td>
-                            <td class="py-3 px-4 text-slate-600 capitalize">${form}</td>
-                            <td class="py-3 px-4 font-bold text-amber-700">${quantity}</td>
-                            <td class="py-3 px-4 text-slate-600">${location}</td>
-                            <td class="py-3 px-4 text-slate-500 text-xs">${brand}</td>
+                            <td class="py-3 px-4 font-semibold text-slate-800">${namaBahan}</td>
+                            <td class="py-3 px-4 text-slate-600 font-mono text-xs">${casNo}</td>
+                            <td class="py-3 px-4 font-bold text-amber-700">${kuantiti}</td>
+                            <td class="py-3 px-4 text-slate-600">${lokasi}</td>
+                            <td class="py-3 px-4 text-slate-500 text-xs">${catatan}</td>
                         </tr>
                     `;
                 }
 
-                document.getElementById('jadualBahan').innerHTML = html || '<tr><td colspan="7" class="py-4 text-center text-slate-400">Tiada rekod bahan kimia dijumpai.</td></tr>';
+                document.getElementById('jadualBahan').innerHTML = html || '<tr><td colspan="6" class="py-6 text-center text-slate-400">Tiada rekod dijumpai.</td></tr>';
             } catch (err) {
-                console.error("Ralat muat Google Sheets CSV:", err);
-                document.getElementById('jadualBahan').innerHTML = '<tr><td colspan="7" class="py-4 text-center text-rose-500">❌ Gagal memuatkan data dari Google Sheets. Sila pastikan sheet terbit sebagai CSV.</td></tr>';
+                console.error("Ralat muat CSV:", err);
+                document.getElementById('jadualBahan').innerHTML = '<tr><td colspan="6" class="py-6 text-center text-rose-500">❌ Gagal memuatkan data dari Google Sheets.</td></tr>';
             }
         }
 
-        // FUNGSI UTILITI PARSER CSV (BEBAS RLAT TANDA KOMA)
-        function parseCSV(text) {
-            let lines = text.split('\n');
+        // CSV Parser Ringkas & Selamat
+        function parseCSVText(text) {
+            const lines = text.split('\n');
             return lines.map(line => {
-                let matches = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
-                return matches ? matches.map(m => m.replace(/^"|"$/g, '')) : line.split(',');
+                const result = [];
+                let cell = '';
+                let inQuotes = false;
+                for (let i = 0; i < line.length; i++) {
+                    const c = line[i];
+                    if (c === '"') {
+                        inQuotes = !inQuotes;
+                    } else if (c === ',' && !inQuotes) {
+                        result.push(cell.trim());
+                        cell = '';
+                    } else {
+                        cell += c;
+                    }
+                }
+                result.push(cell.trim());
+                return result;
             });
         }
 
-        // FUNGSI CARIAN LIVE
         function cariBahanKimia() {
             let input = document.getElementById('carianInput').value.toLowerCase();
             let rows = document.querySelectorAll('.item-row');
@@ -168,7 +178,7 @@
         }
     </script>
 
-    <!-- FIREBASE AUTH & SUPABASE LAST SEEN -->
+    <!-- FIREBASE AUTH & SUPABASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -193,25 +203,15 @@
             try {
                 const userEmail = user.email || '';
                 const userName = user.displayName || userEmail.split('@')[0];
-
                 const now = new Date();
-                const year = now.getFullYear();
-                const month = String(now.getMonth() + 1).padStart(2, '0');
-                const day = String(now.getDate()).padStart(2, '0');
-                const hours = String(now.getHours()).padStart(2, '0');
-                const minutes = String(now.getMinutes()).padStart(2, '0');
-                const seconds = String(now.getSeconds()).padStart(2, '0');
-
-                const localFormattedTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+                const localFormattedTime = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
 
                 await supabaseClient.from('kehadiran_pengguna').upsert({ 
                     email: userEmail, 
                     nama: userName,
                     last_online: localFormattedTime 
                 }, { onConflict: 'email' });
-            } catch (err) {
-                console.error(err);
-            }
+            } catch (err) { console.error(err); }
         }
 
         onAuthStateChanged(auth, (user) => {
@@ -222,7 +222,7 @@
                     document.getElementById('main-content').classList.remove('hidden');
                     kemaskiniLastSeen(user);
                     lucide.createIcons();
-                    muatDataGoogleSheets(); // Panggil fungsi muat data selepas log masuk disahkan
+                    muatDataGoogleSheets(); // Memuatkan data secara automatik dari Google Sheets
                 } else {
                     signOut(auth);
                     window.location.href = "index.html";
@@ -233,9 +233,7 @@
         });
 
         document.getElementById('logout-btn').addEventListener('click', () => {
-            signOut(auth).then(() => {
-                window.location.href = "index.html";
-            });
+            signOut(auth).then(() => { window.location.href = "index.html"; });
         });
     </script>
 </body>
