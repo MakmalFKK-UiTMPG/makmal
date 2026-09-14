@@ -90,6 +90,15 @@
             </div>
         </header>
 
+        <!-- BANNER MOD KEMASKINI -->
+        <div id="bannerKemaskini" class="hidden mb-6 p-4 bg-amber-50 border border-amber-200 rounded-2xl flex items-center justify-between shadow-sm">
+            <div class="flex items-center space-x-3 text-amber-800">
+                <i data-lucide="edit-3" class="w-5 h-5"></i>
+                <span class="text-sm font-bold">Anda sedang mengemaskini Tempahan <span id="labelEditID" class="underline">#</span>. Sila kemaskini maklumat dan tekan 'Kemaskini Tempahan'.</span>
+            </div>
+            <button type="button" onclick="batalModEdit()" class="text-xs font-bold text-amber-900 hover:text-rose-600 underline cursor-pointer">Batal Kemaskini</button>
+        </div>
+
         <form id="formTempahan" class="space-y-8">
             <!-- LANGKAH 1 -->
             <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
@@ -214,7 +223,7 @@
 
                 <button type="submit" id="btnHantar" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-6 rounded-xl shadow-md transition duration-200 flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
                     <i data-lucide="send" class="w-4 h-4"></i>
-                    <span>Hantar Tempahan</span>
+                    <span id="labelBtnHantar">Hantar Tempahan</span>
                 </button>
             </div>
         </form>
@@ -229,18 +238,19 @@
             </div>
 
             <div class="overflow-x-auto custom-scrollbar">
-                <table class="w-full text-left border-collapse min-w-[650px]">
+                <table class="w-full text-left border-collapse min-w-[700px]">
                     <thead>
                         <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500">
                             <th class="py-3 px-4">Nama Pemohon</th>
                             <th class="py-3 px-4">Peralatan</th>
                             <th class="py-3 px-4">Tarikh Guna</th>
                             <th class="py-3 px-4">Masa</th>
-                            <th class="py-3 px-4 w-32">Status</th>
+                            <th class="py-3 px-4 w-28">Status</th>
+                            <th class="py-3 px-4 text-center w-28">Tindakan</th>
                         </tr>
                     </thead>
                     <tbody id="isiJadualPelajar" class="divide-y divide-slate-100 text-sm">
-                        <tr><td colspan="5" class="py-6 text-center text-slate-400 text-xs">Memuatkan data...</td></tr>
+                        <tr><td colspan="6" class="py-6 text-center text-slate-400 text-xs">Memuatkan data...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -270,7 +280,6 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // KAWALAN KESELAMATAN: Tendang pengguna jika belum log masuk
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 const email = user.email;
@@ -283,7 +292,6 @@
             }
         });
 
-        // FUNGSI LOG KELUAR
         document.getElementById('logout-btn').addEventListener('click', () => {
             signOut(auth).then(() => {
                 window.location.href = "index.html";
@@ -293,14 +301,15 @@
         });
     </script>
 
-    <!-- SKRIP SUPABASE & LOGIK TEMPAHAN PELBAGAI JAM -->
+    <!-- SKRIP SUPABASE & LOGIK KEMASKINI TEMPAHAN -->
     <script>
         const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
         const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
         let senaraiTempahanSediaAda = [];
-        const senaraiSlotJam = ["08:00", "09:00", "10:00", "11:00", "12:00", "14:00", "15:00", "16:00"];
+        let idTempahanSedangEdit = null; // 🛠️ MENYIMPAN ID TEMPAHAN YANG SEDANG DIKEMASKINI
+        const senaraiSlotJam = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00"];
 
         function formatTarikhStandard(d) {
             let yyyy = d.getFullYear();
@@ -309,7 +318,6 @@
             return `${yyyy}-${mm}-${dd}`;
         }
 
-        // ✉️ FUNGSI UNTUK MENGHANTAR EMEL NOTIFIKASI TEMPAHAN PERALATAN
         async function hantarNotifikasiTempahan(dataTempahan) {
             const templateParams = {
                 to_email: 'nurha1559@uitm.edu.my',
@@ -340,7 +348,7 @@
 
             let rowMinggu1 = tbody.insertRow();
             rowMinggu1.className = "bg-slate-100 font-bold text-slate-700 text-xs";
-            rowMinggu1.innerHTML = `<td colspan="9" class="p-2.5 border-b border-slate-200">📅 MINGGU 1 (Hari Bekerja)</td>`;
+            rowMinggu1.innerHTML = `<td colspan="10" class="p-2.5 border-b border-slate-200">📅 MINGGU 1 (Hari Bekerja)</td>`;
 
             while (hariDijana < 10) {
                 let tarikh = new Date();
@@ -354,7 +362,7 @@
                     if (hariDijana === 5) {
                         let rowMinggu2 = tbody.insertRow();
                         rowMinggu2.className = "bg-slate-100 font-bold text-slate-700 text-xs";
-                        rowMinggu2.innerHTML = `<td colspan="9" class="p-2.5 border-b border-slate-200">📅 MINGGU 2 (Hari Bekerja)</td>`;
+                        rowMinggu2.innerHTML = `<td colspan="10" class="p-2.5 border-b border-slate-200">📅 MINGGU 2 (Hari Bekerja)</td>`;
                     }
 
                     let row = tbody.insertRow();
@@ -377,12 +385,11 @@
             }
         }
 
-        // 🛠️ FUNGSI MENDAPATKAN KESEMUA SLOT TERLIBAT DALAM JULAT MASA
         function dapatkanSlotDalamJulat(mula, tamat) {
             let slotTerlibat = [];
             let iMula = senaraiSlotJam.indexOf(mula);
             
-            let mapTamat = { "09:00":0, "10:00":1, "11:00":2, "12:00":3, "13:00":4, "15:00":5, "16:00":6, "17:00":7 };
+            let mapTamat = { "09:00":0, "10:00":1, "11:00":2, "12:00":3, "13:00":4, "14:00":5, "15:00":6, "16:00":7, "17:00":8 };
             let iTamat = mapTamat[tamat];
 
             if (iMula !== -1 && iTamat !== undefined && iMula <= iTamat) {
@@ -414,7 +421,8 @@
                 const st = String(rekod.status || '').toLowerCase();
                 const adakahDibatalkan = (st === 'ditolak' || st === 'batal' || st === 'dibatalkan');
 
-                if (rekod.nama_peralatan === peralatanDipilih && !adakahDibatalkan) {
+                // 🛠️ Abaikan rekod yang sedang di-edit supaya slot sendiri tidak ditanda bertindih
+                if (rekod.nama_peralatan === peralatanDipilih && !adakahDibatalkan && rekod.id !== idTempahanSedangEdit) {
                     let slotTerlibat = dapatkanSlotDalamJulat(rekod.masa_mula, rekod.masa_tamat);
                     
                     slotTerlibat.forEach(masaClean => {
@@ -459,6 +467,37 @@
             }
         }
 
+        // 🛠️ FUNGSI UNTUK MENGISI BORANG KEMASKINI
+        window.sediaEditTempahan = function(id) {
+            const rekod = senaraiTempahanSediaAda.find(item => item.id === id);
+            if (!rekod) return;
+
+            idTempahanSedangEdit = id;
+            document.getElementById('nama_pemohon').value = rekod.nama_pemohon || '';
+            document.getElementById('no_telefon').value = rekod.no_telefon || '';
+            document.getElementById('tujuan').value = rekod.tujuan || '';
+            document.getElementById('nama_peralatan').value = rekod.nama_peralatan || '';
+            document.getElementById('tarikh_guna').value = rekod.tarikh_guna || '';
+            document.getElementById('masa_mula').value = rekod.masa_mula || '';
+            document.getElementById('masa_tamat').value = rekod.masa_tamat || '';
+
+            document.getElementById('bannerKemaskini').classList.remove('hidden');
+            document.getElementById('labelEditID').innerText = `#${id}`;
+            document.getElementById('labelBtnHantar').innerText = "Kemaskini Tempahan";
+
+            kemaskiniStatusTimetable();
+            document.getElementById('formTempahan').scrollIntoView({ behavior: 'smooth' });
+        };
+
+        // 🛠️ BATALKAN MOD EDIT
+        window.batalModEdit = function() {
+            idTempahanSedangEdit = null;
+            document.getElementById('formTempahan').reset();
+            document.getElementById('bannerKemaskini').classList.add('hidden');
+            document.getElementById('labelBtnHantar').innerText = "Hantar Tempahan";
+            kemaskiniStatusTimetable();
+        };
+
         document.addEventListener("DOMContentLoaded", async function() {
             lucide.createIcons();
             janaTimetable2Minggu();
@@ -483,16 +522,15 @@
                 if (!tarikh_guna || !masa_mula || !masa_tamat) {
                     alert("Sila pilih Tarikh, Masa Mula, dan Masa Tamat dengan lengkap!");
                     btnHantar.disabled = false;
-                    btnHantar.innerText = "Hantar Tempahan";
+                    btnHantar.innerText = idTempahanSedangEdit ? "Kemaskini Tempahan" : "Hantar Tempahan";
                     return;
                 }
 
-                // 🛠️ SEMAKAN BERTINDIH MULTI-SLOT
                 const slotInginDitempah = dapatkanSlotDalamJulat(masa_mula, masa_tamat);
                 if (slotInginDitempah.length === 0) {
                     alert("❌ Pilihan Masa Tamat mestilah SELEPAS Masa Mula!");
                     btnHantar.disabled = false;
-                    btnHantar.innerText = "Hantar Tempahan";
+                    btnHantar.innerText = idTempahanSedangEdit ? "Kemaskini Tempahan" : "Hantar Tempahan";
                     return;
                 }
 
@@ -505,7 +543,7 @@
                 if (ralatSemak) {
                     alert('Ralat semasa menyemak ketersediaan slot: ' + ralatSemak.message);
                     btnHantar.disabled = false;
-                    btnHantar.innerText = "Hantar Tempahan";
+                    btnHantar.innerText = idTempahanSedangEdit ? "Kemaskini Tempahan" : "Hantar Tempahan";
                     return;
                 }
 
@@ -513,7 +551,8 @@
                 if (senaraiSemak) {
                     senaraiSemak.forEach(rekod => {
                         const st = String(rekod.status || '').toLowerCase();
-                        if (st !== 'ditolak' && st !== 'batal' && st !== 'dibatalkan') {
+                        // 🛠️ Abaikan rekod sendiri semasa menyemak pertindihan
+                        if (st !== 'ditolak' && st !== 'batal' && st !== 'dibatalkan' && rekod.id !== idTempahanSedangEdit) {
                             let slotRekod = dapatkanSlotDalamJulat(rekod.masa_mula, rekod.masa_tamat);
                             let bertindih = slotInginDitempah.some(s => slotRekod.includes(s));
                             if (bertindih) adaBertindih = true;
@@ -525,7 +564,7 @@
                     alert(`❌ MAAF! Sesetengah/Kesemua slot bagi peralatan (${nama_peralatan}) dari ${masa_mula} hingga ${masa_tamat} pada tarikh ${tarikh_guna} telah pun ditempah. Sila pilih julat masa lain.`);
                     await kemaskiniStatusTimetable();
                     btnHantar.disabled = false;
-                    btnHantar.innerText = "Hantar Tempahan";
+                    btnHantar.innerText = idTempahanSedangEdit ? "Kemaskini Tempahan" : "Hantar Tempahan";
                     return;
                 }
 
@@ -540,22 +579,38 @@
                     status: 'Menunggu'
                 };
 
-                // 1. Simpan Rekod Ke Supabase
-                const { data, error } = await supabaseClient
-                    .from('tempahan_peralatan')
-                    .insert([formData]);
+                let ralatOperasi = null;
 
-                if (error) {
-                    alert('Gagal menghantar tempahan: ' + error.message);
-                    btnHantar.disabled = false;
-                    btnHantar.innerText = "Hantar Tempahan";
+                if (idTempahanSedangEdit) {
+                    // 🛠️ PROSES KEMASKINI (UPDATE)
+                    const { error } = await supabaseClient
+                        .from('tempahan_peralatan')
+                        .update(formData)
+                        .eq('id', idTempahanSedangEdit);
+                    ralatOperasi = error;
                 } else {
-                    // 2. Hantar E-mel Notifikasi
+                    // 🛠️ PROSES TAMBAH BAHARU (INSERT)
+                    const { error } = await supabaseClient
+                        .from('tempahan_peralatan')
+                        .insert([formData]);
+                    ralatOperasi = error;
+                }
+
+                if (ralatOperasi) {
+                    alert('Gagal memproses tempahan: ' + ralatOperasi.message);
+                    btnHantar.disabled = false;
+                    btnHantar.innerText = idTempahanSedangEdit ? "Kemaskini Tempahan" : "Hantar Tempahan";
+                } else {
                     await hantarNotifikasiTempahan(formData);
 
-                    alert(`✅ Tempahan berjaya dihantar untuk tempoh ${masa_mula} hingga ${masa_tamat}!`);
-                    
-                    document.getElementById('formTempahan').reset();
+                    if (idTempahanSedangEdit) {
+                        alert(`✅ Tempahan #${idTempahanSedangEdit} berjaya dikemaskini!`);
+                        batalModEdit();
+                    } else {
+                        alert(`✅ Tempahan berjaya dihantar untuk tempoh ${masa_mula} hingga ${masa_tamat}!`);
+                        document.getElementById('formTempahan').reset();
+                    }
+
                     btnHantar.disabled = false;
                     btnHantar.innerText = "Hantar Tempahan";
 
@@ -573,7 +628,7 @@
                     .order('id', { ascending: false });
 
                 if (error) {
-                    tbody.innerHTML = '<tr><td colspan="5" class="py-4 text-center text-rose-500 font-semibold">Gagal memuatkan data.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="6" class="py-4 text-center text-rose-500 font-semibold">Gagal memuatkan data.</td></tr>';
                     return;
                 }
 
@@ -583,7 +638,7 @@
                 }) : [];
 
                 if (rekodAktif.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" class="py-6 text-center text-slate-400">Tiada rekod tempahan aktif ditemui.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="6" class="py-6 text-center text-slate-400">Tiada rekod tempahan aktif ditemui.</td></tr>';
                     return;
                 }
 
@@ -595,7 +650,12 @@
 
                     let statusSemasa = rekod.status || 'Menunggu';
                     let statusBadge = '<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">Menunggu</span>';
-                    if (statusSemasa === 'Lulus') {
+                    
+                    // 🛠️ Butang Kemaskini hanya muncul jika status masih 'Menunggu'
+                    let butangTindakan = '-';
+                    if (statusSemasa === 'Menunggu') {
+                        butangTindakan = `<button onclick="sediaEditTempahan(${rekod.id})" class="px-2.5 py-1 text-xs font-semibold text-indigo-600 bg-indigo-50 border border-indigo-200 hover:bg-indigo-600 hover:text-white rounded-lg transition cursor-pointer">✏️ Kemaskini</button>`;
+                    } else if (statusSemasa === 'Lulus') {
                         statusBadge = '<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Lulus</span>';
                     }
 
@@ -619,6 +679,10 @@
                     const cellStatus = row.insertCell(4);
                     cellStatus.className = "py-3.5 px-4";
                     cellStatus.innerHTML = statusBadge;
+
+                    const cellTindakan = row.insertCell(5);
+                    cellTindakan.className = "py-3.5 px-4 text-center";
+                    cellTindakan.innerHTML = butangTindakan;
                 });
             }
         });
