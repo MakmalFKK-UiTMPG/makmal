@@ -7,7 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <!-- Pustaka PapaParse untuk membaca CSV Google Sheets dengan Tepat -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
 <body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen">
@@ -67,7 +66,7 @@
                 <div>
                     <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                         <i data-lucide="flask-round" class="w-5 h-5 text-amber-600"></i>
-                        Senarai Stok Bahan Kimia Makmal
+                        Senarai Stok Bahan Kimia Makmal (Keseluruhan A-Z)
                     </h2>
                     <p class="text-xs text-slate-500 mt-1">Paparan rekod rasmi inventori makmal FKK Pasir Gudang.</p>
                 </div>
@@ -97,7 +96,7 @@
                         <tr>
                             <td colspan="8" class="py-12 text-center text-slate-400">
                                 <div class="inline-block animate-spin rounded-full h-8 w-8 border-3 border-amber-500 border-t-transparent mb-2"></div>
-                                <p class="text-xs font-semibold">Memuatkan data bahan kimia dari Google Sheets...</p>
+                                <p class="text-xs font-semibold">Memuatkan data bahan kimia dari semua tab Google Sheets...</p>
                             </td>
                         </tr>
                     </tbody>
@@ -112,9 +111,18 @@
 
     </div>
 
-    <!-- SKRIP UTAMA PARSING DATA -->
+    <!-- SKRIP UTAMA PARSING MULTI-TAB GOOGLE SHEETS -->
     <script>
-        const URL_SHEETS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?output=csv';
+        // MASUKKAN PAUTAN CSV SETIAP TAB DALAM SENARAI DI BAWAH:
+        const SENARAI_URL_SHEETS = [
+            'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?gid=1747289315&single=true&output=csv', // Tab 1 (SYMBOL & NUMBER)
+            'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?gid=1535761463&single=true&output=csv', // Tab 2 (A-E) - Ganti dengan URL CSV Tab 2 anda
+            'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?gid=2086616975&single=true&output=csv', // Tab 3 (F-J)// Tambah pautan CSV tab seterusnya di sini jika ada lagi...
+            'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?gid=188204817&single=true&output=csv', // Tab 4 (K-O)
+            'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?gid=1511349215&single=true&output=csv', // Tab 5 (P-T)
+            'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?gid=1389439643&single=true&output=csv', // Tab 6 (U-Z)
+            'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?gid=827845288&single=true&output=csv', // Tab 7 (STANDARD SOLUTION/ REAGENTS)
+        ];
 
         function formatTeksBersamaKoma(str) {
             if (!str) return '-';
@@ -122,93 +130,98 @@
             return cleaned || '-';
         }
 
-        function muatDataGoogleSheets() {
-            Papa.parse(URL_SHEETS_CSV, {
-                download: true,
-                skipEmptyLines: true,
-                complete: function(results) {
-                    const rows = results.data;
-                    let html = '';
-                    let autoBil = 1;
+        async function muatDataGoogleSheets() {
+            let html = '';
+            let autoBil = 1;
 
-                    for (let i = 0; i < rows.length; i++) {
-                        const row = rows[i];
-                        if (!row || row.length < 2) continue;
+            try {
+                // Tarik semua CSV tab serentak
+                for (const url of SENARAI_URL_SHEETS) {
+                    await new Promise((resolve) => {
+                        Papa.parse(url, {
+                            download: true,
+                            skipEmptyLines: true,
+                            complete: function(results) {
+                                const rows = results.data;
 
-                        const rawNama = (row[1] || '').trim();
-                        const namaBahan = formatTeksBersamaKoma(rawNama);
+                                for (let i = 0; i < rows.length; i++) {
+                                    const row = rows[i];
+                                    if (!row || row.length < 2) continue;
 
-                        // ABAIKAN BARIS HEADER ATAS SAHAJA (Abaikan jika nama bahan kosong, nama header, atau tajuk fakulti)
-                        if (!namaBahan || namaBahan === '-' || 
-                            namaBahan.toUpperCase().includes('CHEMICAL NAME') || 
-                            namaBahan.toUpperCase().includes('FAKULTI KEJURUTERAAN') || 
-                            namaBahan.toUpperCase().includes('NAME')) {
-                            continue;
-                        }
+                                    const rawNama = (row[1] || '').trim();
+                                    const namaBahan = formatTeksBersamaKoma(rawNama);
 
-                        // Guna nombor Bil asal dari Sheet, jika tiada/invalid guna auto increment
-                        const rawBil = (row[0] || '').trim();
-                        const displayBil = (rawBil && !isNaN(parseInt(rawBil))) ? rawBil : autoBil++;
+                                    // Abaikan Header
+                                    if (!namaBahan || namaBahan === '-' || 
+                                        namaBahan.toUpperCase().includes('CHEMICAL NAME') || 
+                                        namaBahan.toUpperCase().includes('FAKULTI KEJURUTERAAN') || 
+                                        namaBahan.toUpperCase().includes('NAME')) {
+                                        continue;
+                                    }
 
-                        const casNo = formatTeksBersamaKoma(row[2]);
-                        const form = formatTeksBersamaKoma(row[3]);
-                        
-                        // Semak Kuantiti: Keutamaan Sept 2026 (col 6), kemudian Jan 2026 (col 5), kemudian June 2025 (col 4)
-                        const qSept2026 = formatTeksBersamaKoma(row[6]);
-                        const qJan2026  = formatTeksBersamaKoma(row[5]);
-                        const qJune2025 = formatTeksBersamaKoma(row[4]);
+                                    const casNo = formatTeksBersamaKoma(row[2]);
+                                    const form = formatTeksBersamaKoma(row[3]);
+                                    
+                                    const qSept2026 = formatTeksBersamaKoma(row[6]);
+                                    const qJan2026  = formatTeksBersamaKoma(row[5]);
+                                    const qJune2025 = formatTeksBersamaKoma(row[4]);
 
-                        let kuantiti = '-';
-                        if (qSept2026 && qSept2026 !== '-') {
-                            kuantiti = qSept2026;
-                        } else if (qJan2026 && qJan2026 !== '-') {
-                            kuantiti = qJan2026;
-                        } else if (qJune2025 && qJune2025 !== '-') {
-                            kuantiti = qJune2025;
-                        }
+                                    let kuantiti = '-';
+                                    if (qSept2026 && qSept2026 !== '-') {
+                                        kuantiti = qSept2026;
+                                    } else if (qJan2026 && qJan2026 !== '-') {
+                                        kuantiti = qJan2026;
+                                    } else if (qJune2025 && qJune2025 !== '-') {
+                                        kuantiti = qJune2025;
+                                    }
 
-                        const lokasi = formatTeksBersamaKoma(row[7]);
-                        const brand = formatTeksBersamaKoma(row[8]);
+                                    const lokasi = formatTeksBersamaKoma(row[7]);
+                                    const brand = formatTeksBersamaKoma(row[8]);
 
-                        // Cari pautan SDS dalam lajur
-                        let sdsLink = '';
-                        row.forEach(cell => {
-                            if (cell && (cell.includes('http://') || cell.includes('https://'))) {
-                                sdsLink = cell.trim();
+                                    let sdsLink = '';
+                                    row.forEach(cell => {
+                                        if (cell && (cell.includes('http://') || cell.includes('https://'))) {
+                                            sdsLink = cell.trim();
+                                        }
+                                    });
+
+                                    let sdsHtml = '<span class="text-slate-300 text-xs">-</span>';
+                                    if (sdsLink) {
+                                        sdsHtml = `<a href="${sdsLink}" target="_blank" class="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg border border-indigo-200 transition">
+                                            <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                                            <span>Lihat SDS</span>
+                                        </a>`;
+                                    }
+
+                                    html += `
+                                        <tr class="item-row hover:bg-slate-50/80 transition">
+                                            <td class="py-3 px-4 text-center font-bold text-slate-400">${autoBil++}</td>
+                                            <td class="py-3 px-4 font-semibold text-slate-800">${namaBahan}</td>
+                                            <td class="py-3 px-4 text-slate-600 font-mono text-xs">${casNo}</td>
+                                            <td class="py-3 px-4 text-center text-slate-600 capitalize">${form}</td>
+                                            <td class="py-3 px-4 text-center font-bold text-amber-700">${kuantiti}</td>
+                                            <td class="py-3 px-4 text-slate-600">${lokasi}</td>
+                                            <td class="py-3 px-4 text-slate-600 text-xs">${brand}</td>
+                                            <td class="py-3 px-4 text-center">${sdsHtml}</td>
+                                        </tr>
+                                    `;
+                                }
+                                resolve();
+                            },
+                            error: function(err) {
+                                console.error("Ralat PapaParse:", err);
+                                resolve();
                             }
                         });
-
-                        // Format Butang SDS
-                        let sdsHtml = '<span class="text-slate-300 text-xs">-</span>';
-                        if (sdsLink) {
-                            sdsHtml = `<a href="${sdsLink}" target="_blank" class="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg border border-indigo-200 transition">
-                                <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
-                                <span>Lihat SDS</span>
-                            </a>`;
-                        }
-
-                        html += `
-                            <tr class="item-row hover:bg-slate-50/80 transition">
-                                <td class="py-3 px-4 text-center font-bold text-slate-400">${displayBil}</td>
-                                <td class="py-3 px-4 font-semibold text-slate-800">${namaBahan}</td>
-                                <td class="py-3 px-4 text-slate-600 font-mono text-xs">${casNo}</td>
-                                <td class="py-3 px-4 text-center text-slate-600 capitalize">${form}</td>
-                                <td class="py-3 px-4 text-center font-bold text-amber-700">${kuantiti}</td>
-                                <td class="py-3 px-4 text-slate-600">${lokasi}</td>
-                                <td class="py-3 px-4 text-slate-600 text-xs">${brand}</td>
-                                <td class="py-3 px-4 text-center">${sdsHtml}</td>
-                            </tr>
-                        `;
-                    }
-
-                    document.getElementById('jadualBahan').innerHTML = html || '<tr><td colspan="8" class="py-6 text-center text-slate-400">Tiada rekod bahan kimia dijumpai.</td></tr>';
-                    if (window.lucide) { lucide.createIcons(); }
-                },
-                error: function(err) {
-                    console.error("Ralat PapaParse:", err);
-                    document.getElementById('jadualBahan').innerHTML = '<tr><td colspan="8" class="py-6 text-center text-rose-500">❌ Gagal memuatkan data dari Google Sheets.</td></tr>';
+                    });
                 }
-            });
+
+                document.getElementById('jadualBahan').innerHTML = html || '<tr><td colspan="8" class="py-6 text-center text-slate-400">Tiada rekod bahan kimia dijumpai.</td></tr>';
+                if (window.lucide) { lucide.createIcons(); }
+
+            } catch (err) {
+                console.error("Ralat muat CSV:", err);
+            }
         }
 
         function cariBahanKimia() {
