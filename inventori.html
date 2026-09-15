@@ -1,3 +1,28 @@
+Isu ini berlaku disebabkan oleh **tiga perkara utama** dalam fail Google Sheets Pensyarah tersebut:
+
+1. **Pautan CSV (`SENARAI_URL_PENSYARAH`) Mengandungi ID Tab yang Salah:**
+Pautan CSV terbitan yang dimasukkan sebelum ini memaparkan `gid=756947756` (tab jawatankuasa/nota), manakala data bahan kimia pensyarah yang sebenar berada di tab pertama (`gid=0` atau `gid=1384758586`).
+2. **Struktur Kedudukan Lajur (Column Mapping) Terbalik:**
+Dalam fail Pensyarah anda:
+* **Kolum A (0):** Nombor Bil (1, 2, 3...)
+* **Kolum B (1):** Nama Bahan Kimia
+* **Kolum C (2):** No. CAS
+* **Kolum D (3):** Bentuk / Form
+* **Kolum E (4):** Kuantiti
+* **Kolum F (5):** Lokasi Makmal
+* **Kolum G (6):** Jenama / Catatan
+
+
+3. **Nama Header Google Sheets:**
+Tajuk lajur di Google Sheets Pensyarah ditulis sebagai **"CHEMICAL NAME"** dan **"CAS NO"**, jadi penapis sedia ada yang mencari teks *"NAMA BAHAN"* atau *"NO CAS"* telah melangkau data tersebut.
+
+---
+
+### Kod Penuh `inventori.html` (Pembetulan Lengkap Pautan & Mapping)
+
+Salin kod penuh di bawah dan gantikan **keseluruhan** isi fail `inventori.html` anda di GitHub:
+
+```html
 <!DOCTYPE html>
 <html lang="ms">
 <head>
@@ -451,3 +476,5 @@
     </script>
 </body>
 </html>
+
+```
