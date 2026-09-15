@@ -123,7 +123,7 @@
                     <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                         <i data-lucide="search" class="w-5 h-5"></i>
                     </div>
-                    <input type="text" id="carianInput" onkeyup="cariBahanKimia()" placeholder="Cari nama bahan kimia, No. CAS, lokasi, atau jenama..." class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition">
+                    <input type="text" id="carianInput" onkeyup="cariBahanKimia()" placeholder="Cari nama bahan kimia, No. CAS, lokasi, atau pensyarah..." class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition">
                 </div>
             </div>
 
@@ -138,7 +138,7 @@
                         <p class="text-xs text-slate-500 mt-1">Paparan rekod inventori FKK Pasir Gudang.</p>
                     </div>
 
-                    <!-- BUTANG KEMAS KINI DINAMIK (DILENGKAPI DENGAN PAUTAN ASING KETIKA DIKLIK) -->
+                    <!-- BUTANG KEMAS KINI DINAMIK -->
                     <a id="btnLinkGoogleSheet" href="#" target="_blank" class="inline-flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-bold text-xs transition shadow-sm w-full sm:w-auto">
                         <i data-lucide="external-link" class="w-4 h-4"></i>
                         <span id="btnTextGoogleSheet">Kemaskini Inventori</span>
@@ -154,8 +154,8 @@
                                 <th class="py-3.5 px-4">Nama Bahan Kimia</th>
                                 <th class="py-3.5 px-4">No. CAS</th>
                                 <th class="py-3.5 px-4 text-center">Bentuk</th>
-                                <th class="py-3.5 px-4 text-center">Kuantiti Stok (SEPT 2026)</th>
-                                <th class="py-3.5 px-4">Lokasi Makmal</th>
+                                <th class="py-3.5 px-4 text-center">Kuantiti Stok</th>
+                                <th id="headerLokasi" class="py-3.5 px-4">Lokasi Makmal</th>
                                 <th class="py-3.5 px-4">Jenama</th>
                                 <th class="py-3.5 px-4 text-center">Dokumen SDS</th>
                             </tr>
@@ -184,7 +184,7 @@
     <script>
         // ================= PAUTAN EDIT GOOGLE SHEETS ASING DIBUAT DI SINI =================
         const URL_EDIT_STAF_MAKMAL = "https://docs.google.com/spreadsheets/d/1dSGbRd96Dbiwxw4Z-wtHo_Oae-jgEHuF2T_7vGU0_K0/edit?usp=sharing"; // Untuk FYP & Amali
-        const URL_EDIT_PENSYARAH   = "https://docs.google.com/spreadsheets/d/1dSGbRd96Dbiwxw4Z-wtHo_Oae-jgEHuF2T_7vGU0_K0/edit?usp=sharing"; // Ganti dengan URL Google Sheets Pensyarah kelak
+        const URL_EDIT_PENSYARAH   = "https://docs.google.com/spreadsheets/d/1di2ouMv7HOah1grFpwWjyxLjdGstAPkBgtr98yXxzfs/edit?usp=sharing"; // Google Sheets Pensyarah
 
         // 1. SENARAI PAUTAN CSV READ-ONLY UNTUK BAHAN KIMIA MAKMAL (FYP)
         const SENARAI_URL_FYP = [
@@ -199,7 +199,7 @@
 
         // 2. SENARAI PAUTAN CSV READ-ONLY UNTUK BAHAN KIMIA PENSYARAH
         const SENARAI_URL_PENSYARAH = [
-           'https://docs.google.com/spreadsheets/d/e/2PACX-1vRm2CVMPo0E54UrTVn0D1FgfAHmHuxbnF0bfDfURR-9V_hgTeQTjKXRX4KiR6BspFNsvuBhWxu_2y0x/pub?gid=756947756&single=true&output=csv', // Ganti/tambah URL CSV Pensyarah di sini kelak...
+            'https://docs.google.com/spreadsheets/d/e/2PACX-1vRm2CVMPo0E54UrTVn0D1FgfAHmHuxbnF0bfDfURR-9V_hgTeQTjKXRX4KiR6BspFNsvuBhWxu_2y0x/pub?gid=756947756&single=true&output=csv',
         ];
 
         // 3. SENARAI PAUTAN CSV READ-ONLY UNTUK BAHAN KIMIA MAKMAL (AMALI)
@@ -220,24 +220,28 @@
             const tajukJadual = document.getElementById('tajukJadual');
             const btnLinkSheet = document.getElementById('btnLinkGoogleSheet');
             const btnTextSheet = document.getElementById('btnTextGoogleSheet');
+            const headerLokasi = document.getElementById('headerLokasi');
 
             if (kategori === 'fyp') {
                 tajukJadual.innerHTML = `<i data-lucide="flask-conical" class="w-5 h-5 text-amber-600"></i> Senarai Stok Bahan Kimia Makmal (FYP)`;
+                headerLokasi.innerText = "Lokasi Makmal";
                 btnLinkSheet.href = URL_EDIT_STAF_MAKMAL;
                 btnTextSheet.innerText = "Kemaskini Inventori (Staf Makmal)";
-                muatDataGoogleSheets(SENARAI_URL_FYP, 'Makmal FYP');
+                muatDataGoogleSheets(SENARAI_URL_FYP, 'fyp');
 
             } else if (kategori === 'pensyarah') {
                 tajukJadual.innerHTML = `<i data-lucide="user-check" class="w-5 h-5 text-indigo-600"></i> Senarai Stok Bahan Kimia (Pensyarah)`;
+                headerLokasi.innerText = "Nama Pensyarah / Lokasi";
                 btnLinkSheet.href = URL_EDIT_PENSYARAH;
                 btnTextSheet.innerText = "Kemaskini Inventori (Pensyarah)";
-                muatDataGoogleSheets(SENARAI_URL_PENSYARAH, 'Pensyarah');
+                muatDataGoogleSheets(SENARAI_URL_PENSYARAH, 'pensyarah');
 
             } else if (kategori === 'amali') {
                 tajukJadual.innerHTML = `<i data-lucide="beaker" class="w-5 h-5 text-emerald-600"></i> Senarai Stok Bahan Kimia Makmal (Amali)`;
+                headerLokasi.innerText = "Lokasi Makmal";
                 btnLinkSheet.href = URL_EDIT_STAF_MAKMAL;
                 btnTextSheet.innerText = "Kemaskini Inventori (Staf Makmal)";
-                muatDataGoogleSheets(SENARAI_URL_AMALI, 'Makmal Amali');
+                muatDataGoogleSheets(SENARAI_URL_AMALI, 'amali');
             }
 
             if (window.lucide) { lucide.createIcons(); }
@@ -249,12 +253,12 @@
             document.getElementById('carianInput').value = '';
         }
 
-        async function muatDataGoogleSheets(senaraiUrl, namaKategori) {
+        async function muatDataGoogleSheets(senaraiUrl, jenisKategori) {
             document.getElementById('jadualBahan').innerHTML = `
                 <tr>
                     <td colspan="8" class="py-12 text-center text-slate-400">
                         <div class="inline-block animate-spin rounded-full h-8 w-8 border-3 border-amber-500 border-t-transparent mb-2"></div>
-                        <p class="text-xs font-semibold">Memuatkan data bahan kimia (${namaKategori})...</p>
+                        <p class="text-xs font-semibold">Memuatkan data bahan kimia...</p>
                     </td>
                 </tr>
             `;
@@ -280,35 +284,54 @@
                                     const row = rows[i];
                                     if (!row || row.length < 2) continue;
 
-                                    const rawNama = (row[1] || '').trim();
-                                    const namaBahan = formatTeksBersamaKoma(rawNama);
+                                    let namaBahan = '', casNo = '', form = '', kuantiti = '-', lokasi = '', brand = '';
 
-                                    if (!namaBahan || namaBahan === '-' || 
-                                        namaBahan.toUpperCase().includes('CHEMICAL NAME') || 
-                                        namaBahan.toUpperCase().includes('FAKULTI KEJURUTERAAN') || 
-                                        namaBahan.toUpperCase().includes('NAME')) {
-                                        continue;
+                                    if (jenisKategori === 'pensyarah') {
+                                        // STRUKTUR SHEET PENSYARAH: A=Pensyarah, B=Bil, C=Nama, D=CAS, E=Kuantiti, F=Bentuk, G=Brand/Lokasi
+                                        const pemilik = formatTeksBersamaKoma(row[0]);
+                                        namaBahan = formatTeksBersamaKoma(row[2]);
+
+                                        // Langkau Header
+                                        if (!namaBahan || namaBahan === '-' || 
+                                            namaBahan.toUpperCase().includes('CHEMICAL') || 
+                                            namaBahan.toUpperCase().includes('NAME') || 
+                                            namaBahan.toUpperCase().includes('NAMA BAHAN')) {
+                                            continue;
+                                        }
+
+                                        casNo = formatTeksBersamaKoma(row[3]);
+                                        kuantiti = formatTeksBersamaKoma(row[4]);
+                                        form = formatTeksBersamaKoma(row[5]);
+                                        lokasi = pemilik !== '-' ? pemilik : formatTeksBersamaKoma(row[6]);
+                                        brand = formatTeksBersamaKoma(row[7]);
+
+                                    } else {
+                                        // STRUKTUR SHEET FYP & AMALI
+                                        namaBahan = formatTeksBersamaKoma(row[1]);
+
+                                        if (!namaBahan || namaBahan === '-' || 
+                                            namaBahan.toUpperCase().includes('CHEMICAL') || 
+                                            namaBahan.toUpperCase().includes('NAME') || 
+                                            namaBahan.toUpperCase().includes('FAKULTI')) {
+                                            continue;
+                                        }
+
+                                        casNo = formatTeksBersamaKoma(row[2]);
+                                        form = formatTeksBersamaKoma(row[3]);
+                                        
+                                        const qSept2026 = formatTeksBersamaKoma(row[6]);
+                                        const qJan2026  = formatTeksBersamaKoma(row[5]);
+                                        const qJune2025 = formatTeksBersamaKoma(row[4]);
+
+                                        if (qSept2026 && qSept2026 !== '-') kuantiti = qSept2026;
+                                        else if (qJan2026 && qJan2026 !== '-') kuantiti = qJan2026;
+                                        else if (qJune2025 && qJune2025 !== '-') kuantiti = qJune2025;
+
+                                        lokasi = formatTeksBersamaKoma(row[7]);
+                                        brand = formatTeksBersamaKoma(row[8]);
                                     }
 
-                                    const casNo = formatTeksBersamaKoma(row[2]);
-                                    const form = formatTeksBersamaKoma(row[3]);
-                                    
-                                    const qSept2026 = formatTeksBersamaKoma(row[6]);
-                                    const qJan2026  = formatTeksBersamaKoma(row[5]);
-                                    const qJune2025 = formatTeksBersamaKoma(row[4]);
-
-                                    let kuantiti = '-';
-                                    if (qSept2026 && qSept2026 !== '-') {
-                                        kuantiti = qSept2026;
-                                    } else if (qJan2026 && qJan2026 !== '-') {
-                                        kuantiti = qJan2026;
-                                    } else if (qJune2025 && qJune2025 !== '-') {
-                                        kuantiti = qJune2025;
-                                    }
-
-                                    const lokasi = formatTeksBersamaKoma(row[7]);
-                                    const brand = formatTeksBersamaKoma(row[8]);
-
+                                    // Cari SDS Link dalam mana-mana petak
                                     let sdsLink = '';
                                     row.forEach(cell => {
                                         if (cell && (cell.includes('http://') || cell.includes('https://'))) {
