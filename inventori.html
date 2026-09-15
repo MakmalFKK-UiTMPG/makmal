@@ -154,9 +154,9 @@
                                 <th class="py-3.5 px-4">Nama Bahan Kimia</th>
                                 <th class="py-3.5 px-4">No. CAS</th>
                                 <th class="py-3.5 px-4 text-center">Bentuk</th>
-                                <th class="py-3.5 px-4 text-center">Kuantiti Stok (SEPT 2026)</th>
+                                <th class="py-3.5 px-4 text-center">Kuantiti Stok</th>
                                 <th id="headerLokasi" class="py-3.5 px-4">Lokasi Makmal</th>
-                                <th id="headerJenama" class="py-3.5 px-4">Jenama</th>
+                                <th id="headerJenama" class="py-3.5 px-4">Jenama / Catatan</th>
                                 <th class="py-3.5 px-4 text-center">Dokumen SDS</th>
                             </tr>
                         </thead>
@@ -182,11 +182,9 @@
 
     <!-- SKRIP UTAMA MULTI-TAB & KATEGORI -->
     <script>
-        // PAUTAN EDIT GOOGLE SHEETS
         const URL_EDIT_STAF_MAKMAL = "https://docs.google.com/spreadsheets/d/1dSGbRd96Dbiwxw4Z-wtHo_Oae-jgEHuF2T_7vGU0_K0/edit?usp=sharing"; 
         const URL_EDIT_PENSYARAH   = "https://docs.google.com/spreadsheets/d/1di2ouMv7HOah1grFpwWjyxLjdGstAPkBgtr98yXxzfs/edit?usp=sharing"; 
 
-        // 1. CSV FYP
         const SENARAI_URL_FYP = [
             'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?gid=1747289315&single=true&output=csv', 
             'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?gid=1535761463&single=true&output=csv', 
@@ -197,12 +195,10 @@
             'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?gid=827845288&single=true&output=csv',  
         ];
 
-        // 2. CSV PENSYARAH
         const SENARAI_URL_PENSYARAH = [
             'https://docs.google.com/spreadsheets/d/e/2PACX-1vRm2CVMPo0E54UrTVn0D1FgfAHmHuxbnF0bfDfURR-9V_hgTeQTjKXRX4KiR6BspFNsvuBhWxu_2y0x/pub?gid=756947756&single=true&output=csv'
         ];
 
-        // 3. CSV AMALI
         const SENARAI_URL_AMALI = [];
 
         function formatTeksBersamaKoma(str) {
@@ -289,18 +285,9 @@
                                     let namaBahan = '', casNo = '', form = '', kuantiti = '-', lokasi = '', brand = '';
 
                                     if (jenisKategori === 'pensyarah') {
-                                        // PEMETAAN KHAS GOOGLE SHEETS PENSYARAH (SAMA SEPERTI GAMBAR):
-                                        // Col 1 (B) = Nama Bahan Kimia
-                                        // Col 2 (C) = Nama Pensyarah (Pemilik)
-                                        // Col 4 (E) = Bentuk (liquid/solid)
-                                        // Col 5 (F) = Kuantiti Stok (1 X 2.5L, 1 X 500g)
-                                        // Col 6 (G) = No. CAS (71-36-3, 77-99-6)
-                                        // Col 7 (H) = Lokasi Makmal
-
                                         const rawNama = (row[1] || '').trim();
                                         namaBahan = formatTeksBersamaKoma(rawNama);
 
-                                        // Saring Baris Header
                                         const uppercaseNama = namaBahan.toUpperCase();
                                         if (!namaBahan || namaBahan === '-' || 
                                             uppercaseNama.includes('CHEMICAL NAME') || 
@@ -310,14 +297,13 @@
                                             continue;
                                         }
 
-                                        brand    = formatTeksBersamaKoma(row[2]); // Nama Pensyarah
-                                        form     = formatTeksBersamaKoma(row[4]); // Bentuk
-                                        kuantiti = formatTeksBersamaKoma(row[5]); // Kuantiti
-                                        casNo    = formatTeksBersamaKoma(row[6]); // No. CAS
-                                        lokasi   = formatTeksBersamaKoma(row[7]); // Lokasi Makmal
+                                        form     = formatTeksBersamaKoma(row[2]); // Bentuk
+                                        brand    = formatTeksBersamaKoma(row[3]); // Pemilik (Pensyarah)
+                                        casNo    = formatTeksBersamaKoma(row[4]); // No. CAS
+                                        lokasi   = formatTeksBersamaKoma(row[5]); // Lokasi Makmal
+                                        kuantiti = formatTeksBersamaKoma(row[6]); // Kuantiti Stok / Catatan
 
                                     } else {
-                                        // PEMETAAN GOOGLE SHEETS FYP & AMALI:
                                         const rawNama = (row[1] || '').trim();
                                         namaBahan = formatTeksBersamaKoma(rawNama);
 
@@ -344,7 +330,6 @@
                                         brand = formatTeksBersamaKoma(row[8]);
                                     }
 
-                                    // Butang SDS
                                     let sdsLink = '';
                                     row.forEach(cell => {
                                         if (cell && (cell.includes('http://') || cell.includes('https://'))) {
