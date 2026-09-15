@@ -11,14 +11,17 @@
 </head>
 <body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen">
 
+    <!-- SKRIN LOADING -->
     <div id="loading-screen" class="flex flex-col items-center justify-center min-h-screen p-6 text-center">
         <div class="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mb-4"></div>
         <h2 class="text-xl font-bold text-slate-800">Menyemak Pengesahan Log Masuk...</h2>
         <p class="text-sm text-slate-500 mt-1">Sila tunggu sebentar.</p>
     </div>
 
+    <!-- KANDUNGAN UTAMA -->
     <div id="main-content" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
+        <!-- HEADER TOP -->
         <div class="flex items-center justify-between mb-6">
             <a href="makmal.html" class="inline-flex items-center space-x-2 text-slate-600 hover:text-indigo-600 font-semibold text-sm transition">
                 <i data-lucide="arrow-left" class="w-4 h-4"></i>
@@ -30,6 +33,7 @@
             </button>
         </div>
 
+        <!-- TAJUK UTAMA -->
         <div class="text-center max-w-2xl mx-auto mb-8">
             <div class="inline-flex items-center justify-center p-3 bg-amber-50 text-amber-600 rounded-2xl mb-3 shadow-sm border border-amber-100">
                 <i data-lucide="boxes" class="w-8 h-8"></i>
@@ -38,8 +42,10 @@
             <p class="text-sm text-slate-500 mt-1">Sila pilih kategori inventori</p>
         </div>
 
+        <!-- ================= BAHAGIAN 1: MENU 3 PILIHAN KATEGORI ================= -->
         <div id="pilihan-kategori-section" class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto my-12">
             
+            <!-- KAD 1: BAHAN KIMIA MAKMAL (FYP) -->
             <button onclick="pilihKategori('fyp')" class="group bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-amber-500 transition-all duration-300 text-left flex flex-col justify-between cursor-pointer">
                 <div>
                     <div class="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
@@ -47,7 +53,7 @@
                     </div>
                     <h3 class="text-lg font-bold text-slate-900 group-hover:text-amber-600 transition-colors">Bahan Kimia Makmal (FYP)</h3>
                     <p class="text-slate-500 text-sm mt-2 leading-relaxed">
-                        Senarai stok bahan kimia (Final Year Project).
+                        Senarai stok bahan kimia(Final Year Project).
                     </p>
                 </div>
                 <div class="mt-8 flex items-center text-amber-600 font-bold text-sm">
@@ -56,6 +62,7 @@
                 </div>
             </button>
 
+            <!-- KAD 2: BAHAN KIMIA PENSYARAH -->
             <button onclick="pilihKategori('pensyarah')" class="group bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-indigo-500 transition-all duration-300 text-left flex flex-col justify-between cursor-pointer">
                 <div>
                     <div class="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
@@ -63,7 +70,7 @@
                     </div>
                     <h3 class="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">Bahan Kimia (Pensyarah)</h3>
                     <p class="text-slate-500 text-sm mt-2 leading-relaxed">
-                        Senarai inventori bahan kimia hak milik pensyarah.
+                        Senarai bahan kimia pensyarah.
                     </p>
                 </div>
                 <div class="mt-8 flex items-center text-indigo-600 font-bold text-sm">
@@ -72,6 +79,7 @@
                 </div>
             </button>
 
+            <!-- KAD 3: BAHAN KIMIA MAKMAL (AMALI) -->
             <button onclick="pilihKategori('amali')" class="group bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-emerald-500 transition-all duration-300 text-left flex flex-col justify-between cursor-pointer">
                 <div>
                     <div class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
@@ -79,7 +87,7 @@
                     </div>
                     <h3 class="text-lg font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">Bahan Kimia Makmal (Amali)</h3>
                     <p class="text-slate-500 text-sm mt-2 leading-relaxed">
-                        Senarai stok bahan kimia untuk amali
+                        Senarai stok bahan kimia amali
                     </p>
                 </div>
                 <div class="mt-8 flex items-center text-emerald-600 font-bold text-sm">
@@ -90,8 +98,10 @@
 
         </div>
 
+        <!-- ================= BAHAGIAN 2: PAPARAN JADUAL & CARIAN ================= -->
         <div id="jadual-section" class="hidden">
             
+            <!-- BUTANG KEMBALI KEPADA PILIHAN KATEGORI -->
             <div class="flex items-center justify-between mb-4">
                 <button onclick="kembaliKePilihan()" class="inline-flex items-center space-x-2 bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer">
                     <i data-lucide="layout-grid" class="w-4 h-4"></i>
@@ -99,6 +109,7 @@
                 </button>
             </div>
 
+            <!-- NOTA PERINGATAN MESRA -->
             <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-2xl mb-6 shadow-sm flex items-start space-x-3">
                 <i data-lucide="info" class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5"></i>
                 <p class="text-xs sm:text-sm font-semibold text-amber-900 leading-relaxed">
@@ -106,6 +117,7 @@
                 </p>
             </div>
 
+            <!-- KOTAK CARIAN PINTAR -->
             <div class="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 shadow-sm mb-6">
                 <div class="relative max-w-xl mx-auto">
                     <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -115,6 +127,7 @@
                 </div>
             </div>
 
+            <!-- KAD UTAMA JADUAL INVENTORI -->
             <section class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden mb-8">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-6 border-b border-slate-100 gap-4 bg-slate-50/50">
                     <div>
@@ -125,12 +138,14 @@
                         <p class="text-xs text-slate-500 mt-1">Paparan rekod rasmi inventori FKK Pasir Gudang.</p>
                     </div>
 
-                    <a id="btnLinkGoogleSheet" href="https://docs.google.com/spreadsheets/d/1dSGbRd96Dbiwxw4Z-wtHo_Oae-jgEHuF2T_7vGU0_K0/edit?usp=sharing" target="_blank" class="inline-flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-bold text-xs transition shadow-sm w-full sm:w-auto">
+                    <!-- BUTANG KEMAS KINI DINAMIK (DILENGKAPI DENGAN PAUTAN ASING KETIKA DIKLIK) -->
+                    <a id="btnLinkGoogleSheet" href="#" target="_blank" class="inline-flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-bold text-xs transition shadow-sm w-full sm:w-auto">
                         <i data-lucide="external-link" class="w-4 h-4"></i>
-                        <span>Kemaskini Inventori (Staf Makmal)</span>
+                        <span id="btnTextGoogleSheet">Kemaskini Inventori</span>
                     </a>
                 </div>
 
+                <!-- JADUAL RESPONSIP -->
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
@@ -158,16 +173,22 @@
             </section>
         </div>
 
+        <!-- FOOTER -->
         <footer class="mt-12 text-center text-xs text-slate-400">
             &copy; Hak Cipta Terpelihara Fakulti Kejuruteraan Kimia UiTM Pasir Gudang.
         </footer>
 
     </div>
 
+    <!-- SKRIP UTAMA MULTI-TAB & KATEGORI -->
     <script>
-        // 1. SENARAI PAUTAN CSV UNTUK BAHAN KIMIA MAKMAL (FYP) - 7 TAB ASAL
+        // ================= PAUTAN EDIT GOOGLE SHEETS ASING DIBUAT DI SINI =================
+        const URL_EDIT_STAF_MAKMAL = "https://docs.google.com/spreadsheets/d/1dSGbRd96Dbiwxw4Z-wtHo_Oae-jgEHuF2T_7vGU0_K0/edit?usp=sharing"; // Untuk FYP & Amali
+        const URL_EDIT_PENSYARAH   = "https://docs.google.com/spreadsheets/d/1dSGbRd96Dbiwxw4Z-wtHo_Oae-jgEHuF2T_7vGU0_K0/edit?usp=sharing"; // Ganti dengan URL Google Sheets Pensyarah kelak
+
+        // 1. SENARAI PAUTAN CSV READ-ONLY UNTUK BAHAN KIMIA MAKMAL (FYP)
         const SENARAI_URL_FYP = [
-           'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?gid=1747289315&single=true&output=csv', 
+            'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?gid=1747289315&single=true&output=csv', 
             'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?gid=1535761463&single=true&output=csv', 
             'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?gid=2086616975&single=true&output=csv', 
             'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?gid=188204817&single=true&output=csv',  
@@ -176,14 +197,14 @@
             'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?gid=827845288&single=true&output=csv',  
         ];
 
-        // 2. SENARAI PAUTAN CSV UNTUK BAHAN KIMIA PENSYARAH
+        // 2. SENARAI PAUTAN CSV READ-ONLY UNTUK BAHAN KIMIA PENSYARAH
         const SENARAI_URL_PENSYARAH = [
-            // Tambah pautan CSV Pensyarah di sini...
+            // Ganti/tambah URL CSV Pensyarah di sini kelak...
         ];
 
-        // 3. SENARAI PAUTAN CSV UNTUK BAHAN KIMIA MAKMAL (AMALI)
+        // 3. SENARAI PAUTAN CSV READ-ONLY UNTUK BAHAN KIMIA MAKMAL (AMALI)
         const SENARAI_URL_AMALI = [
-            // Tambah pautan CSV Amali di sini...
+            // Ganti/tambah URL CSV Amali di sini kelak...
         ];
 
         function formatTeksBersamaKoma(str) {
@@ -197,15 +218,25 @@
             document.getElementById('jadual-section').classList.remove('hidden');
 
             const tajukJadual = document.getElementById('tajukJadual');
+            const btnLinkSheet = document.getElementById('btnLinkGoogleSheet');
+            const btnTextSheet = document.getElementById('btnTextGoogleSheet');
 
             if (kategori === 'fyp') {
                 tajukJadual.innerHTML = `<i data-lucide="flask-conical" class="w-5 h-5 text-amber-600"></i> Senarai Stok Bahan Kimia Makmal (FYP)`;
+                btnLinkSheet.href = URL_EDIT_STAF_MAKMAL;
+                btnTextSheet.innerText = "Kemaskini Inventori (Staf Makmal)";
                 muatDataGoogleSheets(SENARAI_URL_FYP, 'Makmal FYP');
+
             } else if (kategori === 'pensyarah') {
                 tajukJadual.innerHTML = `<i data-lucide="user-check" class="w-5 h-5 text-indigo-600"></i> Senarai Stok Bahan Kimia (Pensyarah)`;
+                btnLinkSheet.href = URL_EDIT_PENSYARAH;
+                btnTextSheet.innerText = "Kemaskini Inventori (Pensyarah)";
                 muatDataGoogleSheets(SENARAI_URL_PENSYARAH, 'Pensyarah');
+
             } else if (kategori === 'amali') {
                 tajukJadual.innerHTML = `<i data-lucide="beaker" class="w-5 h-5 text-emerald-600"></i> Senarai Stok Bahan Kimia Makmal (Amali)`;
+                btnLinkSheet.href = URL_EDIT_STAF_MAKMAL;
+                btnTextSheet.innerText = "Kemaskini Inventori (Staf Makmal)";
                 muatDataGoogleSheets(SENARAI_URL_AMALI, 'Makmal Amali');
             }
 
@@ -335,6 +366,7 @@
         }
     </script>
 
+    <!-- FIREBASE AUTH & SUPABASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
