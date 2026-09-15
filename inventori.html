@@ -38,8 +38,33 @@
             <div class="inline-flex items-center justify-center p-3 bg-amber-50 text-amber-600 rounded-2xl mb-3 shadow-sm border border-amber-100">
                 <i data-lucide="boxes" class="w-8 h-8"></i>
             </div>
-            <h1 class="text-2xl sm:text-3xl font-bold text-slate-900">Inventori Bahan Kimia Makmal FKK</h1>
-            <p class="text-sm text-slate-500 mt-1"></p>
+            <h1 class="text-2xl sm:text-3xl font-bold text-slate-900">Inventori Bahan Kimia FKK</h1>
+            <p class="text-sm text-slate-500 mt-1">Pilih kategori inventori di bawah untuk melihat senarai stok terkini</p>
+        </div>
+
+        <!-- 2 PILIHAN UTAMA (BUTANG KATEGORI) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl mx-auto mb-8">
+            <!-- BUTANG 1: MAKMAL -->
+            <button id="btn-tab-makmal" onclick="tukarKategori('makmal')" class="flex items-center p-4 bg-amber-600 text-white rounded-2xl shadow-md hover:bg-amber-700 transition cursor-pointer border-2 border-amber-600">
+                <div class="p-3 bg-white/20 rounded-xl mr-4">
+                    <i data-lucide="flask-conical" class="w-6 h-6 text-white"></i>
+                </div>
+                <div class="text-left">
+                    <h3 class="font-bold text-base">Bahan Kimia (Makmal)</h3>
+                    <p class="text-xs text-amber-100 mt-0.5">Stok kegunaan makmal & amali</p>
+                </div>
+            </button>
+
+            <!-- BUTANG 2: PENSYARAH -->
+            <button id="btn-tab-pensyarah" onclick="tukarKategori('pensyarah')" class="flex items-center p-4 bg-white text-slate-700 rounded-2xl shadow-sm hover:bg-slate-100 transition cursor-pointer border-2 border-slate-200">
+                <div class="p-3 bg-slate-100 rounded-xl mr-4 text-slate-600">
+                    <i data-lucide="user-check" class="w-6 h-6"></i>
+                </div>
+                <div class="text-left">
+                    <h3 class="font-bold text-base">Bahan Kimia (Pensyarah)</h3>
+                    <p class="text-xs text-slate-400 mt-0.5">Simpanan & kegunaan penyelidikan</p>
+                </div>
+            </button>
         </div>
 
         <!-- NOTA PERINGATAN MESRA -->
@@ -64,7 +89,7 @@
         <section class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden mb-8">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-6 border-b border-slate-100 gap-4 bg-slate-50/50">
                 <div>
-                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                    <h2 id="tajukJadual" class="text-lg font-bold text-slate-900 flex items-center gap-2">
                         <i data-lucide="flask-round" class="w-5 h-5 text-amber-600"></i>
                         Senarai Stok Bahan Kimia Makmal (Keseluruhan A-Z)
                     </h2>
@@ -111,18 +136,25 @@
 
     </div>
 
-    <!-- SKRIP UTAMA PARSING MULTI-TAB GOOGLE SHEETS -->
+    <!-- SKRIP UTAMA PARSING MULTI-TAB & KATEGORI -->
     <script>
-        // MASUKKAN PAUTAN CSV SETIAP TAB DALAM SENARAI DI BAWAH:
-        const SENARAI_URL_SHEETS = [
+        // SENARAI PAUTAN CSV UNTUK BAHAN KIMIA MAKMAL (7 TAB ASAL KORANG)
+        const SENARAI_URL_MAKMAL = [
             'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?gid=1747289315&single=true&output=csv', // Tab 1 (SYMBOL & NUMBER)
-            'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?gid=1535761463&single=true&output=csv', // Tab 2 (A-E) - Ganti dengan URL CSV Tab 2 anda
-            'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?gid=2086616975&single=true&output=csv', // Tab 3 (F-J)// Tambah pautan CSV tab seterusnya di sini jika ada lagi...
-            'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?gid=188204817&single=true&output=csv', // Tab 4 (K-O)
+            'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?gid=1535761463&single=true&output=csv', // Tab 2 (A-E)
+            'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?gid=2086616975&single=true&output=csv', // Tab 3 (F-J)
+            'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?gid=188204817&single=true&output=csv',  // Tab 4 (K-O)
             'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?gid=1511349215&single=true&output=csv', // Tab 5 (P-T)
             'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?gid=1389439643&single=true&output=csv', // Tab 6 (U-Z)
-            'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?gid=827845288&single=true&output=csv', // Tab 7 (STANDARD SOLUTION/ REAGENTS)
+            'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?gid=827845288&single=true&output=csv',  // Tab 7 (STANDARD SOLUTION/ REAGENTS)
         ];
+
+        // SENARAI PAUTAN CSV UNTUK BAHAN KIMIA PENSYARAH (Gantikan/tambah URL CSV jika ada kelak)
+        const SENARAI_URL_PENSYARAH = [
+            // Contoh jika ada tab pensyarah: 'https://docs.google.com/spreadsheets/d/e/.../pub?gid=XXXXX&single=true&output=csv'
+        ];
+
+        let kategoriSemasa = 'makmal';
 
         function formatTeksBersamaKoma(str) {
             if (!str) return '-';
@@ -130,13 +162,48 @@
             return cleaned || '-';
         }
 
+        function tukarKategori(kategori) {
+            kategoriSemasa = kategori;
+            const btnMakmal = document.getElementById('btn-tab-makmal');
+            const btnPensyarah = document.getElementById('btn-tab-pensyarah');
+            const tajukJadual = document.getElementById('tajukJadual');
+
+            if (kategori === 'makmal') {
+                btnMakmal.className = "flex items-center p-4 bg-amber-600 text-white rounded-2xl shadow-md hover:bg-amber-700 transition cursor-pointer border-2 border-amber-600";
+                btnPensyarah.className = "flex items-center p-4 bg-white text-slate-700 rounded-2xl shadow-sm hover:bg-slate-100 transition cursor-pointer border-2 border-slate-200";
+                tajukJadual.innerHTML = `<i data-lucide="flask-round" class="w-5 h-5 text-amber-600"></i> Senarai Stok Bahan Kimia Makmal (Keseluruhan A-Z)`;
+            } else {
+                btnPensyarah.className = "flex items-center p-4 bg-amber-600 text-white rounded-2xl shadow-md hover:bg-amber-700 transition cursor-pointer border-2 border-amber-600";
+                btnMakmal.className = "flex items-center p-4 bg-white text-slate-700 rounded-2xl shadow-sm hover:bg-slate-100 transition cursor-pointer border-2 border-slate-200";
+                tajukJadual.innerHTML = `<i data-lucide="user-check" class="w-5 h-5 text-amber-600"></i> Senarai Stok Bahan Kimia Pensyarah`;
+            }
+
+            if (window.lucide) { lucide.createIcons(); }
+            muatDataGoogleSheets();
+        }
+
         async function muatDataGoogleSheets() {
+            document.getElementById('jadualBahan').innerHTML = `
+                <tr>
+                    <td colspan="8" class="py-12 text-center text-slate-400">
+                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-3 border-amber-500 border-t-transparent mb-2"></div>
+                        <p class="text-xs font-semibold">Memuatkan data bahan kimia (${kategoriSemasa})...</p>
+                    </td>
+                </tr>
+            `;
+
+            const senaraiUrl = (kategoriSemasa === 'makmal') ? SENARAI_URL_MAKMAL : SENARAI_URL_PENSYARAH;
+            
+            if (senaraiUrl.length === 0) {
+                document.getElementById('jadualBahan').innerHTML = '<tr><td colspan="8" class="py-6 text-center text-slate-400">Tiada rekod bahan kimia dijumpai untuk kategori ini lagi.</td></tr>';
+                return;
+            }
+
             let html = '';
             let autoBil = 1;
 
             try {
-                // Tarik semua CSV tab serentak
-                for (const url of SENARAI_URL_SHEETS) {
+                for (const url of senaraiUrl) {
                     await new Promise((resolve) => {
                         Papa.parse(url, {
                             download: true,
