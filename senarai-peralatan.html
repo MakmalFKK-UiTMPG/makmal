@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- PapaParse CDN untuk baca Google Sheet CSV -->
+    <!-- PapaParse CDN untuk baca Web CSV -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
         .custom-scrollbar::-webkit-scrollbar {
@@ -44,7 +44,7 @@
             <div>
                 <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">Direktori Inventori (Live Google Drive)</span>
                 <h1 class="text-xl sm:text-2xl font-bold text-slate-900 mt-0.5">Senarai Peralatan & Instrumen Makmal FKK</h1>
-                <p class="text-xs sm:text-sm text-slate-500 mt-1" id="tarikhKemaskini">Kemaskini Terakhir: Sept 2026</p>
+                <p class="text-xs sm:text-sm text-slate-500 mt-1">Data dikemaskini secara langsung dari Google Sheets</p>
             </div>
             <div class="p-3 bg-indigo-50 text-indigo-600 rounded-2xl hidden sm:block">
                 <i data-lucide="microscope" class="w-8 h-8"></i>
@@ -69,11 +69,11 @@
             </div>
         </div>
 
-        <!-- KAWASAN KONTEN MAKMAL (DIJANA AUTOMATIK DARI GOOGLE SHEET) -->
+        <!-- KAWASAN KONTEN MAKMAL (DIJANA AUTOMATIK DARI GOOGLE SHEETS CSV) -->
         <div id="bekasMakmal">
             <div class="p-12 text-center text-slate-400 bg-white border border-slate-200 rounded-2xl shadow-sm">
                 <div class="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-                <p class="font-medium text-sm">Memuatkan data dari Google Sheet...</p>
+                <p class="font-medium text-sm">Memuatkan data dari Google Sheets...</p>
             </div>
         </div>
 
@@ -84,15 +84,15 @@
 
     </div>
 
-    <!-- SKRIP CARIAN, FILTER & INTEGRASI GOOGLE SHEET -->
+    <!-- SKRIP BACA PAUTAN GOOGLE SHEETS WEB CSV -->
     <script>
-        // TAMPAL PAUTAN GOOGLE SHEET CSV ANDA DI SINI
-        const googleSheetCsvUrl = 'https://docs.google.com/spreadsheets/d/153J0APri9Lcmw4iXGaIHJ8wZmOBWxFJg/edit?usp=sharing&ouid=116772226739060700883&rtpof=true&sd=true';
+        // TAMPAL PAUTAN GOOGLE SHEETS CSV ANDA DI DALAM PETIKAN DI BAWAH:
+        const googleSheetCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT9_TAPPghJkgxCPABwbMNc6bKJPl08zOPPW2vp7hxLqy0zjW54WrC5M0dmEJmmeA/pub?gid=548558397&single=true&output=csv';
 
         let senaraiPeralatan = [];
 
-        // 1. FUNGSI TARIK DATA GOOGLE SHEET
-        async function muatDataPeralatan() {
+        // 1. FUNGSI TARIK DATA CSV DARI GOOGLE SHEETS
+        function muatDataGoogleSheet() {
             Papa.parse(googleSheetCsvUrl, {
                 download: true,
                 header: true,
@@ -103,17 +103,17 @@
                     paparkanPeralatan(senaraiPeralatan);
                 },
                 error: function(err) {
-                    console.error("Gagal muat data Google Sheet:", err);
+                    console.error("Gagal membaca pautan CSV:", err);
                     document.getElementById('bekasMakmal').innerHTML = `
                         <div class="p-8 text-center text-rose-500 bg-rose-50 border border-rose-200 rounded-2xl">
-                            ❌ Gagal membaca Google Sheet. Sila pastikan pautan CSV 'Publish to web' telah dimasukkan dengan betul.
+                            ❌ Gagal membaca Google Sheets. Sila pastikan anda telah klik 'Publish to web' dan memilih format 'Comma-separated values (.csv)'.
                         </div>
                     `;
                 }
             });
         }
 
-        // 2. BINA DROPDOWN MAKMAL DARI DATA SHEET
+        // 2. BINA DROPDOWN MAKMAL DARI DATA CSV
         function binaPilihanMakmal(data) {
             const labFilter = document.getElementById('labFilter');
             const senaraiMakmal = new Set();
@@ -151,14 +151,13 @@
                 makmalGrouped[namaMakmal].push(item);
             });
 
-            // Re-generate kad-kad seksyen makmal
+            // Dijana secara automatik mengikut seksyen makmal
             Object.keys(makmalGrouped).forEach(namaMakmal => {
                 const labId = namaMakmal.toLowerCase().replace(/\s+/g, '-');
                 const items = makmalGrouped[namaMakmal];
 
                 let rowsHtml = '';
                 items.forEach((item, index) => {
-                    // Penentuan Warna Badge Status
                     let statusBadge = '';
                     const statusText = item.Status ? item.Status.trim() : 'Available';
                     const statusLower = statusText.toLowerCase();
@@ -190,7 +189,7 @@
                                 <i data-lucide="building-2" class="w-5 h-5 text-indigo-400"></i>
                                 <h2 class="font-bold text-sm sm:text-base">${namaMakmal.toUpperCase()}</h2>
                             </div>
-                            <span class="text-xs text-slate-400 font-medium">Kemaskini: Sept 2026</span>
+                            <span class="text-xs text-slate-400 font-medium">Kemaskini Automatik</span>
                         </div>
                         <div class="overflow-x-auto custom-scrollbar">
                             <table class="w-full text-left border-collapse min-w-[700px]">
@@ -265,7 +264,7 @@
 
         window.onload = function() {
             lucide.createIcons();
-            muatDataPeralatan();
+            muatDataGoogleSheet();
         };
     </script>
 </body>
