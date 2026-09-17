@@ -86,19 +86,64 @@
 
     <!-- SKRIP BACA PAUTAN GOOGLE SHEETS WEB CSV -->
     <script>
-        // TAMPAL PAUTAN GOOGLE SHEETS CSV ANDA DI DALAM PETIKAN DI BAWAH:
         const googleSheetCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT9_TAPPghJkgxCPABwbMNc6bKJPl08zOPPW2vp7hxLqy0zjW54WrC5M0dmEJmmeA/pub?gid=548558397&single=true&output=csv';
 
         let senaraiPeralatan = [];
 
-        // 1. FUNGSI TARIK DATA CSV DARI GOOGLE SHEETS
+        // 1. FUNGSI TARIK DATA MENGIKUT INDEKS LAJUR B HINGGA H
         function muatDataGoogleSheet() {
             Papa.parse(googleSheetCsvUrl, {
                 download: true,
-                header: true,
+                header: false,
                 skipEmptyLines: true,
                 complete: function(results) {
-                    senaraiPeralatan = results.data;
+                    const rawRows = results.data;
+                    let currentLab = 'MAKMAL UNKNOWN';
+                    let parsedPeralatan = [];
+
+                    rawRows.forEach(row => {
+                        // Lajur B berada pada row[1]
+                        const colB = row[1] ? row[1].toString().trim() : '';
+                        // Lajur C berada pada row[2]
+                        const colC = row[2] ? row[2].toString().trim() : '';
+
+                        // Pengesanan Tajuk Makmal di Lajur B (contoh: MAKMAL KIMIA 1, MAKMAL ANALITIKAL, dll)
+                        if (colB.toUpperCase().startsWith('MAKMAL')) {
+                            currentLab = colB;
+                            return;
+                        }
+
+                        // Abaikan baris header 'Bil.' / 'Nama Peralatan' / 'Last update' / kosong
+                        if (colB === 'Bil.' || colB === 'Bil' || colB === '' || colC === 'Nama Peralatan' || colC === '') {
+                            return;
+                        }
+
+                        // Jika ada data peralatan di Lajur C (row[2])
+                        if (colC !== '' && colC !== '-') {
+                            const jenama = row[3] ? row[3].trim() : '';  // Lajur D
+                            const model = row[4] ? row[4].trim() : '';   // Lajur E
+                            
+                            let jenamaModel = '-';
+                            if (jenama && model) {
+                                jenamaModel = `${jenama} / ${model}`;
+                            } else if (jenama) {
+                                jenamaModel = jenama;
+                            } else if (model) {
+                                jenamaModel = model;
+                            }
+
+                            parsedPeralatan.push({
+                                Makmal: currentLab,
+                                NamaPeralatan: colC,
+                                JenamaModel: jenamaModel,
+                                Kuantiti: row[5] ? row[5].trim() : '1 unit', // Lajur F
+                                Status: row[6] ? row[6].trim() : 'available',  // Lajur G
+                                PIC: row[7] ? row[7].trim() : '-'               // Lajur H
+                            });
+                        }
+                    });
+
+                    senaraiPeralatan = parsedPeralatan;
                     binaPilihanMakmal(senaraiPeralatan);
                     paparkanPeralatan(senaraiPeralatan);
                 },
@@ -106,20 +151,20 @@
                     console.error("Gagal membaca pautan CSV:", err);
                     document.getElementById('bekasMakmal').innerHTML = `
                         <div class="p-8 text-center text-rose-500 bg-rose-50 border border-rose-200 rounded-2xl">
-                            ❌ Gagal membaca Google Sheets. Sila pastikan anda telah klik 'Publish to web' dan memilih format 'Comma-separated values (.csv)'.
+                            ❌ Gagal membaca Google Sheets. Sila pastikan pautan CSV telah dimasukkan dengan betul.
                         </div>
                     `;
                 }
             });
         }
 
-        // 2. BINA DROPDOWN MAKMAL DARI DATA CSV
+        // 2. BINA DROPDOWN MAKMAL DARI DATA PROSES
         function binaPilihanMakmal(data) {
             const labFilter = document.getElementById('labFilter');
             const senaraiMakmal = new Set();
 
             data.forEach(item => {
-                if(item.Makmal) senaraiMakmal.add(item.Makmal.trim());
+                if(item.Makmal) senaraiMakmal.add(item.Makmal);
             });
 
             labFilter.innerHTML = `<option value="all">Semua Makmal</option>`;
@@ -141,17 +186,15 @@
                 return;
             }
 
-            // Kumpulkan data mengikut Makmal
             const makmalGrouped = {};
             data.forEach(item => {
-                const namaMakmal = item.Makmal ? item.Makmal.trim() : 'MAKMAL LAIN-LAIN';
+                const namaMakmal = item.Makmal;
                 if (!makmalGrouped[namaMakmal]) {
                     makmalGrouped[namaMakmal] = [];
                 }
                 makmalGrouped[namaMakmal].push(item);
             });
 
-            // Dijana secara automatik mengikut seksyen makmal
             Object.keys(makmalGrouped).forEach(namaMakmal => {
                 const labId = namaMakmal.toLowerCase().replace(/\s+/g, '-');
                 const items = makmalGrouped[namaMakmal];
@@ -159,7 +202,7 @@
                 let rowsHtml = '';
                 items.forEach((item, index) => {
                     let statusBadge = '';
-                    const statusText = item.Status ? item.Status.trim() : 'Available';
+                    const statusText = item.Status || 'available';
                     const statusLower = statusText.toLowerCase();
 
                     if (statusLower.includes('maintenance') || statusLower.includes('penyelenggaraan')) {
@@ -173,11 +216,11 @@
                     rowsHtml += `
                         <tr class="item-row hover:bg-slate-50/80 transition border-b border-slate-100">
                             <td class="py-3.5 px-4 text-center font-medium text-slate-400">${index + 1}</td>
-                            <td class="py-3.5 px-4 font-bold text-slate-800">${item['Nama Peralatan'] || '-'}</td>
-                            <td class="py-3.5 px-4 text-slate-600 font-mono text-xs">${item['Jenama / Model'] || '-'}</td>
-                            <td class="py-3.5 px-4 text-center font-semibold text-slate-700">${item.Kuantiti || '1 Unit'}</td>
+                            <td class="py-3.5 px-4 font-bold text-slate-800">${item.NamaPeralatan}</td>
+                            <td class="py-3.5 px-4 text-slate-600 font-mono text-xs">${item.JenamaModel}</td>
+                            <td class="py-3.5 px-4 text-center font-semibold text-slate-700">${item.Kuantiti}</td>
                             <td class="py-3.5 px-4">${statusBadge}</td>
-                            <td class="py-3.5 px-4 text-slate-600 font-medium">${item['Pegawai (PIC)'] || '-'}</td>
+                            <td class="py-3.5 px-4 text-slate-600 font-medium">${item.PIC}</td>
                         </tr>
                     `;
                 });
