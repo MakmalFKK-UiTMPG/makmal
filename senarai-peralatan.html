@@ -39,7 +39,7 @@
             <div>
                 <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">Direktori Inventori</span>
                 <h1 class="text-xl sm:text-2xl font-bold text-slate-900 mt-0.5">Senarai Peralatan & Instrumen Makmal FKK</h1>
-                <p class="text-xs sm:text-sm text-slate-500 mt-1"></p>
+                <p class="text-xs sm:text-sm text-slate-500 mt-1">Data dikemaskini secara langsung dari Google Sheets</p>
             </div>
             
             <div class="flex items-center space-x-3 w-full sm:w-auto">
@@ -76,7 +76,7 @@
         <div id="bekasMakmal">
             <div class="p-12 text-center text-slate-400 bg-white border border-slate-200 rounded-2xl shadow-sm">
                 <div class="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-                <p class="font-medium text-sm">Memuatkan data...</p>
+                <p class="font-medium text-sm">Memuatkan data dari Google Sheets...</p>
             </div>
         </div>
 
@@ -87,29 +87,46 @@
     </div>
 
     <script>
-        const googleSheetCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT9_TAPPghJkgxCPABwbMNc6bKJPl08zOPPW2vp7hxLqy0zjW54WrC5M0dmEJmmeA/pub?gid=548558397&single=true&output=csv';
-                                   'https://docs.google.com/spreadsheets/d/e/2PACX-1vT9_TAPPghJkgxCPABwbMNc6bKJPl08zOPPW2vp7hxLqy0zjW54WrC5M0dmEJmmeA/pub?gid=680702223&single=true&output=csv';
-                                 
+        // SENARAI PAUTAN CSV DARI SETIAP TAB GOOGLE SHEET
+        const googleSheetCsvUrls = [
+            'https://docs.google.com/spreadsheets/d/e/2PACX-1vT9_TAPPghJkgxCPABwbMNc6bKJPl08zOPPW2vp7hxLqy0zjW54WrC5M0dmEJmmeA/pub?gid=548558397&single=true&output=csv',
+            'https://docs.google.com/spreadsheets/d/e/2PACX-1vT9_TAPPghJkgxCPABwbMNc6bKJPl08zOPPW2vp7hxLqy0zjW54WrC5M0dmEJmmeA/pub?gid=680702223&single=true&output=csv'
+        ];
 
         let senaraiPeralatan = [];
 
-        // 1. FUNGSI TARIK DATA & DETEK TARIKH KEMASKINI DARI SHEET
-        function muatDataGoogleSheet() {
-            Papa.parse(googleSheetCsvUrl, {
-                download: true,
-                header: false,
-                skipEmptyLines: true,
-                complete: function(results) {
-                    const rawRows = results.data;
+        // FUNGSI UNTUK MEMBACA SEBUAH PAUTAN CSV
+        function ambilDataCsv(url) {
+            return new Promise((resolve, reject) => {
+                Papa.parse(url, {
+                    download: true,
+                    header: false,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        resolve(results.data);
+                    },
+                    error: function(err) {
+                        reject(err);
+                    }
+                });
+            });
+        }
+
+        // 1. FUNGSI UTAMA MEMATUKAN DATA DARI BERBILANG TAB GOOGLE SHEET
+        async function muatDataGoogleSheet() {
+            try {
+                // Tarik data dari semua pautan tab serentak
+                const semuaTabResults = await Promise.all(googleSheetCsvUrls.map(url => ambilDataCsv(url)));
+                let parsedPeralatan = [];
+
+                semuaTabResults.forEach(rawRows => {
                     let currentLab = 'MAKMAL UNKNOWN';
                     let currentLabUpdate = 'Kemaskini Automatik';
-                    let parsedPeralatan = [];
 
                     rawRows.forEach(row => {
                         const colB = row[1] ? row[1].toString().trim() : '';
                         const colC = row[2] ? row[2].toString().trim() : '';
                         
-                        // Cari jika ada perkataan 'Last update' dalam mana-mana petak baris tersebut
                         const fullRowText = row.join(' ');
                         if (fullRowText.toLowerCase().includes('last update')) {
                             const match = fullRowText.match(/last update\s*:\s*([^\s,]+(?:\s+[^\s,]+)?)/i);
@@ -124,7 +141,7 @@
                             return;
                         }
 
-                        // Abaikan baris header 'Bil.' / 'Nama Peralatan' / 'Last update' / kosong
+                        // Abaikan baris header atau baris kosong
                         if (colB === 'Bil.' || colB === 'Bil' || colB === '' || colC === 'Nama Peralatan' || colC === '') {
                             return;
                         }
@@ -154,20 +171,20 @@
                             });
                         }
                     });
+                });
 
-                    senaraiPeralatan = parsedPeralatan;
-                    binaPilihanMakmal(senaraiPeralatan);
-                    paparkanPeralatan(senaraiPeralatan);
-                },
-                error: function(err) {
-                    console.error("Gagal membaca pautan CSV:", err);
-                    document.getElementById('bekasMakmal').innerHTML = `
-                        <div class="p-8 text-center text-rose-500 bg-rose-50 border border-rose-200 rounded-2xl">
-                            ❌ Gagal membaca Google Sheets. Sila pastikan pautan CSV telah dimasukkan dengan betul.
-                        </div>
-                    `;
-                }
-            });
+                senaraiPeralatan = parsedPeralatan;
+                binaPilihanMakmal(senaraiPeralatan);
+                paparkanPeralatan(senaraiPeralatan);
+
+            } catch (err) {
+                console.error("Gagal membaca pautan CSV:", err);
+                document.getElementById('bekasMakmal').innerHTML = `
+                    <div class="p-8 text-center text-rose-500 bg-rose-50 border border-rose-200 rounded-2xl">
+                        ❌ Gagal membaca Google Sheets. Sila pastikan pautan CSV telah dimasukkan dengan betul.
+                    </div>
+                `;
+            }
         }
 
         // 2. BINA DROPDOWN MAKMAL DARI DATA PROSES
