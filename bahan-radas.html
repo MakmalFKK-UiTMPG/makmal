@@ -246,15 +246,15 @@
             if (user) {
                 if (!user.email.endsWith('@uitm.edu.my') && !user.email.endsWith('@student.uitm.edu.my')) {
                     signOut(auth);
-                    window.location.href = "index.html";
+                    window.location.href = "makmal.html";
                 }
             } else {
-                window.location.href = "index.html";
+                window.location.href = "makmal.html";
             }
         });
 
         document.getElementById('logout-btn').addEventListener('click', () => {
-            signOut(auth).then(() => window.location.href = "index.html");
+            signOut(auth).then(() => window.location.href = "makmal.html");
         });
     </script>
 
