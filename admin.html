@@ -6,7 +6,7 @@
     <title>Panel Admin - Pengurusan Tempahan & Permohonan Makmal</title>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; max-width: 1200px; margin: auto; background-color: #f9f9f9; }
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 1250px; margin: auto; background-color: #f9f9f9; }
         
         #main-admin-content { display: none; }
         #loading-admin { text-align: center; padding: 80px 20px; color: #2c3e50; }
@@ -69,14 +69,12 @@
         <h2>⚙️ Panel Admin & Pegawai Makmal</h2>
         <p>Uruskan kelulusan tempahan peralatan, permohonan bahan/radas, dan semakan sisa kimia di sini.</p>
 
-        <!-- TAB NAVIGATION -->
         <div class="tab-container">
             <button class="tab-btn active" onclick="tukarTab('tempahan')">📅 Tempahan Slot Peralatan</button>
             <button class="tab-btn" onclick="tukarTab('bahan')">🧪 Permohonan Bahan Kimia & Radas</button>
             <button class="tab-btn" onclick="tukarTab('sisa')">🧪 Pemberitahuan Sisa Kimia</button>
         </div>
 
-        <!-- 1. SEKSYEN TEMPAHAN PERALATAN -->
         <div id="sekSyenTempahan">
             <div class="summary-container">
                 <div class="summary-card"><h4>JUMLAH TEMPAHAN</h4><p id="totalTempahan">0</p></div>
@@ -87,14 +85,20 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Pemohon</th><th>No. Tel</th><th>Peralatan</th><th>Tarikh</th><th>Masa</th><th>Status</th><th>Tindakan</th>
+                        <th width="14%">Tarikh Tempahan</th>
+                        <th>Pemohon</th>
+                        <th>No. Tel</th>
+                        <th>Peralatan</th>
+                        <th>Tarikh Guna</th>
+                        <th>Masa Guna</th>
+                        <th>Status</th>
+                        <th>Tindakan</th>
                     </tr>
                 </thead>
-                <tbody id="isiJadualTempahan"><tr><td colspan="7" style="text-align:center;">Memuatkan...</td></tr></tbody>
+                <tbody id="isiJadualTempahan"><tr><td colspan="8" style="text-align:center;">Memuatkan...</td></tr></tbody>
             </table>
         </div>
 
-        <!-- 2. SEKSYEN BAHAN & RADAS -->
         <div id="sekSyenBahan" style="display:none;">
             <table>
                 <thead>
@@ -106,7 +110,6 @@
             </table>
         </div>
 
-        <!-- 3. SEKSYEN SISA KIMIA -->
         <div id="sekSyenSisa" style="display:none;">
             <table>
                 <thead>
@@ -134,7 +137,6 @@
         </div>
     </div>
 
-    <!-- KAWALAN KESELAMATAN BERASASKAN E-MEL RASMI ADMIN -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -180,7 +182,6 @@
         });
     </script>
 
-    <!-- FUNGSI PEMPROSESAN DATA SUPABASE -->
     <script>
         const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
@@ -212,7 +213,7 @@
             }
         }
 
-        // 1. DATA TEMPAHAN SLOT
+        // 1. DATA TEMPAHAN SLOT (SUDAH DITAMBAH LAJUR TARIKH TEMPAHAN DIBUAT)
         async function dapatkanTempahan() {
             const { data } = await supabaseClient
                 .from('tempahan_peralatan')
@@ -228,8 +229,22 @@
                 document.getElementById('totalMenunggu').innerText = data.filter(r => (r.status === 'Menunggu' || !r.status)).length;
 
                 data.forEach(r => {
+                    // Formatkan masa dicipta (created_at) dari Supabase
+                    let tarikhDibuat = '-';
+                    if (r.created_at) {
+                        tarikhDibuat = new Date(r.created_at).toLocaleString('ms-MY', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: true
+                        });
+                    }
+
                     const row = tbody.insertRow();
                     row.innerHTML = `
+                        <td style="font-size: 11px; font-weight: bold; color: #34495e;">${tarikhDibuat}</td>
                         <td>${r.nama_pemohon || '-'}</td>
                         <td>${r.no_telefon || '-'}</td>
                         <td>${r.nama_peralatan || '-'}</td>
@@ -346,13 +361,13 @@
                 <ul style="margin-top:0; font-size:13px;">${(rekod.ahli_kumpulan || []).map(a => `<li>${a.nama} (${a.id})</li>`).join('') || 'Tiada'}</ul>
 
                 <h4 style="margin:10px 0 5px 0; color:#16a085;">🧪 Bahan Kimia Dipohon:</h4>
-                <ul style="margin-top:0; font-size:13px;">${(rekod.senarai_bahan_kimia || []).map(b => `<li><strong>${b.nama}</strong> - ${b.kuantiti}</li>`).join('') || 'Tiada'}</ul>
+                <ul style="margin-top:0; font-size:13px;">${(rekod.senarai_bahan_kimia || []).map(b => `<li><strong>${b.nama}</strong> -${b.kuantiti}</li>`).join('') || 'Tiada'}</ul>
 
                 <h4 style="margin:10px 0 5px 0; color:#16a085;">🔬 Alat Radas Dipohon:</h4>
-                <ul style="margin-top:0; font-size:13px;">${(rekod.senarai_radas || []).map(r => `<li><strong>${r.nama}</strong> - ${r.kuantiti} unit</li>`).join('') || 'Tiada'}</ul>
+                <ul style="margin-top:0; font-size:13px;">${(rekod.senarai_radas || []).map(r => `<li><strong>${r.nama}</strong> -${r.kuantiti} unit</li>`).join('') || 'Tiada'}</ul>
 
                 <h4 style="margin:10px 0 5px 0; color:#16a085;">⚙️ Peralatan Makmal Dipohon:</h4>
-                <ul style="margin-top:0; font-size:13px;">${(rekod.senarai_peralatan || []).map(p => `<li><strong>${p.nama}</strong> - ${p.kuantiti} unit</li>`).join('') || 'Tiada'}</ul>
+                <ul style="margin-top:0; font-size:13px;">${(rekod.senarai_peralatan || []).map(p => `<li><strong>${p.nama}</strong> -${p.kuantiti} unit</li>`).join('') || 'Tiada'}</ul>
 
                 <hr style="border:none; border-top:1px solid #ddd; margin:15px 0;">
                 
@@ -411,7 +426,6 @@
             }
         }
 
-        // TUKAR STATUS KEPADA 'Batal' (Soft Delete)
         async function batalRekod(jadual, id) {
             if(confirm("Pasti mahu menukar status rekod ini kepada 'Batal'?")) {
                 const { error } = await supabaseClient
@@ -429,7 +443,6 @@
             }
         }
 
-        // 🛠️ PADAM REKOD TERUS DARI DATABASE (Hard Delete)
         async function padamRekodKekal(jadual, id) {
             if(confirm("⚠️ AMARAN: Rekod ini akan DIPADAM KEKAL dari pangkalan data!\nAdakah anda pasti mahu memadam rekod ini?")) {
                 const { error } = await supabaseClient
