@@ -25,6 +25,7 @@
 
         .btn-export { background-color: #27ae60; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; }
         .btn-export:hover { background-color: #219150; }
+        .btn-print { background-color: #8e44ad; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 13px; margin-right: 5px; }
 
         /* KAD RINGKASAN */
         .summary-container { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
@@ -56,6 +57,15 @@
         
         .komposisi-list { margin: 0; padding-left: 15px; font-size: 12px; }
         .tarikh-badge { font-size: 11px; color: #7f8c8d; display: block; margin-top: 2px; }
+
+        /* GAYA KHAS MENCETAK BORANG RASMI PDF */
+        @media print {
+            body * { visibility: hidden; }
+            #modalDetail, #modalDetail * { visibility: visible; }
+            #modalDetail { position: absolute; left: 0; top: 0; width: 100%; height: auto; background: none; }
+            .modal-content { width: 100%; max-width: 100%; margin: 0; padding: 10px; border: none; box-shadow: none; }
+            .close-modal, .no-print { display: none !important; }
+        }
     </style>
 </head>
 <body>
@@ -101,7 +111,7 @@
                         <th>Peralatan</th>
                         <th>Tarikh Guna</th>
                         <th>Masa Guna</th>
-                        <th width="12%">Status & Tarikh Keputusan</th>
+                        <th width="12%">Status & Tarikh</th>
                         <th>Tindakan</th>
                     </tr>
                 </thead>
@@ -113,12 +123,12 @@
             <table>
                 <thead>
                     <tr>
-                        <th width="14%">Tarikh Pohon</th>
+                        <th width="14%">Tarikh Mohon</th>
                         <th>Nama Pemohon</th>
                         <th>No. ID</th>
                         <th>Tujuan</th>
                         <th>Penyelia</th>
-                        <th width="12%">Status & Tarikh Keputusan</th>
+                        <th width="12%">Status & Tarikh</th>
                         <th>Tindakan</th>
                     </tr>
                 </thead>
@@ -152,51 +162,6 @@
             </div>
         </div>
     </div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyDDC9PLSCOzna4caIsrfPSvfR3A_FczKDc",
-            authDomain: "sistem-makmal-fkkuitmpg.firebaseapp.com",
-            projectId: "sistem-makmal-fkkuitmpg",
-            storageBucket: "sistem-makmal-fkkuitmpg.firebasestorage.app",
-            messagingSenderId: "291806336887",
-            appId: "1:291806336887:web:a0d4fca1866459ead03372"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-
-        const ADMIN_EMAILS = [
-            "nurha1559@uitm.edu.my",
-            "pegawai1@uitm.edu.my",
-            "pensyarah1@uitm.edu.my"
-        ];
-
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                const userEmail = (user.email || '').toLowerCase().trim();
-                const isAdmin = ADMIN_EMAILS.some(email => email.toLowerCase().trim() === userEmail);
-
-                if (isAdmin) {
-                    document.getElementById('loading-admin').style.display = 'none';
-                    document.getElementById('main-admin-content').style.display = 'block';
-                    window.muatTurunSemuaData();
-                } else {
-                    alert(`❌ AKSES DITOLAK!\nAkaun (${userEmail}) tiada kebenaran Admin.`);
-                    window.location.href = "makmal.html";
-                }
-            } else {
-                window.location.href = "index.html";
-            }
-        });
-
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            signOut(auth).then(() => window.location.href = "index.html");
-        });
-    </script>
 
     <script>
         const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
@@ -237,7 +202,6 @@
             }
         }
 
-        // FUNGSI MUAT TURUN EXCEL / CSV
         async function eksportDataSemasa() {
             let namaJadual = 'tempahan_peralatan';
             const tabAktif = document.querySelector('.tab-btn.active').innerText;
@@ -411,11 +375,18 @@
             if (!rekod) return;
 
             const tarikhMasaLulus = formatTarikhMasa(rekod.tarikh_kelulusan);
+            const tarikhMasaDihantar = formatTarikhMasa(rekod.created_at);
 
             let html = `
-                <div style="background:#f8f9fa; padding:12px; border-radius:6px; margin-bottom:15px; font-size:13px;">
+                <div style="border-bottom:2px solid #2c3e50; padding-bottom:10px; margin-bottom:15px; text-align:center;">
+                    <h3 style="margin:0; color:#2c3e50;">FAKULTI KEJURUTERAAN KIMIA UiTM PASIR GUDANG</h3>
+                    <p style="margin:2px 0; font-size:12px; font-weight:bold; color:#16a085;">BORANG PERMOHONAN BAHAN KIMIA, ALAT RADAS & PERALATAN MAKMAL</p>
+                    <small style="color:#7f8c8d;">Kod Borang: PPM-FKK 01/ARBKPM (Ver.02) | Tarikh Pohon: ${tarikhMasaDihantar}</small>
+                </div>
+
+                <div style="background:#f8f9fa; padding:12px; border-radius:6px; margin-bottom:15px; font-size:13px; border:1px solid #e0e0e0;">
                     <p style="margin:3px 0;"><strong>Nama Pemohon:</strong> ${rekod.nama_pemohon} (${rekod.no_id})</p>
-                    <p style="margin:3px 0;"><strong>Semester/Sesi:</strong> ${rekod.semester_sesi || '-'}</p>
+                    <p style="margin:3px 0;"><strong>No. Telefon:</strong> ${rekod.no_telefon || '-'} | <strong>Semester/Sesi:</strong> ${rekod.semester_sesi || '-'}</p>
                     <p style="margin:3px 0;"><strong>Tujuan:</strong> ${rekod.tujuan} | <strong>Penyelia:</strong> ${rekod.nama_penyelia || '-'}</p>
                     <p style="margin:3px 0;"><strong>Tajuk Projek:</strong> ${rekod.tajuk_projek || '-'}</p>
                     ${tarikhMasaLulus ? `<p style="margin:3px 0; color:#27ae60;"><strong>Tarikh Keputusan Terakhir:</strong> ${tarikhMasaLulus}</p>` : ''}
@@ -435,14 +406,17 @@
 
                 <hr style="border:none; border-top:1px solid #ddd; margin:15px 0;">
                 
-                <label style="display:block; font-weight:bold; margin-bottom:5px; color:#2c3e50; font-size:13px;">
-                    ✏️ Catatan Admin / Pelulusan Separa:
-                </label>
-                <textarea id="catatanAdminInput" style="width:97%; height:70px; padding:8px; border:1px solid #ccc; border-radius:4px; font-family:Arial;" placeholder="Contoh: Diluluskan untuk Beaker sahaja. Ethanol tidak diluluskan kerana stok terhad.">${rekod.catatan_admin || ''}</textarea>
+                <div class="no-print">
+                    <label style="display:block; font-weight:bold; margin-bottom:5px; color:#2c3e50; font-size:13px;">
+                        ✏️ Catatan Admin / Pelulusan Separa:
+                    </label>
+                    <textarea id="catatanAdminInput" style="width:97%; height:70px; padding:8px; border:1px solid #ccc; border-radius:4px; font-family:Arial;" placeholder="Contoh: Diluluskan untuk Beaker sahaja. Ethanol tidak diluluskan kerana stok terhad.">${rekod.catatan_admin || ''}</textarea>
 
-                <div style="margin-top:15px; display:flex; gap:10px; justify-content:flex-end;">
-                    <button class="btn-lulus" onclick="simpanKeputusan(${rekod.id}, 'Lulus')">✅ Luluskan Permohonan</button>
-                    <button class="btn-tolak" onclick="simpanKeputusan(${rekod.id}, 'Ditolak')">❌ Tolak Permohonan</button>
+                    <div style="margin-top:15px; display:flex; gap:10px; justify-content:flex-end;">
+                        <button onclick="window.print()" class="btn-print">🖨️ Cetak / Simpan Borang Rasmi PDF</button>
+                        <button class="btn-lulus" onclick="simpanKeputusan(${rekod.id}, 'Lulus')">✅ Luluskan Permohonan</button>
+                        <button class="btn-tolak" onclick="simpanKeputusan(${rekod.id}, 'Ditolak')">❌ Tolak Permohonan</button>
+                    </div>
                 </div>
             `;
 
@@ -542,6 +516,51 @@
                 }
             }
         }
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDDC9PLSCOzna4caIsrfPSvfR3A_FczKDc",
+            authDomain: "sistem-makmal-fkkuitmpg.firebaseapp.com",
+            projectId: "sistem-makmal-fkkuitmpg",
+            storageBucket: "sistem-makmal-fkkuitmpg.firebasestorage.app",
+            messagingSenderId: "291806336887",
+            appId: "1:291806336887:web:a0d4fca1866459ead03372"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        const ADMIN_EMAILS = [
+            "nurha1559@uitm.edu.my",
+            "pegawai1@uitm.edu.my",
+            "pensyarah1@uitm.edu.my"
+        ];
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const userEmail = (user.email || '').toLowerCase().trim();
+                const isAdmin = ADMIN_EMAILS.some(email => email.toLowerCase().trim() === userEmail);
+
+                if (isAdmin) {
+                    document.getElementById('loading-admin').style.display = 'none';
+                    document.getElementById('main-admin-content').style.display = 'block';
+                    window.muatTurunSemuaData();
+                } else {
+                    alert(`❌ AKSES DITOLAK!\nAkaun (${userEmail}) tiada kebenaran Admin.`);
+                    window.location.href = "makmal.html";
+                }
+            } else {
+                window.location.href = "index.html";
+            }
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            signOut(auth).then(() => window.location.href = "index.html");
+        });
     </script>
 </body>
 </html>
