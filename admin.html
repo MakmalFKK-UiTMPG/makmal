@@ -92,7 +92,7 @@
                         <th>Peralatan</th>
                         <th>Tarikh Guna</th>
                         <th>Masa Guna</th>
-                        <th width="12%">Status & Tarikh </th>
+                        <th width="12%">Status & Tarikh</th>
                         <th>Tindakan</th>
                     </tr>
                 </thead>
@@ -121,14 +121,14 @@
             <table>
                 <thead>
                     <tr>
-                        <th width="5%">ID</th>
-                        <th width="12%">Tarikh Dijana</th>
+                        <th width="4%">ID</th>
+                        <th width="15%">Tarikh Permohonan Dihantar</th>
                         <th width="18%">Pemohon / Makmal</th>
                         <th width="12%">Fizikal Sisa</th>
                         <th>Komposisi Bahan Kimia</th>
                         <th width="10%">Berat / Isipadu</th>
-                        <th width="12%">Status & Tarikh Semakan</th>
-                        <th width="18%">Tindakan</th>
+                        <th width="13%">Status & Tarikh Semakan</th>
+                        <th width="16%">Tindakan</th>
                     </tr>
                 </thead>
                 <tbody id="isiJadualSisa"><tr><td colspan="8" style="text-align:center;">Memuatkan...</td></tr></tbody>
@@ -196,10 +196,10 @@
 
         let dataBahanGlobal = [];
 
-        // Helper memformat tarikh & masa
         function formatTarikhMasa(timestamp) {
             if (!timestamp) return '';
             const d = new Date(timestamp);
+            if (isNaN(d.getTime())) return timestamp; // Kembalikan string biasa jika bukan format timestamp standard
             return d.toLocaleDateString('ms-MY', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' +
                    d.toLocaleTimeString('ms-MY', { hour: '2-digit', minute: '2-digit', hour12: true });
         }
@@ -307,7 +307,7 @@
             }
         }
 
-        // 3. DATA JANAAN SISA KIMIA
+        // 3. DATA JANAAN SISA KIMIA (TARIKH & MASA DIHANTAR DIKEMASKINI)
         async function dapatkanJanaanSisa() {
             const { data, error } = await supabaseClient
                 .from('janaan_sisa')
@@ -336,6 +336,10 @@
                 }
                 htmlKomposisi += '</ul>';
 
+                // Semak lajur timestamp dari Supabase (created_at atau tarikh_penstoran)
+                const rawCreatedAt = r.created_at || r.tarikh_dijana || r.tarikh_penstoran;
+                const tarikhMasaDijana = formatTarikhMasa(rawCreatedAt) || '-';
+
                 const statusPapar = r.status || 'Belum Disemak';
                 const statusClass = (statusPapar === 'Disemak') ? 'status-disemak' : 'status-belum-disemak';
                 const beratPaparan = r.berat_kasar ? `${r.berat_kasar}` : '-';
@@ -344,7 +348,7 @@
                 const row = tbody.insertRow();
                 row.innerHTML = `
                     <td><b>#${r.id}</b></td>
-                    <td>${r.tarikh_penstoran || '-'}</td>
+                    <td style="font-size: 11px; font-weight: bold; color: #2c3e50;">${tarikhMasaDijana}</td>
                     <td><b>${r.nama_pemohon || '-'}</b><br><small style="color:#7f8c8d;">${r.nama_makmal || '-'}</small></td>
                     <td>${r.fizikal_sisa || '-'}</td>
                     <td>${htmlKomposisi}</td>
@@ -408,7 +412,6 @@
 
         function tutupModal() { document.getElementById('modalDetail').style.display = 'none'; }
 
-        // SIMPAN KEPUTUSAN + RECORD TARIKH & MASA KELULUSAN
         async function simpanKeputusan(id, status) {
             const catatan = document.getElementById('catatanAdminInput').value;
             const masaKini = new Date().toISOString();
@@ -431,7 +434,6 @@
             }
         }
 
-        // TUKAR STATUS TEMPAHAN + RECORD TARIKH KELULUSAN
         async function tukarStatus(jadual, id, status) {
             const masaKini = new Date().toISOString();
             await supabaseClient
@@ -447,7 +449,6 @@
             dapatkanBahanRadas();
         }
 
-        // TUKAR STATUS SISA + RECORD TARIKH SEMAKAN
         async function tukarStatusSisa(id, status) {
             const masaKini = new Date().toISOString();
             const { error } = await supabaseClient
