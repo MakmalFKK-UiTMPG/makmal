@@ -85,7 +85,7 @@
             <table>
                 <thead>
                     <tr>
-                        <th width="14%">Tarikh Tempahan</th>
+                        <th width="15%">Tarikh Tempahan</th>
                         <th>Pemohon</th>
                         <th>No. Tel</th>
                         <th>Peralatan</th>
@@ -103,7 +103,13 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Tarikh Pohon</th><th>Nama Pemohon</th><th>No. ID</th><th>Tujuan</th><th>Penyelia</th><th>Status</th><th>Tindakan</th>
+                        <th width="15%">Tarikh Pohon</th>
+                        <th>Nama Pemohon</th>
+                        <th>No. ID</th>
+                        <th>Tujuan</th>
+                        <th>Penyelia</th>
+                        <th>Status</th>
+                        <th>Tindakan</th>
                     </tr>
                 </thead>
                 <tbody id="isiJadualBahan"><tr><td colspan="7" style="text-align:center;">Memuatkan...</td></tr></tbody>
@@ -213,7 +219,7 @@
             }
         }
 
-        // 1. DATA TEMPAHAN SLOT (SUDAH DITAMBAH LAJUR TARIKH TEMPAHAN DIBUAT)
+        // 1. DATA TEMPAHAN SLOT PERALATAN (TARIKH & MASA FULL)
         async function dapatkanTempahan() {
             const { data } = await supabaseClient
                 .from('tempahan_peralatan')
@@ -229,13 +235,14 @@
                 document.getElementById('totalMenunggu').innerText = data.filter(r => (r.status === 'Menunggu' || !r.status)).length;
 
                 data.forEach(r => {
-                    // Formatkan masa dicipta (created_at) dari Supabase
                     let tarikhDibuat = '-';
                     if (r.created_at) {
-                        tarikhDibuat = new Date(r.created_at).toLocaleString('ms-MY', {
+                        const d = new Date(r.created_at);
+                        tarikhDibuat = d.toLocaleDateString('ms-MY', {
                             day: '2-digit',
                             month: '2-digit',
-                            year: 'numeric',
+                            year: 'numeric'
+                        }) + ' ' + d.toLocaleTimeString('ms-MY', {
                             hour: '2-digit',
                             minute: '2-digit',
                             hour12: true
@@ -244,7 +251,7 @@
 
                     const row = tbody.insertRow();
                     row.innerHTML = `
-                        <td style="font-size: 11px; font-weight: bold; color: #34495e;">${tarikhDibuat}</td>
+                        <td style="font-size: 11px; font-weight: bold; color: #2c3e50;">${tarikhDibuat}</td>
                         <td>${r.nama_pemohon || '-'}</td>
                         <td>${r.no_telefon || '-'}</td>
                         <td>${r.nama_peralatan || '-'}</td>
@@ -262,7 +269,7 @@
             }
         }
 
-        // 2. DATA PERMOHONAN BAHAN & RADAS
+        // 2. DATA PERMOHONAN BAHAN & RADAS (TARIKH & MASA FULL)
         async function dapatkanBahanRadas() {
             const { data } = await supabaseClient
                 .from('permohonan_bahan_radas')
@@ -275,10 +282,23 @@
 
             if(data) {
                 data.forEach(r => {
-                    const tarikh = new Date(r.created_at).toLocaleDateString('ms-MY');
+                    let tarikhMasaPohon = '-';
+                    if (r.created_at) {
+                        const d = new Date(r.created_at);
+                        tarikhMasaPohon = d.toLocaleDateString('ms-MY', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                        }) + ' ' + d.toLocaleTimeString('ms-MY', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: true
+                        });
+                    }
+
                     const row = tbody.insertRow();
                     row.innerHTML = `
-                        <td>${tarikh}</td>
+                        <td style="font-size: 11px; font-weight: bold; color: #2c3e50;">${tarikhMasaPohon}</td>
                         <td>${r.nama_pemohon}</td>
                         <td>${r.no_id}</td>
                         <td>${r.tujuan}</td>
