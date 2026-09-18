@@ -6,7 +6,7 @@
     <title>Panel Admin - Pengurusan Tempahan & Permohonan Makmal</title>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; max-width: 1250px; margin: auto; background-color: #f9f9f9; }
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 1300px; margin: auto; background-color: #f9f9f9; }
         
         #main-admin-content { display: none; }
         #loading-admin { text-align: center; padding: 80px 20px; color: #2c3e50; }
@@ -51,6 +51,7 @@
         .close-modal { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
         
         .komposisi-list { margin: 0; padding-left: 15px; font-size: 12px; }
+        .tarikh-badge { font-size: 11px; color: #7f8c8d; display: block; margin-top: 2px; }
     </style>
 </head>
 <body>
@@ -85,13 +86,13 @@
             <table>
                 <thead>
                     <tr>
-                        <th width="15%">Tarikh Tempahan</th>
+                        <th width="14%">Tarikh Tempahan</th>
                         <th>Pemohon</th>
                         <th>No. Tel</th>
                         <th>Peralatan</th>
                         <th>Tarikh Guna</th>
                         <th>Masa Guna</th>
-                        <th>Status</th>
+                        <th width="12%">Status & Tarikh Keputusan</th>
                         <th>Tindakan</th>
                     </tr>
                 </thead>
@@ -103,12 +104,12 @@
             <table>
                 <thead>
                     <tr>
-                        <th width="15%">Tarikh Pohon</th>
+                        <th width="14%">Tarikh Pohon</th>
                         <th>Nama Pemohon</th>
                         <th>No. ID</th>
                         <th>Tujuan</th>
                         <th>Penyelia</th>
-                        <th>Status</th>
+                        <th width="12%">Status & Tarikh Keputusan</th>
                         <th>Tindakan</th>
                     </tr>
                 </thead>
@@ -122,11 +123,11 @@
                     <tr>
                         <th width="5%">ID</th>
                         <th width="12%">Tarikh Dijana</th>
-                        <th width="20%">Pemohon / Makmal</th>
-                        <th width="15%">Fizikal Sisa</th>
+                        <th width="18%">Pemohon / Makmal</th>
+                        <th width="12%">Fizikal Sisa</th>
                         <th>Komposisi Bahan Kimia</th>
-                        <th width="12%">Berat / Isipadu</th>
-                        <th width="10%">Status</th>
+                        <th width="10%">Berat / Isipadu</th>
+                        <th width="12%">Status & Tarikh Semakan</th>
                         <th width="18%">Tindakan</th>
                     </tr>
                 </thead>
@@ -195,6 +196,14 @@
 
         let dataBahanGlobal = [];
 
+        // Helper memformat tarikh & masa
+        function formatTarikhMasa(timestamp) {
+            if (!timestamp) return '';
+            const d = new Date(timestamp);
+            return d.toLocaleDateString('ms-MY', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' +
+                   d.toLocaleTimeString('ms-MY', { hour: '2-digit', minute: '2-digit', hour12: true });
+        }
+
         window.muatTurunSemuaData = function() {
             dapatkanTempahan();
             dapatkanBahanRadas();
@@ -219,7 +228,7 @@
             }
         }
 
-        // 1. DATA TEMPAHAN SLOT PERALATAN (TARIKH & MASA FULL)
+        // 1. DATA TEMPAHAN SLOT
         async function dapatkanTempahan() {
             const { data } = await supabaseClient
                 .from('tempahan_peralatan')
@@ -235,19 +244,8 @@
                 document.getElementById('totalMenunggu').innerText = data.filter(r => (r.status === 'Menunggu' || !r.status)).length;
 
                 data.forEach(r => {
-                    let tarikhDibuat = '-';
-                    if (r.created_at) {
-                        const d = new Date(r.created_at);
-                        tarikhDibuat = d.toLocaleDateString('ms-MY', {
-                            day: '2-digit',
-                            month: '2-digit',
-                            year: 'numeric'
-                        }) + ' ' + d.toLocaleTimeString('ms-MY', {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            hour12: true
-                        });
-                    }
+                    const tarikhDibuat = formatTarikhMasa(r.created_at);
+                    const tarikhLulus = formatTarikhMasa(r.tarikh_kelulusan);
 
                     const row = tbody.insertRow();
                     row.innerHTML = `
@@ -257,7 +255,10 @@
                         <td>${r.nama_peralatan || '-'}</td>
                         <td>${r.tarikh_guna || '-'}</td>
                         <td>${r.masa_mula || ''} - ${r.masa_tamat || ''}</td>
-                        <td><span class="status-${(r.status||'menunggu').toLowerCase()}">${r.status||'Menunggu'}</span></td>
+                        <td>
+                            <span class="status-${(r.status||'menunggu').toLowerCase()}">${r.status||'Menunggu'}</span>
+                            ${tarikhLulus ? `<span class="tarikh-badge">🗓️ ${tarikhLulus}</span>` : ''}
+                        </td>
                         <td>
                             <button class="btn-lulus" onclick="tukarStatus('tempahan_peralatan', ${r.id}, 'Lulus')">Lulus</button>
                             <button class="btn-tolak" onclick="tukarStatus('tempahan_peralatan', ${r.id}, 'Ditolak')">Tolak</button>
@@ -269,7 +270,7 @@
             }
         }
 
-        // 2. DATA PERMOHONAN BAHAN & RADAS (TARIKH & MASA FULL)
+        // 2. DATA PERMOHONAN BAHAN & RADAS
         async function dapatkanBahanRadas() {
             const { data } = await supabaseClient
                 .from('permohonan_bahan_radas')
@@ -282,19 +283,8 @@
 
             if(data) {
                 data.forEach(r => {
-                    let tarikhMasaPohon = '-';
-                    if (r.created_at) {
-                        const d = new Date(r.created_at);
-                        tarikhMasaPohon = d.toLocaleDateString('ms-MY', {
-                            day: '2-digit',
-                            month: '2-digit',
-                            year: 'numeric'
-                        }) + ' ' + d.toLocaleTimeString('ms-MY', {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            hour12: true
-                        });
-                    }
+                    const tarikhMasaPohon = formatTarikhMasa(r.created_at);
+                    const tarikhLulus = formatTarikhMasa(r.tarikh_kelulusan);
 
                     const row = tbody.insertRow();
                     row.innerHTML = `
@@ -303,7 +293,10 @@
                         <td>${r.no_id}</td>
                         <td>${r.tujuan}</td>
                         <td>${r.nama_penyelia || '-'}</td>
-                        <td><span class="status-${(r.status||'menunggu').toLowerCase()}">${r.status||'Menunggu'}</span></td>
+                        <td>
+                            <span class="status-${(r.status||'menunggu').toLowerCase()}">${r.status||'Menunggu'}</span>
+                            ${tarikhLulus ? `<span class="tarikh-badge">🗓️ ${tarikhLulus}</span>` : ''}
+                        </td>
                         <td>
                             <button class="btn-detail" onclick="paparkanDetail(${r.id})">🔍 Lihat / Semak</button>
                             <button class="btn-batal" onclick="batalRekod('permohonan_bahan_radas', ${r.id})">Batal</button>
@@ -346,6 +339,7 @@
                 const statusPapar = r.status || 'Belum Disemak';
                 const statusClass = (statusPapar === 'Disemak') ? 'status-disemak' : 'status-belum-disemak';
                 const beratPaparan = r.berat_kasar ? `${r.berat_kasar}` : '-';
+                const tarikhSemak = formatTarikhMasa(r.tarikh_semakan);
 
                 const row = tbody.insertRow();
                 row.innerHTML = `
@@ -355,7 +349,10 @@
                     <td>${r.fizikal_sisa || '-'}</td>
                     <td>${htmlKomposisi}</td>
                     <td><b>${beratPaparan}</b></td>
-                    <td><span class="${statusClass}">${statusPapar}</span></td>
+                    <td>
+                        <span class="${statusClass}">${statusPapar}</span>
+                        ${tarikhSemak ? `<span class="tarikh-badge">🗓️ ${tarikhSemak}</span>` : ''}
+                    </td>
                     <td>
                         <button class="btn-lulus" onclick="tukarStatusSisa(${r.id}, 'Disemak')">Disemak</button>
                         <button class="btn-batal" onclick="tukarStatusSisa(${r.id}, 'Batal')">Batal</button>
@@ -369,12 +366,15 @@
             const rekod = dataBahanGlobal.find(r => r.id === id);
             if (!rekod) return;
 
+            const tarikhMasaLulus = formatTarikhMasa(rekod.tarikh_kelulusan);
+
             let html = `
                 <div style="background:#f8f9fa; padding:12px; border-radius:6px; margin-bottom:15px; font-size:13px;">
                     <p style="margin:3px 0;"><strong>Nama Pemohon:</strong> ${rekod.nama_pemohon} (${rekod.no_id})</p>
                     <p style="margin:3px 0;"><strong>Semester/Sesi:</strong> ${rekod.semester_sesi || '-'}</p>
                     <p style="margin:3px 0;"><strong>Tujuan:</strong> ${rekod.tujuan} | <strong>Penyelia:</strong> ${rekod.nama_penyelia || '-'}</p>
                     <p style="margin:3px 0;"><strong>Tajuk Projek:</strong> ${rekod.tajuk_projek || '-'}</p>
+                    ${tarikhMasaLulus ? `<p style="margin:3px 0; color:#27ae60;"><strong>Tarikh Keputusan Terakhir:</strong> ${tarikhMasaLulus}</p>` : ''}
                 </div>
 
                 <h4 style="margin:10px 0 5px 0; color:#2c3e50;">👥 Ahli Kumpulan:</h4>
@@ -408,12 +408,18 @@
 
         function tutupModal() { document.getElementById('modalDetail').style.display = 'none'; }
 
+        // SIMPAN KEPUTUSAN + RECORD TARIKH & MASA KELULUSAN
         async function simpanKeputusan(id, status) {
             const catatan = document.getElementById('catatanAdminInput').value;
+            const masaKini = new Date().toISOString();
             
             const { error } = await supabaseClient
                 .from('permohonan_bahan_radas')
-                .update({ status: status, catatan_admin: catatan })
+                .update({ 
+                    status: status, 
+                    catatan_admin: catatan,
+                    tarikh_kelulusan: masaKini
+                })
                 .eq('id', id);
 
             if (error) {
@@ -425,17 +431,31 @@
             }
         }
 
+        // TUKAR STATUS TEMPAHAN + RECORD TARIKH KELULUSAN
         async function tukarStatus(jadual, id, status) {
-            await supabaseClient.from(jadual).update({ status: status }).eq('id', id);
+            const masaKini = new Date().toISOString();
+            await supabaseClient
+                .from(jadual)
+                .update({ 
+                    status: status,
+                    tarikh_kelulusan: masaKini 
+                })
+                .eq('id', id);
+                
             alert(`Status berjaya ditukar kepada: ${status}`);
             dapatkanTempahan();
             dapatkanBahanRadas();
         }
 
+        // TUKAR STATUS SISA + RECORD TARIKH SEMAKAN
         async function tukarStatusSisa(id, status) {
+            const masaKini = new Date().toISOString();
             const { error } = await supabaseClient
                 .from('janaan_sisa')
-                .update({ status: status })
+                .update({ 
+                    status: status,
+                    tarikh_semakan: masaKini
+                })
                 .eq('id', id);
 
             if (error) {
@@ -448,9 +468,10 @@
 
         async function batalRekod(jadual, id) {
             if(confirm("Pasti mahu menukar status rekod ini kepada 'Batal'?")) {
+                const masaKini = new Date().toISOString();
                 const { error } = await supabaseClient
                     .from(jadual)
-                    .update({ status: 'Batal' })
+                    .update({ status: 'Batal', tarikh_kelulusan: masaKini })
                     .eq('id', id);
 
                 if (error) {
