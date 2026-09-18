@@ -307,64 +307,64 @@
             }
         }
 
-        // 3. DATA JANAAN SISA KIMIA (TARIKH & MASA DIHANTAR DIKEMASKINI)
-        async function dapatkanJanaanSisa() {
-            const { data, error } = await supabaseClient
-                .from('janaan_sisa')
-                .select('*')
-                .order('id', { ascending: false });
-                
-            const tbody = document.getElementById('isiJadualSisa');
-            tbody.innerHTML = '';
+       // 3. DATA JANAAN SISA KIMIA (BAIKI PAPARAN TARIKH & MASA DIHANTAR)
+async function dapatkanJanaanSisa() {
+    const { data, error } = await supabaseClient
+        .from('janaan_sisa')
+        .select('*')
+        .order('id', { ascending: false });
+        
+    const tbody = document.getElementById('isiJadualSisa');
+    tbody.innerHTML = '';
 
-            if (error) {
-                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:red;">Gagal memuatkan data sisa: ${error.message}</td></tr>`;
-                return;
-            }
+    if (error) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:red;">Gagal memuatkan data sisa: ${error.message}</td></tr>`;
+        return;
+    }
 
-            if (!data || data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;">Tiada rekod pemberitahuan sisa kimia.</td></tr>`;
-                return;
-            }
+    if (!data || data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;">Tiada rekod pemberitahuan sisa kimia.</td></tr>`;
+        return;
+    }
 
-            data.forEach(r => {
-                let htmlKomposisi = '<ul class="komposisi-list">';
-                if (Array.isArray(r.komposisi_sisa)) {
-                    r.komposisi_sisa.forEach(k => {
-                        htmlKomposisi += `<li><b>${k.nama}:</b> ${k.peratus}</li>`;
-                    });
-                }
-                htmlKomposisi += '</ul>';
-
-                // Semak lajur timestamp dari Supabase (created_at atau tarikh_penstoran)
-                const rawCreatedAt = r.created_at || r.tarikh_dijana || r.tarikh_penstoran;
-                const tarikhMasaDijana = formatTarikhMasa(rawCreatedAt) || '-';
-
-                const statusPapar = r.status || 'Belum Disemak';
-                const statusClass = (statusPapar === 'Disemak') ? 'status-disemak' : 'status-belum-disemak';
-                const beratPaparan = r.berat_kasar ? `${r.berat_kasar}` : '-';
-                const tarikhSemak = formatTarikhMasa(r.tarikh_semakan);
-
-                const row = tbody.insertRow();
-                row.innerHTML = `
-                    <td><b>#${r.id}</b></td>
-                    <td style="font-size: 11px; font-weight: bold; color: #2c3e50;">${tarikhMasaDijana}</td>
-                    <td><b>${r.nama_pemohon || '-'}</b><br><small style="color:#7f8c8d;">${r.nama_makmal || '-'}</small></td>
-                    <td>${r.fizikal_sisa || '-'}</td>
-                    <td>${htmlKomposisi}</td>
-                    <td><b>${beratPaparan}</b></td>
-                    <td>
-                        <span class="${statusClass}">${statusPapar}</span>
-                        ${tarikhSemak ? `<span class="tarikh-badge">🗓️ ${tarikhSemak}</span>` : ''}
-                    </td>
-                    <td>
-                        <button class="btn-lulus" onclick="tukarStatusSisa(${r.id}, 'Disemak')">Disemak</button>
-                        <button class="btn-batal" onclick="tukarStatusSisa(${r.id}, 'Batal')">Batal</button>
-                        <button class="btn-padam" onclick="padamRekodKekal('janaan_sisa', ${r.id})">🗑️ Padam</button>
-                    </td>
-                `;
+    data.forEach(r => {
+        let htmlKomposisi = '<ul class="komposisi-list">';
+        if (Array.isArray(r.komposisi_sisa)) {
+            r.komposisi_sisa.forEach(k => {
+                htmlKomposisi += `<li><b>${k.nama}:</b> ${k.peratus}</li>`;
             });
         }
+        htmlKomposisi += '</ul>';
+
+        // Utamakan lajur created_at automatik dari Supabase untuk dapatkan MASA & TARIKH TEPAT
+        const timestampPohon = r.created_at || r.tarikh_dijana || r.tarikh_penstoran;
+        const tarikhMasaDijana = formatTarikhMasa(timestampPohon) || '-';
+
+        const statusPapar = r.status || 'Belum Disemak';
+        const statusClass = (statusPapar === 'Disemak') ? 'status-disemak' : 'status-belum-disemak';
+        const beratPaparan = r.berat_kasar ? `${r.berat_kasar}` : '-';
+        const tarikhSemak = formatTarikhMasa(r.tarikh_semakan);
+
+        const row = tbody.insertRow();
+        row.innerHTML = `
+            <td><b>#${r.id}</b></td>
+            <td style="font-size: 11px; font-weight: bold; color: #2c3e50;">${tarikhMasaDijana}</td>
+            <td><b>${r.nama_pemohon || '-'}</b><br><small style="color:#7f8c8d;">${r.nama_makmal || '-'}</small></td>
+            <td>${r.fizikal_sisa || '-'}</td>
+            <td>${htmlKomposisi}</td>
+            <td><b>${beratPaparan}</b></td>
+            <td>
+                <span class="${statusClass}">${statusPapar}</span>
+                ${tarikhSemak ? `<span class="tarikh-badge">🗓️ ${tarikhSemak}</span>` : ''}
+            </td>
+            <td>
+                <button class="btn-lulus" onclick="tukarStatusSisa(${r.id}, 'Disemak')">Disemak</button>
+                <button class="btn-batal" onclick="tukarStatusSisa(${r.id}, 'Batal')">Batal</button>
+                <button class="btn-padam" onclick="padamRekodKekal('janaan_sisa', ${r.id})">🗑️ Padam</button>
+            </td>
+        `;
+    });
+}
 
         function paparkanDetail(id) {
             const rekod = dataBahanGlobal.find(r => r.id === id);
