@@ -58,7 +58,7 @@
         .komposisi-list { margin: 0; padding-left: 15px; font-size: 12px; }
         .tarikh-badge { font-size: 11px; color: #7f8c8d; display: block; margin-top: 2px; }
 
-        /* GAYA KHAS UNTUK MENCETAK DOKUMEN / BORANG RASMI PDF */
+        /* GAYA KHAS MENCETAK BORANG RASMI PDF */
         @media print {
             body * { visibility: hidden; }
             #modalDetail, #modalDetail * { visibility: visible; }
@@ -84,6 +84,7 @@
         <h2>⚙️ Panel Admin & Pegawai Makmal</h2>
         <p>Uruskan kelulusan tempahan peralatan, permohonan bahan/radas, dan semakan sisa kimia di sini.</p>
 
+        <!-- TAB NAVIGATION & EXPORT BUTTON -->
         <div class="tab-action-wrapper">
             <div class="tab-container">
                 <button class="tab-btn active" onclick="tukarTab('tempahan')">📅 Tempahan Slot Peralatan</button>
@@ -163,52 +164,9 @@
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyDDC9PLSCOzna4caIsrfPSvfR3A_FczKDc",
-            authDomain: "sistem-makmal-fkkuitmpg.firebaseapp.com",
-            projectId: "sistem-makmal-fkkuitmpg",
-            storageBucket: "sistem-makmal-fkkuitmpg.firebasestorage.app",
-            messagingSenderId: "291806336887",
-            appId: "1:291806336887:web:a0d4fca1866459ead03372"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-
-        const ADMIN_EMAILS = [
-            "nurha1559@uitm.edu.my",
-            "pegawai1@uitm.edu.my",
-            "pensyarah1@uitm.edu.my"
-        ];
-
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                const userEmail = (user.email || '').toLowerCase().trim();
-                const isAdmin = ADMIN_EMAILS.some(email => email.toLowerCase().trim() === userEmail);
-
-                if (isAdmin) {
-                    document.getElementById('loading-admin').style.display = 'none';
-                    document.getElementById('main-admin-content').style.display = 'block';
-                    window.muatTurunSemuaData();
-                } else {
-                    alert(`❌ AKSES DITOLAK!\nAkaun (${userEmail}) tiada kebenaran Admin.`);
-                    window.location.href = "makmal.html";
-                }
-            } else {
-                window.location.href = "index.html";
-            }
-        });
-
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            signOut(auth).then(() => window.location.href = "index.html");
-        });
-    </script>
-
+    <!-- SKRIP UTAMA SUPABASE & FIREBASE AUTH -->
     <script>
+        // TETAPAN PAUTAN SUPABASE (DIDEKLARASIKAN SATU KALI SAHAJA)
         const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
         const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
@@ -304,9 +262,10 @@
                         <td>${r.no_telefon || '-'}</td>
                         <td>${r.nama_peralatan || '-'}</td>
                         <td>${r.tarikh_guna || '-'}</td>
-                        <td>${r.masa_mula \vert{}\vert{} ''} -${r.masa_tamat || ''}</td>
+                        <td>${r.masa_mula || ''} - ${r.masa_tamat || ''}</td>
                         <td>
-                            <span class="status-${(r.status||'menunggu').toLowerCase()}">${r.status\vert{}\vert{}'Menunggu'}</span>${tarikhLulus ? `<span class="tarikh-badge">🗓️ ${tarikhLulus}</span>` : ''}
+                            <span class="status-${(r.status||'menunggu').toLowerCase()}">${r.status||'Menunggu'}</span>
+                            ${tarikhLulus ? `<span class="tarikh-badge">🗓️ ${tarikhLulus}</span>` : ''}
                         </td>
                         <td>
                             <button class="btn-lulus" onclick="tukarStatus('tempahan_peralatan', ${r.id}, 'Lulus')">Lulus</button>
@@ -343,7 +302,8 @@
                         <td>${r.tujuan}</td>
                         <td>${r.nama_penyelia || '-'}</td>
                         <td>
-                            <span class="status-${(r.status||'menunggu').toLowerCase()}">${r.status\vert{}\vert{}'Menunggu'}</span>${tarikhLulus ? `<span class="tarikh-badge">🗓️ ${tarikhLulus}</span>` : ''}
+                            <span class="status-${(r.status||'menunggu').toLowerCase()}">${r.status||'Menunggu'}</span>
+                            ${tarikhLulus ? `<span class="tarikh-badge">🗓️ ${tarikhLulus}</span>` : ''}
                         </td>
                         <td>
                             <button class="btn-detail" onclick="paparkanDetail(${r.id})">🔍 Lihat / Semak</button>
@@ -379,7 +339,7 @@
                 let htmlKomposisi = '<ul class="komposisi-list">';
                 if (Array.isArray(r.komposisi_sisa)) {
                     r.komposisi_sisa.forEach(k => {
-                        htmlKomposisi += `<li><b>${k.nama}:</b>${k.peratus}</li>`;
+                        htmlKomposisi += `<li><b>${k.nama}:</b> ${k.peratus}</li>`;
                     });
                 }
                 htmlKomposisi += '</ul>';
@@ -396,12 +356,13 @@
                 row.innerHTML = `
                     <td><b>#${r.id}</b></td>
                     <td style="font-size: 11px; font-weight: bold; color: #2c3e50;">${tarikhMasaDijana}</td>
-                    <td><b>${r.nama_pemohon \vert{}\vert{} '-'}</b><br><small style="color:#7f8c8d;">${r.nama_makmal || '-'}</small></td>
+                    <td><b>${r.nama_pemohon || '-'}</b><br><small style="color:#7f8c8d;">${r.nama_makmal || '-'}</small></td>
                     <td>${r.fizikal_sisa || '-'}</td>
                     <td>${htmlKomposisi}</td>
                     <td><b>${beratPaparan}</b></td>
                     <td>
-                        <span class="${statusClass}">${statusPapar}</span>${tarikhSemak ? `<span class="tarikh-badge">🗓️ ${tarikhSemak}</span>` : ''}
+                        <span class="${statusClass}">${statusPapar}</span>
+                        ${tarikhSemak ? `<span class="tarikh-badge">🗓️ ${tarikhSemak}</span>` : ''}
                     </td>
                     <td>
                         <button class="btn-lulus" onclick="tukarStatusSisa(${r.id}, 'Disemak')">Disemak</button>
@@ -412,7 +373,6 @@
             });
         }
 
-        // PAPARKAN MODAL PERINCIAN KONTEN BERSERTA BUTANG CETAK BORANG RASMI PDF
         function paparkanDetail(id) {
             const rekod = dataBahanGlobal.find(r => r.id === id);
             if (!rekod) return;
@@ -429,19 +389,182 @@
 
                 <div style="background:#f8f9fa; padding:12px; border-radius:6px; margin-bottom:15px; font-size:13px; border:1px solid #e0e0e0;">
                     <p style="margin:3px 0;"><strong>Nama Pemohon:</strong> ${rekod.nama_pemohon} (${rekod.no_id})</p>
-                    <p style="margin:3px 0;"><strong>No. Telefon:</strong> ${rekod.no_telefon \vert{}\vert{} '-'} \vert{} <strong>Semester/Sesi:</strong>${rekod.semester_sesi || '-'}</p>
-                    <p style="margin:3px 0;"><strong>Tujuan:</strong> ${rekod.tujuan} \vert{} <strong>Penyelia:</strong>${rekod.nama_penyelia || '-'}</p>
-                    <p style="margin:3px 0;"><strong>Tajuk Projek:</strong> ${rekod.tajuk_projek \vert{}\vert{} '-'}</p>${tarikhMasaLulus ? `<p style="margin:3px 0; color:#27ae60;"><strong>Tarikh Keputusan Terakhir:</strong> ${tarikhMasaLulus}</p>` : ''}
+                    <p style="margin:3px 0;"><strong>No. Telefon:</strong> ${rekod.no_telefon || '-'} | <strong>Semester/Sesi:</strong> ${rekod.semester_sesi || '-'}</p>
+                    <p style="margin:3px 0;"><strong>Tujuan:</strong> ${rekod.tujuan} | <strong>Penyelia:</strong> ${rekod.nama_penyelia || '-'}</p>
+                    <p style="margin:3px 0;"><strong>Tajuk Projek:</strong> ${rekod.tajuk_projek || '-'}</p>
+                    ${tarikhMasaLulus ? `<p style="margin:3px 0; color:#27ae60;"><strong>Tarikh Keputusan Terakhir:</strong> ${tarikhMasaLulus}</p>` : ''}
                 </div>
 
                 <h4 style="margin:10px 0 5px 0; color:#2c3e50;">👥 Ahli Kumpulan:</h4>
                 <ul style="margin-top:0; font-size:13px;">${(rekod.ahli_kumpulan || []).map(a => `<li>${a.nama} (${a.id})</li>`).join('') || 'Tiada'}</ul>
 
                 <h4 style="margin:10px 0 5px 0; color:#16a085;">🧪 Bahan Kimia Dipohon:</h4>
-                <ul style="margin-top:0; font-size:13px;">${(rekod.senarai_bahan_kimia || []).map(b => `<li><strong>${b.nama}</strong> - ${b.kuantiti}</li>`).join('') || 'Tiada'}</ul>
+                <ul style="margin-top:0; font-size:13px;">${(rekod.senarai_bahan_kimia || []).map(b => `<li><strong>${b.nama}</strong> -${b.kuantiti}</li>`).join('') || 'Tiada'}</ul>
 
                 <h4 style="margin:10px 0 5px 0; color:#16a085;">🔬 Alat Radas Dipohon:</h4>
-                <ul style="margin-top:0; font-size:13px;">${(rekod.senarai_radas || []).map(r => `<li><strong>${r.nama}</strong> - ${r.kuantiti} unit</li>`).join('') || 'Tiada'}</ul>
+                <ul style="margin-top:0; font-size:13px;">${(rekod.senarai_radas || []).map(r => `<li><strong>${r.nama}</strong> -${r.kuantiti} unit</li>`).join('') || 'Tiada'}</ul>
 
                 <h4 style="margin:10px 0 5px 0; color:#16a085;">⚙️ Peralatan Makmal Dipohon:</h4>
-                <ul style="margin-top:0; font-size:13px;">${(rekod.senarai_peralatan || []).map(p => `<li><strong>${p.nama}</strong> - ${p.kuantiti} unit</li>`).join('') || 'Tiada'}</ul>
+                <ul style="margin-top:0; font-size:13px;">${(rekod.senarai_peralatan || []).map(p => `<li><strong>${p.nama}</strong> -${p.kuantiti} unit</li>`).join('') || 'Tiada'}</ul>
+
+                <hr style="border:none; border-top:1px solid #ddd; margin:15px 0;">
+                
+                <div class="no-print">
+                    <label style="display:block; font-weight:bold; margin-bottom:5px; color:#2c3e50; font-size:13px;">
+                        ✏️ Catatan Admin / Pelulusan Separa:
+                    </label>
+                    <textarea id="catatanAdminInput" style="width:97%; height:70px; padding:8px; border:1px solid #ccc; border-radius:4px; font-family:Arial;" placeholder="Contoh: Diluluskan untuk Beaker sahaja. Ethanol tidak diluluskan kerana stok terhad.">${rekod.catatan_admin || ''}</textarea>
+
+                    <div style="margin-top:15px; display:flex; gap:10px; justify-content:flex-end;">
+                        <button onclick="window.print()" class="btn-print">🖨️ Cetak / Simpan Borang Rasmi PDF</button>
+                        <button class="btn-lulus" onclick="simpanKeputusan(${rekod.id}, 'Lulus')">✅ Luluskan Permohonan</button>
+                        <button class="btn-tolak" onclick="simpanKeputusan(${rekod.id}, 'Ditolak')">❌ Tolak Permohonan</button>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('isiModal').innerHTML = html;
+            document.getElementById('modalDetail').style.display = 'block';
+        }
+
+        function tutupModal() { document.getElementById('modalDetail').style.display = 'none'; }
+
+        async function simpanKeputusan(id, status) {
+            const catatan = document.getElementById('catatanAdminInput').value;
+            const masaKini = new Date().toISOString();
+            
+            const { error } = await supabaseClient
+                .from('permohonan_bahan_radas')
+                .update({ 
+                    status: status, 
+                    catatan_admin: catatan,
+                    tarikh_kelulusan: masaKini
+                })
+                .eq('id', id);
+
+            if (error) {
+                alert("❌ Ralat semasa menyimpan: " + error.message);
+            } else {
+                alert(`✅ Berjaya! Permohonan telah dikemas kini kepada status '${status}'.`);
+                tutupModal();
+                dapatkanBahanRadas();
+            }
+        }
+
+        async function tukarStatus(jadual, id, status) {
+            const masaKini = new Date().toISOString();
+            await supabaseClient
+                .from(jadual)
+                .update({ 
+                    status: status,
+                    tarikh_kelulusan: masaKini 
+                })
+                .eq('id', id);
+                
+            alert(`Status berjaya ditukar kepada: ${status}`);
+            dapatkanTempahan();
+            dapatkanBahanRadas();
+        }
+
+        async function tukarStatusSisa(id, status) {
+            const masaKini = new Date().toISOString();
+            const { error } = await supabaseClient
+                .from('janaan_sisa')
+                .update({ 
+                    status: status,
+                    tarikh_semakan: masaKini
+                })
+                .eq('id', id);
+
+            if (error) {
+                alert("❌ Ralat semasa mengemaskini status sisa: " + error.message);
+            } else {
+                alert(`✅ Status rekod sisa #${id} berjaya ditukar kepada '${status}'.`);
+                dapatkanJanaanSisa();
+            }
+        }
+
+        async function batalRekod(jadual, id) {
+            if(confirm("Pasti mahu menukar status rekod ini kepada 'Batal'?")) {
+                const masaKini = new Date().toISOString();
+                const { error } = await supabaseClient
+                    .from(jadual)
+                    .update({ status: 'Batal', tarikh_kelulusan: masaKini })
+                    .eq('id', id);
+
+                if (error) {
+                    alert("❌ Ralat: " + error.message);
+                } else {
+                    alert("✅ Status rekod telah dikemaskini kepada 'Batal'.");
+                    dapatkanTempahan();
+                    dapatkanBahanRadas();
+                }
+            }
+        }
+
+        async function padamRekodKekal(jadual, id) {
+            if(confirm("⚠️ AMARAN: Rekod ini akan DIPADAM KEKAL dari pangkalan data!\nAdakah anda pasti mahu memadam rekod ini?")) {
+                const { error } = await supabaseClient
+                    .from(jadual)
+                    .delete()
+                    .eq('id', id);
+
+                if (error) {
+                    alert("❌ Ralat semasa memadam: " + error.message);
+                } else {
+                    alert("🗑️ Rekod telah berjaya dipadam secara kekal!");
+                    dapatkanTempahan();
+                    dapatkanBahanRadas();
+                    dapatkanJanaanSisa();
+                }
+            }
+        }
+    </script>
+
+    <!-- KAWALAN KESELAMATAN FIREBASE AUTH (MODULE) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDDC9PLSCOzna4caIsrfPSvfR3A_FczKDc",
+            authDomain: "sistem-makmal-fkkuitmpg.firebaseapp.com",
+            projectId: "sistem-makmal-fkkuitmpg",
+            storageBucket: "sistem-makmal-fkkuitmpg.firebasestorage.app",
+            messagingSenderId: "291806336887",
+            appId: "1:291806336887:web:a0d4fca1866459ead03372"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        const ADMIN_EMAILS = [
+            "nurha1559@uitm.edu.my",
+            "pegawai1@uitm.edu.my",
+            "pensyarah1@uitm.edu.my"
+        ];
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const userEmail = (user.email || '').toLowerCase().trim();
+                const isAdmin = ADMIN_EMAILS.some(email => email.toLowerCase().trim() === userEmail);
+
+                if (isAdmin) {
+                    document.getElementById('loading-admin').style.display = 'none';
+                    document.getElementById('main-admin-content').style.display = 'block';
+                    window.muatTurunSemuaData();
+                } else {
+                    alert(`❌ AKSES DITOLAK!\nAkaun (${userEmail}) tiada kebenaran Admin.`);
+                    window.location.href = "makmal.html";
+                }
+            } else {
+                window.location.href = "index.html";
+            }
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            signOut(auth).then(() => window.location.href = "index.html");
+        });
+    </script>
+</body>
+</html>
