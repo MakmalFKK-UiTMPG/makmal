@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Admin - Pengurusan Tempahan & Permohonan Makmal</title>
+    <!-- Supabase CDN -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: Arial, sans-serif; padding: 20px; max-width: 1300px; margin: auto; background-color: #f9f9f9; }
@@ -23,9 +24,11 @@
         .tab-btn { padding: 10px 20px; font-weight: bold; border: none; background: #e0e0e0; cursor: pointer; border-radius: 5px 5px 0 0; }
         .tab-btn.active { background: #2c3e50; color: white; }
 
+        .action-buttons-group { display: flex; gap: 8px; }
         .btn-export { background-color: #27ae60; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; }
         .btn-export:hover { background-color: #219150; }
-        .btn-print { background-color: #8e44ad; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 13px; margin-right: 5px; }
+        .btn-print-main { background-color: #8e44ad; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-print-main:hover { background-color: #712b8d; }
 
         /* KAD RINGKASAN */
         .summary-container { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
@@ -48,6 +51,7 @@
         .btn-lulus { background-color: #27ae60; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; }
         .btn-tolak { background-color: #c0392b; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; margin-left: 3px; }
         .btn-detail { background-color: #2980b9; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-weight: bold; margin-left: 3px; }
+        .btn-cetak-row { background-color: #8e44ad; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-weight: bold; margin-left: 3px; }
         .btn-batal { background-color: #f39c12; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-weight: bold; margin-left: 3px; }
         .btn-padam { background-color: #c0392b; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-weight: bold; margin-left: 3px; }
 
@@ -58,7 +62,7 @@
         .komposisi-list { margin: 0; padding-left: 15px; font-size: 12px; }
         .tarikh-badge { font-size: 11px; color: #7f8c8d; display: block; margin-top: 2px; }
 
-        /* GAYA KHAS MENCETAK BORANG RASMI PDF */
+        /* GAYA KHAS UNTUK MENCETAK DOKUMEN / BORANG RASMI PDF */
         @media print {
             body * { visibility: hidden; }
             #modalDetail, #modalDetail * { visibility: visible; }
@@ -84,15 +88,21 @@
         <h2>⚙️ Panel Admin & Pegawai Makmal</h2>
         <p>Uruskan kelulusan tempahan peralatan, permohonan bahan/radas, dan semakan sisa kimia di sini.</p>
 
+        <!-- TAB NAVIGATION & ACTION BUTTONS -->
         <div class="tab-action-wrapper">
             <div class="tab-container">
                 <button class="tab-btn active" onclick="tukarTab('tempahan')">📅 Tempahan Slot Peralatan</button>
                 <button class="tab-btn" onclick="tukarTab('bahan')">🧪 Permohonan Bahan Kimia & Radas</button>
                 <button class="tab-btn" onclick="tukarTab('sisa')">🧪 Pemberitahuan Sisa Kimia</button>
             </div>
-            <button onclick="eksportDataSemasa()" class="btn-export">
-                📥 Muat Turun Data (Excel / CSV)
-            </button>
+            <div class="action-buttons-group">
+                <button onclick="window.print()" class="btn-print-main">
+                    🖨️ Cetak / Simpan PDF
+                </button>
+                <button onclick="eksportDataSemasa()" class="btn-export">
+                    📥 Muat Turun Data (Excel / CSV)
+                </button>
+            </div>
         </div>
 
         <div id="sekSyenTempahan">
@@ -147,7 +157,7 @@
                         <th>Komposisi Bahan Kimia</th>
                         <th width="10%">Berat / Isipadu</th>
                         <th width="13%">Status & Tarikh Semakan</th>
-                        <th width="16%">Tindakan</th>
+                        <th width="20%">Tindakan</th>
                     </tr>
                 </thead>
                 <tbody id="isiJadualSisa"><tr><td colspan="8" style="text-align:center;">Memuatkan...</td></tr></tbody>
@@ -157,18 +167,20 @@
         <div id="modalDetail" class="modal">
             <div class="modal-content">
                 <span class="close-modal" onclick="tutupModal()">&times;</span>
-                <h3 style="color:#2c3e50; border-bottom:2px solid #16a085; padding-bottom:5px; margin-top:0;">📋 Perincian Permohonan Bahan & Radas</h3>
+                <h3 style="color:#2c3e50; border-bottom:2px solid #16a085; padding-bottom:5px; margin-top:0;">📋 Perincian Permohonan</h3>
                 <div id="isiModal"></div>
             </div>
         </div>
     </div>
 
+    <!-- 1. PAUTAN & FUNGSI UTAMA SUPABASE -->
     <script>
         const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
         const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
         let dataBahanGlobal = [];
+        let dataSisaGlobal = [];
 
         function formatTarikhMasa(timestamp) {
             if (!timestamp) return '';
@@ -304,6 +316,7 @@
                         </td>
                         <td>
                             <button class="btn-detail" onclick="paparkanDetail(${r.id})">🔍 Lihat / Semak</button>
+                            <button class="btn-cetak-row" onclick="paparkanDetail(${r.id}); setTimeout(()=>window.print(), 300);">🖨️ Cetak PDF</button>
                             <button class="btn-batal" onclick="batalRekod('permohonan_bahan_radas', ${r.id})">Batal</button>
                             <button class="btn-padam" onclick="padamRekodKekal('permohonan_bahan_radas', ${r.id})">🗑️ Padam</button>
                         </td>
@@ -321,6 +334,7 @@
                 
             const tbody = document.getElementById('isiJadualSisa');
             tbody.innerHTML = '';
+            dataSisaGlobal = data || [];
 
             if (error) {
                 tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:red;">Gagal memuatkan data sisa: ${error.message}</td></tr>`;
@@ -362,6 +376,7 @@
                         ${tarikhSemak ? `<span class="tarikh-badge">🗓️ ${tarikhSemak}</span>` : ''}
                     </td>
                     <td>
+                        <button class="btn-detail" onclick="paparkanDetailSisa(${r.id})">🔍 Lihat / Cetak</button>
                         <button class="btn-lulus" onclick="tukarStatusSisa(${r.id}, 'Disemak')">Disemak</button>
                         <button class="btn-batal" onclick="tukarStatusSisa(${r.id}, 'Batal')">Batal</button>
                         <button class="btn-padam" onclick="padamRekodKekal('janaan_sisa', ${r.id})">🗑️ Padam</button>
@@ -370,6 +385,7 @@
             });
         }
 
+        // PAPARAN BORANG RASMI PERMOHONAN BAHAN & RADAS
         function paparkanDetail(id) {
             const rekod = dataBahanGlobal.find(r => r.id === id);
             if (!rekod) return;
@@ -413,10 +429,62 @@
                     <textarea id="catatanAdminInput" style="width:97%; height:70px; padding:8px; border:1px solid #ccc; border-radius:4px; font-family:Arial;" placeholder="Contoh: Diluluskan untuk Beaker sahaja. Ethanol tidak diluluskan kerana stok terhad.">${rekod.catatan_admin || ''}</textarea>
 
                     <div style="margin-top:15px; display:flex; gap:10px; justify-content:flex-end;">
-                        <button onclick="window.print()" class="btn-print">🖨️ Cetak / Simpan Borang Rasmi PDF</button>
+                        <button onclick="window.print()" class="btn-print-main">🖨️ Cetak / Simpan Borang Rasmi PDF</button>
                         <button class="btn-lulus" onclick="simpanKeputusan(${rekod.id}, 'Lulus')">✅ Luluskan Permohonan</button>
                         <button class="btn-tolak" onclick="simpanKeputusan(${rekod.id}, 'Ditolak')">❌ Tolak Permohonan</button>
                     </div>
+                </div>
+            `;
+
+            document.getElementById('isiModal').innerHTML = html;
+            document.getElementById('modalDetail').style.display = 'block';
+        }
+
+        // PAPARAN BORANG RASMI PEMBERITAHUAN SISA KIMIA
+        function paparkanDetailSisa(id) {
+            const rekod = dataSisaGlobal.find(r => r.id === id);
+            if (!rekod) return;
+
+            const tarikhMasaDihantar = formatTarikhMasa(rekod.created_at || rekod.tarikh_dijana || rekod.tarikh_penstoran);
+            const tarikhSemak = formatTarikhMasa(rekod.tarikh_semakan);
+
+            let htmlKomposisi = '<ul style="margin-top:0; font-size:13px;">';
+            if (Array.isArray(rekod.komposisi_sisa)) {
+                rekod.komposisi_sisa.forEach(k => {
+                    htmlKomposisi += `<li><strong>${k.nama}:</strong> ${k.peratus}</li>`;
+                });
+            }
+            htmlKomposisi += '</ul>';
+
+            let html = `
+                <div style="border-bottom:2px solid #2c3e50; padding-bottom:10px; margin-bottom:15px; text-align:center;">
+                    <h3 style="margin:0; color:#2c3e50;">FAKULTI KEJURUTERAAN KIMIA UiTM PASIR GUDANG</h3>
+                    <p style="margin:2px 0; font-size:12px; font-weight:bold; color:#d35400;">BORANG NOTIFIKASI & PEMBERITAHUAN JANAAN SISA KIMIA</p>
+                    <small style="color:#7f8c8d;">ID Rekod: #${rekod.id} | Tarikh Dihantar: ${tarikhMasaDihantar}</small>
+                </div>
+
+                <div style="background:#f8f9fa; padding:12px; border-radius:6px; margin-bottom:15px; font-size:13px; border:1px solid #e0e0e0;">
+                    <p style="margin:3px 0;"><strong>Nama Pemohon:</strong> ${rekod.nama_pemohon || '-'} (${rekod.no_id || '-'})</p>
+                    <p style="margin:3px 0;"><strong>No. Telefon:</strong> ${rekod.no_tel || '-'} | <strong>Makmal Sumber Sisa:</strong> ${rekod.nama_makmal || '-'}</p>
+                    <p style="margin:3px 0;"><strong>Tarikh Penstoran Sisa:</strong> ${rekod.tarikh_penstoran || '-'}</p>
+                    ${tarikhSemak ? `<p style="margin:3px 0; color:#27ae60;"><strong>Tarikh Disemak Pegawai:</strong> ${tarikhSemak}</p>` : ''}
+                </div>
+
+                <h4 style="margin:10px 0 5px 0; color:#2c3e50;">📦 Physical State / Fizikal Sisa:</h4>
+                <p style="margin:0 0 10px 0; font-size:13px; font-weight:bold; color:#2980b9;">${rekod.fizikal_sisa || '-'}</p>
+
+                <h4 style="margin:10px 0 5px 0; color:#16a085;">🧪 Komposisi Bahan Kimia Terlibat:</h4>
+                ${htmlKomposisi}
+
+                <h4 style="margin:10px 0 5px 0; color:#16a085;">⚖️ Berat Kasar / Isipadu Sisa:</h4>
+                <p style="margin:0 0 10px 0; font-size:13px; font-weight:bold;">${rekod.berat_kasar || '-'}</p>
+
+                <hr style="border:none; border-top:1px solid #ddd; margin:15px 0;">
+                
+                <div class="no-print" style="margin-top:15px; display:flex; gap:10px; justify-content:flex-end;">
+                    <button onclick="window.print()" class="btn-print-main">🖨️ Cetak / Simpan Borang Sisa PDF</button>
+                    <button class="btn-lulus" onclick="tukarStatusSisa(${rekod.id}, 'Disemak'); tutupModal();">Disemak</button>
+                    <button class="btn-batal" onclick="tukarStatusSisa(${rekod.id}, 'Batal'); tutupModal();">Batal</button>
                 </div>
             `;
 
@@ -518,6 +586,7 @@
         }
     </script>
 
+    <!-- 2. KAWALAN KESELAMATAN FIREBASE AUTH (MODULE) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
