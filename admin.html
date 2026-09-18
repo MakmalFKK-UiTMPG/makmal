@@ -25,6 +25,7 @@
 
         .btn-export { background-color: #27ae60; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; }
         .btn-export:hover { background-color: #219150; }
+        .btn-print { background-color: #8e44ad; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 13px; margin-right: 5px; }
 
         /* KAD RINGKASAN */
         .summary-container { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
@@ -56,6 +57,15 @@
         
         .komposisi-list { margin: 0; padding-left: 15px; font-size: 12px; }
         .tarikh-badge { font-size: 11px; color: #7f8c8d; display: block; margin-top: 2px; }
+
+        /* GAYA KHAS UNTUK MENCETAK DOKUMEN / BORANG RASMI PDF */
+        @media print {
+            body * { visibility: hidden; }
+            #modalDetail, #modalDetail * { visibility: visible; }
+            #modalDetail { position: absolute; left: 0; top: 0; width: 100%; height: auto; background: none; }
+            .modal-content { width: 100%; max-width: 100%; margin: 0; padding: 10px; border: none; box-shadow: none; }
+            .close-modal, .no-print { display: none !important; }
+        }
     </style>
 </head>
 <body>
@@ -101,7 +111,7 @@
                         <th>Peralatan</th>
                         <th>Tarikh Guna</th>
                         <th>Masa Guna</th>
-                        <th width="12%">Status & Tarikh Keputusan</th>
+                        <th width="12%">Status & Tarikh</th>
                         <th>Tindakan</th>
                     </tr>
                 </thead>
@@ -113,12 +123,12 @@
             <table>
                 <thead>
                     <tr>
-                        <th width="14%">Tarikh Pohon</th>
+                        <th width="14%">Tarikh Mohon</th>
                         <th>Nama Pemohon</th>
                         <th>No. ID</th>
                         <th>Tujuan</th>
                         <th>Penyelia</th>
-                        <th width="12%">Status & Tarikh Keputusan</th>
+                        <th width="12%">Status & Tarikh</th>
                         <th>Tindakan</th>
                     </tr>
                 </thead>
@@ -237,7 +247,6 @@
             }
         }
 
-        // FUNGSI MUAT TURUN EXCEL / CSV
         async function eksportDataSemasa() {
             let namaJadual = 'tempahan_peralatan';
             const tabAktif = document.querySelector('.tab-btn.active').innerText;
@@ -295,10 +304,9 @@
                         <td>${r.no_telefon || '-'}</td>
                         <td>${r.nama_peralatan || '-'}</td>
                         <td>${r.tarikh_guna || '-'}</td>
-                        <td>${r.masa_mula || ''} - ${r.masa_tamat || ''}</td>
+                        <td>${r.masa_mula \vert{}\vert{} ''} -${r.masa_tamat || ''}</td>
                         <td>
-                            <span class="status-${(r.status||'menunggu').toLowerCase()}">${r.status||'Menunggu'}</span>
-                            ${tarikhLulus ? `<span class="tarikh-badge">🗓️ ${tarikhLulus}</span>` : ''}
+                            <span class="status-${(r.status||'menunggu').toLowerCase()}">${r.status\vert{}\vert{}'Menunggu'}</span>${tarikhLulus ? `<span class="tarikh-badge">🗓️ ${tarikhLulus}</span>` : ''}
                         </td>
                         <td>
                             <button class="btn-lulus" onclick="tukarStatus('tempahan_peralatan', ${r.id}, 'Lulus')">Lulus</button>
@@ -335,8 +343,7 @@
                         <td>${r.tujuan}</td>
                         <td>${r.nama_penyelia || '-'}</td>
                         <td>
-                            <span class="status-${(r.status||'menunggu').toLowerCase()}">${r.status||'Menunggu'}</span>
-                            ${tarikhLulus ? `<span class="tarikh-badge">🗓️ ${tarikhLulus}</span>` : ''}
+                            <span class="status-${(r.status||'menunggu').toLowerCase()}">${r.status\vert{}\vert{}'Menunggu'}</span>${tarikhLulus ? `<span class="tarikh-badge">🗓️ ${tarikhLulus}</span>` : ''}
                         </td>
                         <td>
                             <button class="btn-detail" onclick="paparkanDetail(${r.id})">🔍 Lihat / Semak</button>
@@ -372,7 +379,7 @@
                 let htmlKomposisi = '<ul class="komposisi-list">';
                 if (Array.isArray(r.komposisi_sisa)) {
                     r.komposisi_sisa.forEach(k => {
-                        htmlKomposisi += `<li><b>${k.nama}:</b> ${k.peratus}</li>`;
+                        htmlKomposisi += `<li><b>${k.nama}:</b>${k.peratus}</li>`;
                     });
                 }
                 htmlKomposisi += '</ul>';
@@ -389,13 +396,12 @@
                 row.innerHTML = `
                     <td><b>#${r.id}</b></td>
                     <td style="font-size: 11px; font-weight: bold; color: #2c3e50;">${tarikhMasaDijana}</td>
-                    <td><b>${r.nama_pemohon || '-'}</b><br><small style="color:#7f8c8d;">${r.nama_makmal || '-'}</small></td>
+                    <td><b>${r.nama_pemohon \vert{}\vert{} '-'}</b><br><small style="color:#7f8c8d;">${r.nama_makmal || '-'}</small></td>
                     <td>${r.fizikal_sisa || '-'}</td>
                     <td>${htmlKomposisi}</td>
                     <td><b>${beratPaparan}</b></td>
                     <td>
-                        <span class="${statusClass}">${statusPapar}</span>
-                        ${tarikhSemak ? `<span class="tarikh-badge">🗓️ ${tarikhSemak}</span>` : ''}
+                        <span class="${statusClass}">${statusPapar}</span>${tarikhSemak ? `<span class="tarikh-badge">🗓️ ${tarikhSemak}</span>` : ''}
                     </td>
                     <td>
                         <button class="btn-lulus" onclick="tukarStatusSisa(${r.id}, 'Disemak')">Disemak</button>
@@ -406,142 +412,36 @@
             });
         }
 
+        // PAPARKAN MODAL PERINCIAN KONTEN BERSERTA BUTANG CETAK BORANG RASMI PDF
         function paparkanDetail(id) {
             const rekod = dataBahanGlobal.find(r => r.id === id);
             if (!rekod) return;
 
             const tarikhMasaLulus = formatTarikhMasa(rekod.tarikh_kelulusan);
+            const tarikhMasaDihantar = formatTarikhMasa(rekod.created_at);
 
             let html = `
-                <div style="background:#f8f9fa; padding:12px; border-radius:6px; margin-bottom:15px; font-size:13px;">
+                <div style="border-bottom:2px solid #2c3e50; padding-bottom:10px; margin-bottom:15px; text-align:center;">
+                    <h3 style="margin:0; color:#2c3e50;">FAKULTI KEJURUTERAAN KIMIA UiTM PASIR GUDANG</h3>
+                    <p style="margin:2px 0; font-size:12px; font-weight:bold; color:#16a085;">BORANG PERMOHONAN BAHAN KIMIA, ALAT RADAS & PERALATAN MAKMAL</p>
+                    <small style="color:#7f8c8d;">Kod Borang: PPM-FKK 01/ARBKPM (Ver.02) | Tarikh Pohon: ${tarikhMasaDihantar}</small>
+                </div>
+
+                <div style="background:#f8f9fa; padding:12px; border-radius:6px; margin-bottom:15px; font-size:13px; border:1px solid #e0e0e0;">
                     <p style="margin:3px 0;"><strong>Nama Pemohon:</strong> ${rekod.nama_pemohon} (${rekod.no_id})</p>
-                    <p style="margin:3px 0;"><strong>Semester/Sesi:</strong> ${rekod.semester_sesi || '-'}</p>
-                    <p style="margin:3px 0;"><strong>Tujuan:</strong> ${rekod.tujuan} | <strong>Penyelia:</strong> ${rekod.nama_penyelia || '-'}</p>
-                    <p style="margin:3px 0;"><strong>Tajuk Projek:</strong> ${rekod.tajuk_projek || '-'}</p>
-                    ${tarikhMasaLulus ? `<p style="margin:3px 0; color:#27ae60;"><strong>Tarikh Keputusan Terakhir:</strong> ${tarikhMasaLulus}</p>` : ''}
+                    <p style="margin:3px 0;"><strong>No. Telefon:</strong> ${rekod.no_telefon \vert{}\vert{} '-'} \vert{} <strong>Semester/Sesi:</strong>${rekod.semester_sesi || '-'}</p>
+                    <p style="margin:3px 0;"><strong>Tujuan:</strong> ${rekod.tujuan} \vert{} <strong>Penyelia:</strong>${rekod.nama_penyelia || '-'}</p>
+                    <p style="margin:3px 0;"><strong>Tajuk Projek:</strong> ${rekod.tajuk_projek \vert{}\vert{} '-'}</p>${tarikhMasaLulus ? `<p style="margin:3px 0; color:#27ae60;"><strong>Tarikh Keputusan Terakhir:</strong> ${tarikhMasaLulus}</p>` : ''}
                 </div>
 
                 <h4 style="margin:10px 0 5px 0; color:#2c3e50;">👥 Ahli Kumpulan:</h4>
                 <ul style="margin-top:0; font-size:13px;">${(rekod.ahli_kumpulan || []).map(a => `<li>${a.nama} (${a.id})</li>`).join('') || 'Tiada'}</ul>
 
                 <h4 style="margin:10px 0 5px 0; color:#16a085;">🧪 Bahan Kimia Dipohon:</h4>
-                <ul style="margin-top:0; font-size:13px;">${(rekod.senarai_bahan_kimia || []).map(b => `<li><strong>${b.nama}</strong> -${b.kuantiti}</li>`).join('') || 'Tiada'}</ul>
+                <ul style="margin-top:0; font-size:13px;">${(rekod.senarai_bahan_kimia || []).map(b => `<li><strong>${b.nama}</strong> - ${b.kuantiti}</li>`).join('') || 'Tiada'}</ul>
 
                 <h4 style="margin:10px 0 5px 0; color:#16a085;">🔬 Alat Radas Dipohon:</h4>
-                <ul style="margin-top:0; font-size:13px;">${(rekod.senarai_radas || []).map(r => `<li><strong>${r.nama}</strong> -${r.kuantiti} unit</li>`).join('') || 'Tiada'}</ul>
+                <ul style="margin-top:0; font-size:13px;">${(rekod.senarai_radas || []).map(r => `<li><strong>${r.nama}</strong> - ${r.kuantiti} unit</li>`).join('') || 'Tiada'}</ul>
 
                 <h4 style="margin:10px 0 5px 0; color:#16a085;">⚙️ Peralatan Makmal Dipohon:</h4>
-                <ul style="margin-top:0; font-size:13px;">${(rekod.senarai_peralatan || []).map(p => `<li><strong>${p.nama}</strong> -${p.kuantiti} unit</li>`).join('') || 'Tiada'}</ul>
-
-                <hr style="border:none; border-top:1px solid #ddd; margin:15px 0;">
-                
-                <label style="display:block; font-weight:bold; margin-bottom:5px; color:#2c3e50; font-size:13px;">
-                    ✏️ Catatan Admin / Pelulusan Separa:
-                </label>
-                <textarea id="catatanAdminInput" style="width:97%; height:70px; padding:8px; border:1px solid #ccc; border-radius:4px; font-family:Arial;" placeholder="Contoh: Diluluskan untuk Beaker sahaja. Ethanol tidak diluluskan kerana stok terhad.">${rekod.catatan_admin || ''}</textarea>
-
-                <div style="margin-top:15px; display:flex; gap:10px; justify-content:flex-end;">
-                    <button class="btn-lulus" onclick="simpanKeputusan(${rekod.id}, 'Lulus')">✅ Luluskan Permohonan</button>
-                    <button class="btn-tolak" onclick="simpanKeputusan(${rekod.id}, 'Ditolak')">❌ Tolak Permohonan</button>
-                </div>
-            `;
-
-            document.getElementById('isiModal').innerHTML = html;
-            document.getElementById('modalDetail').style.display = 'block';
-        }
-
-        function tutupModal() { document.getElementById('modalDetail').style.display = 'none'; }
-
-        async function simpanKeputusan(id, status) {
-            const catatan = document.getElementById('catatanAdminInput').value;
-            const masaKini = new Date().toISOString();
-            
-            const { error } = await supabaseClient
-                .from('permohonan_bahan_radas')
-                .update({ 
-                    status: status, 
-                    catatan_admin: catatan,
-                    tarikh_kelulusan: masaKini
-                })
-                .eq('id', id);
-
-            if (error) {
-                alert("❌ Ralat semasa menyimpan: " + error.message);
-            } else {
-                alert(`✅ Berjaya! Permohonan telah dikemas kini kepada status '${status}'.`);
-                tutupModal();
-                dapatkanBahanRadas();
-            }
-        }
-
-        async function tukarStatus(jadual, id, status) {
-            const masaKini = new Date().toISOString();
-            await supabaseClient
-                .from(jadual)
-                .update({ 
-                    status: status,
-                    tarikh_kelulusan: masaKini 
-                })
-                .eq('id', id);
-                
-            alert(`Status berjaya ditukar kepada: ${status}`);
-            dapatkanTempahan();
-            dapatkanBahanRadas();
-        }
-
-        async function tukarStatusSisa(id, status) {
-            const masaKini = new Date().toISOString();
-            const { error } = await supabaseClient
-                .from('janaan_sisa')
-                .update({ 
-                    status: status,
-                    tarikh_semakan: masaKini
-                })
-                .eq('id', id);
-
-            if (error) {
-                alert("❌ Ralat semasa mengemaskini status sisa: " + error.message);
-            } else {
-                alert(`✅ Status rekod sisa #${id} berjaya ditukar kepada '${status}'.`);
-                dapatkanJanaanSisa();
-            }
-        }
-
-        async function batalRekod(jadual, id) {
-            if(confirm("Pasti mahu menukar status rekod ini kepada 'Batal'?")) {
-                const masaKini = new Date().toISOString();
-                const { error } = await supabaseClient
-                    .from(jadual)
-                    .update({ status: 'Batal', tarikh_kelulusan: masaKini })
-                    .eq('id', id);
-
-                if (error) {
-                    alert("❌ Ralat: " + error.message);
-                } else {
-                    alert("✅ Status rekod telah dikemaskini kepada 'Batal'.");
-                    dapatkanTempahan();
-                    dapatkanBahanRadas();
-                }
-            }
-        }
-
-        async function padamRekodKekal(jadual, id) {
-            if(confirm("⚠️ AMARAN: Rekod ini akan DIPADAM KEKAL dari pangkalan data!\nAdakah anda pasti mahu memadam rekod ini?")) {
-                const { error } = await supabaseClient
-                    .from(jadual)
-                    .delete()
-                    .eq('id', id);
-
-                if (error) {
-                    alert("❌ Ralat semasa memadam: " + error.message);
-                } else {
-                    alert("🗑️ Rekod telah berjaya dipadam secara kekal!");
-                    dapatkanTempahan();
-                    dapatkanBahanRadas();
-                    dapatkanJanaanSisa();
-                }
-            }
-        }
-    </script>
-</body>
-</html>
+                <ul style="margin-top:0; font-size:13px;">${(rekod.senarai_peralatan || []).map(p => `<li><strong>${p.nama}</strong> - ${p.kuantiti} unit</li>`).join('') || 'Tiada'}</ul>
