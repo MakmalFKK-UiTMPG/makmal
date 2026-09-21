@@ -87,7 +87,7 @@
     </div>
 
     <script>
-        // SENARAI PAUTAN CSV DARI SETIAP TAB GOOGLE SHEET
+        // SENARAI PAUTAN CSV DARI SETIAP TAB GOOGLE SHEET PERALATAN
         const googleSheetCsvUrls = [
             'https://docs.google.com/spreadsheets/d/e/2PACX-1vT9_TAPPghJkgxCPABwbMNc6bKJPl08zOPPW2vp7hxLqy0zjW54WrC5M0dmEJmmeA/pub?gid=548558397&single=true&output=csv',
             'https://docs.google.com/spreadsheets/d/e/2PACX-1vT9_TAPPghJkgxCPABwbMNc6bKJPl08zOPPW2vp7hxLqy0zjW54WrC5M0dmEJmmeA/pub?gid=680702223&single=true&output=csv'
@@ -95,7 +95,6 @@
 
         let senaraiPeralatan = [];
 
-        // FUNGSI UNTUK MEMBACA SEBUAH PAUTAN CSV
         function ambilDataCsv(url) {
             return new Promise((resolve, reject) => {
                 Papa.parse(url, {
@@ -112,10 +111,8 @@
             });
         }
 
-        // 1. FUNGSI UTAMA MEMATUKAN DATA DARI BERBILANG TAB GOOGLE SHEET
         async function muatDataGoogleSheet() {
             try {
-                // Tarik data dari semua pautan tab serentak
                 const semuaTabResults = await Promise.all(googleSheetCsvUrls.map(url => ambilDataCsv(url)));
                 let parsedPeralatan = [];
 
@@ -135,18 +132,15 @@
                             }
                         }
 
-                        // Pengesanan Tajuk Makmal di Lajur B
                         if (colB.toUpperCase().startsWith('MAKMAL')) {
                             currentLab = colB;
                             return;
                         }
 
-                        // Abaikan baris header atau baris kosong
                         if (colB === 'Bil.' || colB === 'Bil' || colB === '' || colC === 'Nama Peralatan' || colC === '') {
                             return;
                         }
 
-                        // Jika ada data peralatan di Lajur C (row[2])
                         if (colC !== '' && colC !== '-') {
                             const jenama = row[3] ? row[3].trim() : '';  
                             const model = row[4] ? row[4].trim() : '';   
@@ -187,7 +181,6 @@
             }
         }
 
-        // 2. BINA DROPDOWN MAKMAL DARI DATA PROSES
         function binaPilihanMakmal(data) {
             const labFilter = document.getElementById('labFilter');
             const senaraiMakmal = new Set();
@@ -205,7 +198,6 @@
             });
         }
 
-        // 3. PAPARKAN DATA MENGIKUT SEKSYEN MAKMAL
         function paparkanPeralatan(data) {
             const bekas = document.getElementById('bekasMakmal');
             bekas.innerHTML = '';
@@ -291,7 +283,6 @@
             lucide.createIcons();
         }
 
-        // 4. FUNGSI CARIAN REAL-TIME
         function cariPeralatan() {
             let input = document.getElementById('carianInput').value.toLowerCase();
             let labSections = document.querySelectorAll('.lab-section');
@@ -318,7 +309,6 @@
             });
         }
 
-        // 5. FUNGSI PENAPIS MAKMAL
         function filterMakmal() {
             let selectedLab = document.getElementById('labFilter').value;
             let labSections = document.querySelectorAll('.lab-section');
