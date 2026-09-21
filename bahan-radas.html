@@ -260,8 +260,9 @@
     </script>
 
     <script>
+        // KUNCI ASAL SUPABASE YANG SEBENAR & SAH
         const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjE0MjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
         const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
         function tambahBarisAhli() {
@@ -319,10 +320,10 @@
             tambahBarisPeralatan();
         };
 
-        // FUNGSI NOTIFIKASI EMEL VIA WEB3FORMS (DENGAN ISOLASI MESEJ RALAT)
+        // FUNGSI NOTIFIKASI EMEL VIA WEB3FORMS API
         async function hantarNotifikasiEmelAdmin(payload) {
             try {
-                const response = await fetch("https://api.web3forms.com/submit", {
+                await fetch("https://api.web3forms.com/submit", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -349,13 +350,6 @@ Sila semak pangkalan data Supabase atau portal admin untuk tindakan kelulusan.
                         `
                     })
                 });
-
-                const result = await response.json();
-                if (result.success) {
-                    console.log("✅ Emel notifikasi berjaya dihantar kepada Pegawai Makmal!");
-                } else {
-                    console.warn("⚠️ Ralat Web3Forms:", result.message);
-                }
             } catch (err) {
                 console.warn("⚠️ Notifikasi emel tidak dapat dihantar:", err);
             }
@@ -410,18 +404,15 @@ Sila semak pangkalan data Supabase atau portal admin untuk tindakan kelulusan.
                 status: 'Menunggu Kelulusan'
             };
 
-            // SIMPAN DATA KE SUPABASE
-            const { data, error } = await supabaseClient
-                .from('permohonan_bahan_radas')
-                .insert([payload]);
+            // SIMPAN PERMOHONAN KE SUPABASE
+            const { data, error } = await supabaseClient.from('permohonan_bahan_radas').insert([payload]);
 
             if (error) {
-                console.error("❌ Ralat Supabase:", error);
-                alert("❌ Gagal menyimpan ke pangkalan data Supabase: " + error.message);
+                alert("❌ Gagal menghantar permohonan: " + error.message);
                 btnHantar.disabled = false;
                 btnHantar.innerText = "Hantar Permohonan";
             } else {
-                // HANTAR NOTIFIKASI EMEL SECARA LATAR BELAKANG
+                // HANTAR EMEL NOTIFIKASI SECARA LATAR BELAKANG
                 await hantarNotifikasiEmelAdmin(payload);
 
                 alert("✅ Permohonan anda telah berjaya dihantar untuk kelulusan Pegawai Makmal!");
