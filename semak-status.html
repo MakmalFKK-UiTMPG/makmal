@@ -23,10 +23,25 @@
             background: #cbd5e1;
             border-radius: 4px;
         }
+
+        /* GAYA KHAS PENCETAKAN */
+        #slipCetakArea {
+            display: none;
+        }
+
         @media print {
-            body * { visibility: hidden; }
-            #slipCetakArea, #slipCetakArea * { visibility: visible; }
-            #slipCetakArea { position: absolute; left: 0; top: 0; width: 100%; }
+            body > *:not(#slipCetakArea) {
+                display: none !important;
+            }
+            #slipCetakArea {
+                display: block !important;
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background: #ffffff;
+                color: #000000;
+            }
         }
     </style>
 </head>
@@ -52,7 +67,7 @@
                 <div>
                     <span class="text-xs font-bold uppercase tracking-wider text-emerald-600">Portals Semakan Digital</span>
                     <h1 class="text-xl sm:text-2xl font-bold text-slate-900 mt-0.5">Semakan Status Permohonan Bahan & Radas</h1>
-                    <p class="text-xs sm:text-sm text-slate-500 mt-1">Masukkan No. ID (Pelajar / Staf) anda untuk status permohonan.</p>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1">Masukkan No. ID (Pelajar / Staf) anda untuk menyemak status permohonan.</p>
                 </div>
                 <div class="p-3 bg-emerald-50 text-emerald-600 rounded-2xl hidden sm:block">
                     <i data-lucide="file-search" class="w-8 h-8"></i>
@@ -155,7 +170,7 @@
     </div>
 
     <!-- AREA SLIP CETAKAN -->
-    <div id="slipCetakArea" class="hidden p-8 bg-white text-slate-900"></div>
+    <div id="slipCetakArea" class="p-8 bg-white text-slate-900"></div>
 
     <!-- SKRIP SUPABASE & CARIAN STATUS -->
     <script>
@@ -295,7 +310,7 @@
                     ahliHTML = `<div class="mt-2 pt-2 border-t border-slate-100 text-xs text-slate-500"><strong>Ahli:</strong> ${r.ahli_kumpulan.map(a => a.nama).join(', ')}</div>`;
                 }
 
-                // Butang Tindakan (Kemaskini jika Menunggu, Cetak Permohonan jika Lulus)
+                // Butang Tindakan
                 let tindakanHTML = '-';
                 if (isMenunggu) {
                     tindakanHTML = `
@@ -467,7 +482,7 @@
             }
         });
 
-        // FUNGSI CETAK PERMOHONAN
+        // FUNGSI CETAK PERMOHONAN DENGAN PEMBAIKAN
         function cetakSlip(id) {
             const r = dataRekodSemasa.find(item => item.id == id);
             if (!r) return;
@@ -479,7 +494,7 @@
                 itemsFormatted += `</ul>`;
             }
             if (r.senarai_bahan_kimia && r.senarai_bahan_kimia.length > 0) {
-                itemsFormatted += `<p class="font-bold mt-2 text-xs">Bahan Kimia:</p><ul class="list-disc list-inside text-xs">`;
+                itemsFormatted += `<p class="font-bold mt-2 text-xs">Bahan Kimia / Pakai Buang:</p><ul class="list-disc list-inside text-xs">`;
                 r.senarai_bahan_kimia.forEach(b => itemsFormatted += `<li>${b.nama} - ${b.kuantiti}</li>`);
                 itemsFormatted += `</ul>`;
             }
@@ -504,6 +519,7 @@
                         <tr class="border-b"><td class="font-bold py-1.5">Nama Penyelia:</td><td>${r.nama_penyelia || '-'}</td></tr>
                         <tr class="border-b"><td class="font-bold py-1.5">Tajuk Projek:</td><td>${r.tajuk_projek || '-'}</td></tr>
                         <tr class="border-b"><td class="font-bold py-1.5">Status Permohonan:</td><td class="font-bold text-emerald-700">${r.status}</td></tr>
+                        <tr class="border-b"><td class="font-bold py-1.5">Catatan Pegawai:</td><td>${r.catatan_admin || '-'}</td></tr>
                     </table>
 
                     <div class="mb-6 p-4 bg-slate-50 border rounded-lg text-xs">
@@ -524,7 +540,10 @@
                 </div>
             `;
 
-            window.print();
+            // Paparkan secara langsung dan buka dialog pencetakan
+            setTimeout(() => {
+                window.print();
+            }, 100);
         }
     </script>
 </body>
