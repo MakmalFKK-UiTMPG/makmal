@@ -4,109 +4,198 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fasiliti Keselamatan Makmal FKK</title>
+    
+    <!-- TAILWIND CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- LUCIDE ICONS CDN -->
+    <script src="https://unpkg.com/@lucide/web"></script>
+    <!-- SUPABASE SDK -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; max-width: 1100px; margin: auto; background-color: #f8f9fa; }
-        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .back-btn { color: #2980b9; text-decoration: none; font-weight: bold; font-size: 14px; }
-        .title-box { text-align: center; margin-bottom: 25px; }
-        .title-box h2 { color: #c0392b; margin-bottom: 5px; }
-        .title-box p { color: #7f8c8d; margin: 0; font-size: 14px; }
-        .search-container { margin-bottom: 25px; text-align: center; }
-        .search-input { width: 100%; max-width: 550px; padding: 12px 20px; border: 2px solid #c0392b; border-radius: 25px; font-size: 15px; outline: none; }
-        .lab-section { background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 25px; overflow: hidden; border: 1px solid #e2e8f0; }
-        .lab-header { background-color: #c0392b; color: white; padding: 12px 20px; font-size: 16px; font-weight: bold; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px 15px; text-align: left; font-size: 13px; border-bottom: 1px solid #eee; }
-        th { background-color: #f1f5f9; color: #334155; font-size: 12px; text-transform: uppercase; }
-        tr:hover { background-color: #f8fafc; }
-        .badge { font-weight: bold; padding: 4px 10px; border-radius: 12px; font-size: 11px; display: inline-block; }
-        .badge-good { background: #d4edda; color: #155724; }
-        .badge-inspection { background: #fff3cd; color: #856404; }
-        .badge-faulty { background: #f8d7da; color: #721c24; }
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 6px;
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
     </style>
 </head>
-<body>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen">
 
-    <div class="header-top">
-        <a href="makmal.html" class="back-btn">⬅️ Kembali ke Menu Utama</a>
-        <a href="bahan-radas.html" class="back-btn" style="color: #16a085;">🧪 Permohonan Bahan & Radas</a>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- HEADER NAVIGASI / TOP BAR -->
+        <div class="flex items-center justify-between gap-4 mb-6">
+            <a href="makmal.html" class="inline-flex items-center space-x-2 text-sm font-semibold text-slate-600 hover:text-rose-600 transition group">
+                <i data-lucide="arrow-left" class="w-4 h-4 transition-transform group-hover:-translate-x-1"></i>
+                <span>Kembali ke Menu Utama</span>
+            </a>
+            <a href="bahan-radas.html" class="inline-flex items-center space-x-2 text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg border border-emerald-200 transition">
+                <i data-lucide="flask-conical" class="w-3.5 h-3.5"></i>
+                <span>Permohonan Bahan & Radas</span>
+            </a>
+        </div>
+
+        <!-- TAJUK UTAMA & KOTAK CARIAN -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm mb-8">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-rose-600">Keselamatan & Bantuan Kecemasan</span>
+                    <h1 class="text-xl sm:text-2xl font-bold text-slate-900 mt-0.5">Status Fasiliti Keselamatan Makmal FKK</h1>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1">Direktori peralatan kecemasan, tempat simpanan kit pertolongan cemas, dan status penyelenggaraan terkini.</p>
+                </div>
+                <div class="p-3 bg-rose-50 text-rose-600 rounded-2xl hidden sm:block">
+                    <i data-lucide="shield-alert" class="w-8 h-8"></i>
+                </div>
+            </div>
+
+            <!-- KOTAK CARIAN -->
+            <div class="mt-6">
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <i data-lucide="search" class="w-5 h-5"></i>
+                    </div>
+                    <input type="text" id="carianInput" onkeyup="cariFasiliti()" placeholder="Cari nama fasiliti, lokasi, atau status keselamatan..." class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:bg-white transition">
+                </div>
+            </div>
+        </div>
+
+        <!-- KANDUNGAN JADUAL INDUK -->
+        <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+            <div class="p-4 bg-slate-900 text-white font-bold text-sm flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <i data-lucide="list-checks" class="w-4 h-4 text-rose-400"></i>
+                    <span>Log Induk Peralatan Keselamatan & Bantuan Kecemasan</span>
+                </div>
+                <span id="jumlahKiraan" class="text-xs font-normal text-slate-400 bg-slate-800 px-2.5 py-1 rounded-md">Memuatkan...</span>
+            </div>
+
+            <div class="overflow-x-auto custom-scrollbar">
+                <table class="w-full text-left border-collapse min-w-[800px]">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            <th class="py-3 px-4 w-12 text-center">Bil</th>
+                            <th class="py-3 px-4">Fasiliti Keselamatan</th>
+                            <th class="py-3 px-4">Lokasi Utama</th>
+                            <th class="py-3 px-4 w-28">Kuantiti</th>
+                            <th class="py-3 px-4 w-44">Status Semasa</th>
+                            <th class="py-3 px-4 w-48">PIC / Catatan</th>
+                        </tr>
+                    </thead>
+                    <tbody id="jadualFasiliti" class="divide-y divide-slate-100 text-sm">
+                        <tr>
+                            <td colspan="6" class="py-8 text-center text-slate-400">
+                                <div class="flex flex-col items-center justify-center space-y-2">
+                                    <div class="w-6 h-6 border-2 border-rose-600 border-t-transparent rounded-full animate-spin"></div>
+                                    <span class="text-xs">Sedang memuatkan data fasiliti...</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="mt-12 text-center text-xs text-slate-400">
+            &copy; Hak Cipta Terpelihara Fakulti Kejuruteraan Kimia UiTM Pasir Gudang.
+        </footer>
+
     </div>
 
-    <div class="title-box">
-        <h2>🛡️ Senarai & Status Fasiliti Keselamatan Makmal FKK</h2>
-        <p>Direktori Peralatan Kecemasan & Keselamatan Terkini</p>
-    </div>
-
-    <div class="search-container">
-        <input type="text" id="carianInput" class="search-input" onkeyup="cariFasiliti()" placeholder="🔍 Cari nama fasiliti, lokasi, atau status...">
-    </div>
-
-    <div class="lab-section">
-        <div class="lab-header">📋 Log Induk Peralatan Keselamatan & Bantuan Kecemasan</div>
-        <table>
-            <thead>
-                <tr>
-                    <th width="40">Bil</th>
-                    <th>Fasiliti Keselamatan</th>
-                    <th>Lokasi Utama</th>
-                    <th width="100">Kuantiti</th>
-                    <th width="160">Status Semasa</th>
-                    <th width="150">PIC / Catatan</th>
-                </tr>
-            </thead>
-            <tbody id="jadualFasiliti">
-                <tr><td colspan="6" style="text-align:center;">🔄 Sedang memuatkan data...</td></tr>
-            </tbody>
-        </table>
-    </div>
-
+    <!-- SKRIP LOGIK SUPABASE & CARIAN -->
     <script>
         const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
         const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
+        window.onload = function() {
+            lucide.createIcons();
+            muatFasiliti();
+        };
+
         async function muatFasiliti() {
+            const tbody = document.getElementById('jadualFasiliti');
+            const kiraanElem = document.getElementById('jumlahKiraan');
+
             const { data, error } = await supabaseClient
                 .from('fasiliti_keselamatan')
                 .select('*')
                 .order('id', { ascending: true });
 
             if (error) {
-                console.error(error);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="py-6 text-center text-rose-500 bg-rose-50 text-xs font-semibold">
+                            ⚠️ Ralat memuatkan data: ${error.message}
+                        </td>
+                    </tr>
+                `;
+                kiraanElem.innerText = 'Ralat';
                 return;
             }
 
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="py-8 text-center text-slate-400 text-xs">
+                            Tiada rekod fasiliti keselamatan dijumpai dalam pangkalan data.
+                        </td>
+                    </tr>
+                `;
+                kiraanElem.innerText = '0 Rekod';
+                return;
+            }
+
+            kiraanElem.innerText = `${data.length} Rekod Diperoleh`;
+
             let html = '';
             data.forEach((item, index) => {
-                let badgeClass = 'badge-good';
-                if (item.status.includes('Semakan') || item.status.includes('Penyelenggaraan')) badgeClass = 'badge-inspection';
-                if (item.status.includes('Rosak') || item.status.includes('Tidak')) badgeClass = 'badge-faulty';
+                const statusStr = item.status || 'Baik';
+                
+                // Lencana Dinamik
+                let badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+                if (statusStr.includes('Semakan') || statusStr.includes('Penyelenggaraan')) {
+                    badgeClass = 'bg-amber-50 text-amber-700 border-amber-200';
+                } else if (statusStr.includes('Rosak') || statusStr.includes('Tidak') || statusStr.includes('Gagal')) {
+                    badgeClass = 'bg-rose-50 text-rose-700 border-rose-200';
+                }
 
                 html += `
-                    <tr class="item-row">
-                        <td>${index + 1}</td>
-                        <td><b>${item.nama_fasiliti}</b></td>
-                        <td>${item.lokasi}</td>
-                        <td>${item.kuantiti || '-'}</td>
-                        <td><span class="badge ${badgeClass}">${item.status}</span></td>
-                        <td>${item.pic || '-'}</td>
+                    <tr class="item-row hover:bg-slate-50/80 transition align-middle">
+                        <td class="py-3.5 px-4 text-center font-mono text-xs text-slate-500">${index + 1}</td>
+                        <td class="py-3.5 px-4 font-bold text-slate-900">${item.nama_fasiliti}</td>
+                        <td class="py-3.5 px-4 text-slate-600">${item.lokasi || '-'}</td>
+                        <td class="py-3.5 px-4 font-semibold text-slate-700">${item.kuantiti || '-'}</td>
+                        <td class="py-3.5 px-4">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border ${badgeClass}">
+                                ${statusStr}
+                            </span>
+                        </td>
+                        <td class="py-3.5 px-4 text-xs text-slate-600">${item.pic || '-'}</td>
                     </tr>
                 `;
             });
-            document.getElementById('jadualFasiliti').innerHTML = html;
+
+            tbody.innerHTML = html;
+            lucide.createIcons();
         }
 
         function cariFasiliti() {
-            let input = document.getElementById('carianInput').value.toLowerCase();
-            let rows = document.querySelectorAll('.item-row');
+            const input = document.getElementById('carianInput').value.toLowerCase();
+            const rows = document.querySelectorAll('.item-row');
+            
             rows.forEach(row => {
-                let text = row.innerText.toLowerCase();
+                const text = row.innerText.toLowerCase();
                 row.style.display = text.includes(input) ? "" : "none";
             });
         }
-
-        muatFasiliti();
     </script>
 </body>
 </html>
