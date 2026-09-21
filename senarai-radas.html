@@ -31,7 +31,7 @@
         <p class="text-sm text-slate-500 mt-1">Sila tunggu sebentar.</p>
     </div>
 
-    <!-- KANDUNGAN UTAMA (TERSEMBUNYI SEHINGGA SAH LOG MASUK) -->
+    <!-- KANDUNGAN UTAMA -->
     <div id="main-content" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         <!-- NAVIGASI ATAS & BUTANG LOG KELUAR -->
@@ -54,6 +54,14 @@
             </button>
         </div>
 
+        <!-- NOTIS REKOD INVENTORI 2020 -->
+        <div class="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-xl mb-6 flex items-center space-x-3 shadow-sm">
+            <i data-lucide="info" class="w-5 h-5 text-amber-600 flex-shrink-0"></i>
+            <p class="text-xs sm:text-sm font-medium">
+                <strong>Makluman:</strong> Rekod inventori alat radas yang dipaparkan adalah berdasarkan <strong>rekod pangkalan data bagi tahun 2020</strong>.
+            </p>
+        </div>
+
         <!-- HEADER UTAMA -->
         <header class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
@@ -63,8 +71,7 @@
             </div>
             
             <div class="flex items-center space-x-3 w-full sm:w-auto">
-                <!-- PAUTAN EDIT GOOGLE SHEET STAF MAKMAL -->
-                <a href="https://docs.google.com/spreadsheets/d/153J0APri9Lcmw4iXGaIHJ8wZmOBWxFJg/edit?usp=drive_link" 
+                <a href="https://docs.google.com/spreadsheets/d/1tund3RNdALNmcivC_WLaZ25wbGHDALpQx-NCuwQn5Mg/edit?usp=sharing" 
                    target="_blank" 
                    rel="noopener noreferrer"
                    class="inline-flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition shadow-sm border border-emerald-500 w-full sm:w-auto">
@@ -85,7 +92,7 @@
                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                     <i data-lucide="search" class="w-5 h-5"></i>
                 </div>
-                <input type="text" id="carianInput" onkeyup="cariRadas()" placeholder="Cari nama alat radas, saiz, jenama, atau makmal..." class="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent shadow-sm transition">
+                <input type="text" id="carianInput" onkeyup="cariRadas()" placeholder="Cari nama alat radas atau makmal..." class="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent shadow-sm transition">
             </div>
 
             <div>
@@ -99,7 +106,7 @@
         <div id="bekasRadas">
             <div class="p-12 text-center text-slate-400 bg-white border border-slate-200 rounded-2xl shadow-sm">
                 <div class="w-8 h-8 border-4 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-                <p class="font-medium text-sm">Memuatkan data alat radas...</p>
+                <p class="font-medium text-sm">Memuatkan data alat radas dari Google Sheet...</p>
             </div>
         </div>
 
@@ -109,7 +116,7 @@
 
     </div>
 
-    <!-- MODUL FIREBASE AUTH & SUPABASE (KAWALAN KESELAMATAN & LAST SEEN) -->
+    <!-- MODUL FIREBASE AUTH & SUPABASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -126,7 +133,6 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // TETAPAN SUPABASE UNTUK REKOD LAST SEEN
         const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
         const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
@@ -158,7 +164,6 @@
             }
         }
 
-        // KAWALAN KESELAMATAN KETAT (LOG MASUK)
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 const email = user.email || '';
@@ -178,7 +183,6 @@
             }
         });
 
-        // FUNGSI LOG KELUAR
         document.getElementById('logout-btn').addEventListener('click', () => {
             signOut(auth).then(() => {
                 window.location.href = "makmal.html";
@@ -188,13 +192,9 @@
         });
     </script>
 
-    <!-- SKRIP UTAMA UNTUK PAPARAN CSV GOOGLE SHEET -->
+    <!-- SKRIP UTAMA CSV GOOGLE SHEET -->
     <script>
-        // PAUTAN PUBLISH TO WEB (CSV) DARI GOOGLE SHEET KHUSUS UNTUK TAB ALAT RADAS
-        // 💡 Masukkan pautan CSV Publish to Web bagi tab Alat Radas di sini:
-        const csvUrlRadas = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRijQBFxjY_ck5fwNFisGxwCR9WTh9stEr0wyjPYobfIVj-SAUnWTbNK9lNg6rDfm9nDlEmUUuqUIn7/pub?gid=1009797141&single=true&output=csv';
-                            'https://docs.google.com/spreadsheets/d/e/2PACX-1vRijQBFxjY_ck5fwNFisGxwCR9WTh9stEr0wyjPYobfIVj-SAUnWTbNK9lNg6rDfm9nDlEmUUuqUIn7/pub?gid=1000183847&single=true&output=csv';
-                            'https://docs.google.com/spreadsheets/d/e/2PACX-1vRijQBFxjY_ck5fwNFisGxwCR9WTh9stEr0wyjPYobfIVj-SAUnWTbNK9lNg6rDfm9nDlEmUUuqUIn7/pub?gid=2047715628&single=true&output=csv';
+        const csvUrlRadas = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT9_TAPPghJkgxCPABwbMNc6bKJPl08zOPPW2vp7hxLqy0zjW54WrC5M0dmEJmmeA/pub?gid=680702223&single=true&output=csv';
 
         let senaraiRadas = [];
 
@@ -212,15 +212,6 @@
 
         async function muatDataGoogleSheet() {
             try {
-                if (csvUrlRadas === 'PAUTAN_CSV_ALAT_RADAS_DI_SINI') {
-                    document.getElementById('bekasRadas').innerHTML = `
-                        <div class="p-8 text-center text-amber-600 bg-amber-50 border border-amber-200 rounded-2xl">
-                            ⚠️ Sila masukkan pautan CSV Publish to Web untuk Alat Radas pada baris kod ini.
-                        </div>
-                    `;
-                    return;
-                }
-
                 const rawData = await ambilDataCsv(csvUrlRadas);
                 senaraiRadas = prosesRawCsv(rawData);
 
@@ -243,6 +234,7 @@
             let currentLabUpdate = 'Kemaskini Automatik';
 
             rawRows.forEach(row => {
+                const colA = row[0] ? row[0].toString().trim() : '';
                 const colB = row[1] ? row[1].toString().trim() : '';
                 const colC = row[2] ? row[2].toString().trim() : '';
                 const fullRowText = row.join(' ');
@@ -252,12 +244,15 @@
                     if (match && match[0]) currentLabUpdate = match[0];
                 }
 
-                if (colB.toUpperCase().startsWith('MAKMAL')) {
+                if (colA.toUpperCase().startsWith('MAKMAL')) {
+                    currentLab = colA;
+                    return;
+                } else if (colB.toUpperCase().startsWith('MAKMAL')) {
                     currentLab = colB;
                     return;
                 }
 
-                if (colB === 'Bil.' || colB === 'Bil' || colB === '' || colC === 'Nama Radas' || colC === 'Nama Item' || colC === '') {
+                if (colA === 'Bil.' || colA === 'Bil' || colB === 'Bil.' || colB === 'Bil' || colC === 'Nama Radas' || colC === 'Nama Item' || colC === '') {
                     return;
                 }
 
@@ -266,7 +261,6 @@
                         Makmal: currentLab,
                         TarikhKemaskini: currentLabUpdate,
                         NamaRadas: colC,
-                        SaizJenama: row[3] ? row[3].trim() : '-', 
                         Kuantiti: row[4] ? row[4].trim() : '1 unit', 
                         Status: row[5] ? row[5].trim() : 'Available',  
                         PIC: row[6] ? row[6].trim() : '-'               
@@ -282,7 +276,7 @@
             const senaraiMakmal = new Set();
 
             data.forEach(item => {
-                if(item.Makmal) senaraiMakmal.add(item.Makmal);
+                if(item.Makmal && item.Makmal !== 'MAKMAL UNKNOWN') senaraiMakmal.add(item.Makmal);
             });
 
             labFilter.innerHTML = `<option value="all">Semua Makmal</option>`;
@@ -332,12 +326,11 @@
 
                     rowsHtml += `
                         <tr class="item-row hover:bg-slate-50/80 transition border-b border-slate-100">
-                            <td class="py-3.5 px-4 text-center font-medium text-slate-400">${index + 1}</td>
+                            <td class="py-3.5 px-4 text-center font-medium text-slate-400 w-16">${index + 1}</td>
                             <td class="py-3.5 px-4 font-bold text-slate-800">${item.NamaRadas}</td>
-                            <td class="py-3.5 px-4 text-slate-600 font-mono text-xs">${item.SaizJenama}</td>
-                            <td class="py-3.5 px-4 text-center font-semibold text-slate-700">${item.Kuantiti}</td>
-                            <td class="py-3.5 px-4">${statusBadge}</td>
-                            <td class="py-3.5 px-4 text-slate-600 font-medium">${item.PIC}</td>
+                            <td class="py-3.5 px-4 text-center font-semibold text-slate-700 w-32">${item.Kuantiti}</td>
+                            <td class="py-3.5 px-4 w-40">${statusBadge}</td>
+                            <td class="py-3.5 px-4 text-slate-600 font-medium w-48">${item.PIC}</td>
                         </tr>
                     `;
                 });
@@ -352,13 +345,12 @@
                             <span class="text-xs text-slate-400 font-medium">${group.tarikh}</span>
                         </div>
                         <div class="overflow-x-auto custom-scrollbar">
-                            <table class="w-full text-left border-collapse min-w-[700px]">
+                            <table class="w-full text-left border-collapse min-w-[600px]">
                                 <thead>
                                     <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500">
-                                        <th class="py-3 px-4 w-12 text-center">Bil</th>
-                                        <th class="py-3 px-4">Nama Alat Radas</th>
-                                        <th class="py-3 px-4">Saiz / Jenama</th>
-                                        <th class="py-3 px-4 w-28 text-center">Kuantiti</th>
+                                        <th class="py-3 px-4 w-16 text-center">Bil</th>
+                                        <th class="py-3 px-4">Nama Alat Radas & Saiz</th>
+                                        <th class="py-3 px-4 w-32 text-center">Kuantiti</th>
                                         <th class="py-3 px-4 w-40">Status Stok</th>
                                         <th class="py-3 px-4 w-48">Pegawai (PIC)</th>
                                     </tr>
@@ -415,10 +407,6 @@
                 }
             });
         }
-
-        window.onload = function() {
-            lucide.createIcons();
-        };
     </script>
 </body>
 </html>
