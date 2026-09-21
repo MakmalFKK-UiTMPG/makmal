@@ -52,7 +52,7 @@
                 <div>
                     <span class="text-xs font-bold uppercase tracking-wider text-emerald-600">Portals Semakan Digital</span>
                     <h1 class="text-xl sm:text-2xl font-bold text-slate-900 mt-0.5">Semakan Status Permohonan Bahan & Radas</h1>
-                    <p class="text-xs sm:text-sm text-slate-500 mt-1">Masukkan No. ID (Pelajar / Staf) anda untuk melihat keseluruhan perincian permohonan dan catatan Pegawai Makmal.</p>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1">Masukkan No. ID (Pelajar / Staf) anda untuk status permohonan.</p>
                 </div>
                 <div class="p-3 bg-emerald-50 text-emerald-600 rounded-2xl hidden sm:block">
                     <i data-lucide="file-search" class="w-8 h-8"></i>
@@ -84,7 +84,7 @@
 
     </div>
 
-    <!-- MODAL EDIT PERMOHONAN (TERMASUK EDIT RADAS & KUANTITI) -->
+    <!-- MODAL EDIT PERMOHONAN -->
     <div id="modalEdit" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50 overflow-y-auto">
         <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-xl max-h-[90vh] flex flex-col">
             <div class="flex items-center justify-between border-b pb-3 mb-4">
@@ -131,7 +131,7 @@
                 <!-- BAHAGIAN EDIT BAHAN KIMIA -->
                 <div>
                     <div class="flex items-center justify-between mb-2">
-                        <label class="text-xs font-bold text-slate-800">🧪 Senarai Bahan Kimia</label>
+                        <label class="text-xs font-bold text-slate-800">🧪 Senarai Bahan Kimia / Pakai Buang</label>
                         <button type="button" onclick="tambahBarisBahanModal()" class="text-[11px] font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2 py-1 rounded-lg border border-emerald-200 transition">+ Tambah Bahan</button>
                     </div>
                     <div id="containerEditBahan" class="space-y-2"></div>
@@ -295,7 +295,7 @@
                     ahliHTML = `<div class="mt-2 pt-2 border-t border-slate-100 text-xs text-slate-500"><strong>Ahli:</strong> ${r.ahli_kumpulan.map(a => a.nama).join(', ')}</div>`;
                 }
 
-                // Butang Tindakan (Kemaskini jika Menunggu, Cetak jika Lulus)
+                // Butang Tindakan (Kemaskini jika Menunggu, Cetak Permohonan jika Lulus)
                 let tindakanHTML = '-';
                 if (isMenunggu) {
                     tindakanHTML = `
@@ -308,7 +308,7 @@
                     tindakanHTML = `
                         <button onclick="cetakSlip('${r.id}')" class="inline-flex items-center space-x-1 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer shadow-sm">
                             <i data-lucide="printer" class="w-3.5 h-3.5"></i>
-                            <span>Cetak Slip</span>
+                            <span>Cetak Permohonan</span>
                         </button>
                     `;
                 }
@@ -350,7 +350,6 @@
             lucide.createIcons();
         }
 
-        // FUNGSI MEMAPARKAN ITEM DI DALAM MODAL
         function tambahBarisRadasModal(nama = '', kuantiti = '') {
             const container = document.getElementById('containerEditRadas');
             const div = document.createElement('div');
@@ -387,7 +386,6 @@
             container.appendChild(div);
         }
 
-        // FUNGSI BUKA MODAL EDIT PERMOHONAN
         function bukaModalEdit(id) {
             const rekod = dataRekodSemasa.find(item => item.id == id);
             if (!rekod) return;
@@ -398,20 +396,16 @@
             document.getElementById('editTajuk').value = rekod.tajuk_projek || '';
             document.getElementById('editPenyelia').value = rekod.nama_penyelia || '';
 
-            // Bersihkan bekas item
             document.getElementById('containerEditRadas').innerHTML = '';
             document.getElementById('containerEditBahan').innerHTML = '';
             document.getElementById('containerEditAlat').innerHTML = '';
 
-            // Isi senarai radas jika ada
             if (rekod.senarai_radas && rekod.senarai_radas.length > 0) {
                 rekod.senarai_radas.forEach(r => tambahBarisRadasModal(r.nama, r.kuantiti));
             }
-            // Isi senarai bahan kimia jika ada
             if (rekod.senarai_bahan_kimia && rekod.senarai_bahan_kimia.length > 0) {
                 rekod.senarai_bahan_kimia.forEach(b => tambahBarisBahanModal(b.nama, b.kuantiti));
             }
-            // Isi senarai peralatan jika ada
             if (rekod.senarai_peralatan && rekod.senarai_peralatan.length > 0) {
                 rekod.senarai_peralatan.forEach(a => tambahBarisAlatModal(a.nama, a.kuantiti));
             }
@@ -424,12 +418,10 @@
             document.getElementById('modalEdit').classList.add('hidden');
         }
 
-        // SIMPAN KEMASKINI PERMOHONAN DENGAN ITEM RADAS/BAHAN
         document.getElementById('formEditPermohonan').addEventListener('submit', async function(e) {
             e.preventDefault();
             const id = document.getElementById('editId').value;
 
-            // Kumpul semula senarai radas baharu
             const radasList = [];
             document.querySelectorAll('#containerEditRadas .item-radas-row').forEach(row => {
                 const nama = row.querySelector('.edit-radas-nama').value.trim();
@@ -437,7 +429,6 @@
                 if (nama) radasList.push({ nama, kuantiti });
             });
 
-            // Kumpul semula senarai bahan kimia baharu
             const bahanList = [];
             document.querySelectorAll('#containerEditBahan .item-bahan-row').forEach(row => {
                 const nama = row.querySelector('.edit-bahan-nama').value.trim();
@@ -445,7 +436,6 @@
                 if (nama) bahanList.push({ nama, kuantiti });
             });
 
-            // Kumpul semula senarai peralatan baharu
             const alatList = [];
             document.querySelectorAll('#containerEditAlat .item-alat-row').forEach(row => {
                 const nama = row.querySelector('.edit-alat-nama').value.trim();
@@ -477,7 +467,7 @@
             }
         });
 
-        // FUNGSI CETAK SLIP KELULUSAN
+        // FUNGSI CETAK PERMOHONAN
         function cetakSlip(id) {
             const r = dataRekodSemasa.find(item => item.id == id);
             if (!r) return;
@@ -504,7 +494,7 @@
                 <div class="border-2 border-slate-800 p-8 rounded-xl max-w-2xl mx-auto">
                     <div class="text-center border-b-2 border-slate-800 pb-4 mb-6">
                         <h2 class="text-base font-bold uppercase">FAKULTI KEJURUTERAAN KIMIA UiTM PASIR GUDANG</h2>
-                        <h3 class="text-sm font-bold text-emerald-800 mt-1">SLIP KELULUSAN PERMOHONAN ALAT RADAS / BAHAN MAKMAL</h3>
+                        <h3 class="text-sm font-bold text-emerald-800 mt-1">BORANG CETAKAN KELULUSAN PERMOHONAN ALAT RADAS / BAHAN MAKMAL</h3>
                     </div>
 
                     <table class="w-full text-xs mb-6 border-collapse">
