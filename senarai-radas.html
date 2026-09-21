@@ -58,7 +58,7 @@
         <div class="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-xl mb-6 flex items-center space-x-3 shadow-sm">
             <i data-lucide="info" class="w-5 h-5 text-amber-600 flex-shrink-0"></i>
             <p class="text-xs sm:text-sm font-medium">
-                <strong>Makluman:</strong> Rekod inventori alat radas yang dipaparkan adalah berdasarkan <strong>rekod pangkalan data bagi tahun 2020</strong>
+                <strong>Makluman:</strong> Rekod inventori alat radas yang dipaparkan adalah berdasarkan <strong>rekod pangkalan data bagi tahun 2020</strong>.
             </p>
         </div>
 
@@ -241,10 +241,10 @@
             }
         }
 
-        // PEMPROSESAN TEPAT MENGIKUT LAJUR A HINGGA H GOOGLE SHEET ANDA
         function prosesRawCsv(rawRows) {
             let parsedItems = [];
             let currentLab = 'MAKMAL UTAMA';
+            let currentPic = '-';
 
             rawRows.forEach(row => {
                 const fullRowText = row.join(' ').trim();
@@ -257,27 +257,29 @@
                     } else {
                         currentLab = fullRowText;
                     }
-                    return;
                 }
 
-                // 2. Baca Lajur mengikut susunan sebenar Google Sheet:
-                // row[1] = Lajur B (Bil.)
-                // row[2] = Lajur C (Nama Alat Radas)
-                // row[4] = Lajur E (Kuantiti Sedia Ada 2020)
-                // row[6] = Lajur G (Status Stok)
-                // row[7] = Lajur H (Catatan)
+                // 2. Ekstrak Nama PIC daripada perkataan "PIC:" (Baris 3 Dalam Sheet)
+                if (fullRowText.toLowerCase().includes('pic:')) {
+                    let picParts = fullRowText.split(/PIC:/i);
+                    if (picParts.length > 1) {
+                        currentPic = picParts[1].trim();
+                    }
+                }
+
+                // 3. Baca Lajur mengikut susunan sebenar Google Sheet:
                 const valBil = row[1] ? row[1].toString().trim() : (row[0] ? row[0].toString().trim() : '');
                 const valNama = row[2] ? row[2].toString().trim() : (row[1] ? row[1].toString().trim() : '');
                 const valKuantiti = row[4] ? row[4].toString().trim() : (row[3] ? row[3].toString().trim() : '');
                 const valStatus = row[6] ? row[6].toString().trim() : (row[5] ? row[5].toString().trim() : '');
                 const valCatatan = row[7] ? row[7].toString().trim() : (row[6] ? row[6].toString().trim() : '');
 
-                // Tapis dan ambil hanya baris yang mempunyai nombor Bilangan sah (1, 2, 3...)
                 const isNum = !isNaN(parseInt(valBil)) && parseInt(valBil) > 0;
 
                 if (isNum && valNama !== '' && valNama !== 'Nama Alat Radas') {
                     parsedItems.push({
                         Makmal: currentLab,
+                        PIC: currentPic,
                         NamaRadas: valNama,
                         Kuantiti: valKuantiti !== '' ? valKuantiti : '0 unit',
                         Status: valStatus !== '' ? valStatus : 'Available',
@@ -319,7 +321,7 @@
             data.forEach(item => {
                 const namaMakmal = item.Makmal;
                 if (!makmalGrouped[namaMakmal]) {
-                    makmalGrouped[namaMakmal] = { items: [] };
+                    makmalGrouped[namaMakmal] = { pic: item.PIC, items: [] };
                 }
                 makmalGrouped[namaMakmal].items.push(item);
             });
@@ -360,6 +362,9 @@
                                 <i data-lucide="building-2" class="w-5 h-5 text-teal-400"></i>
                                 <h2 class="font-bold text-sm sm:text-base">${namaMakmal.toUpperCase()}</h2>
                             </div>
+                            <span class="text-xs text-slate-300 font-medium bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700">
+                                Pegawai (PIC): <strong class="text-teal-300">${group.pic}</strong>
+                            </span>
                         </div>
                         <div class="overflow-x-auto custom-scrollbar">
                             <table class="w-full text-left border-collapse">
