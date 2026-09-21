@@ -36,10 +36,12 @@
                 <i data-lucide="arrow-left" class="w-4 h-4 transition-transform group-hover:-translate-x-1"></i>
                 <span>Kembali ke Menu Utama</span>
             </a>
-            <a href="bahan-radas.html" class="inline-flex items-center space-x-2 text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg border border-emerald-200 transition">
-                <i data-lucide="flask-conical" class="w-3.5 h-3.5"></i>
-                <span>Permohonan Bahan & Radas</span>
-            </a>
+            
+            <!-- BUTANG LOG KELUAR BAHARU -->
+            <button id="logout-btn" class="inline-flex items-center justify-center space-x-2 bg-white hover:bg-rose-50 text-slate-700 hover:text-rose-600 px-4 py-2 rounded-xl font-semibold text-sm transition border border-slate-200 hover:border-rose-200 cursor-pointer shadow-sm">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+                <span>Log Keluar</span>
+            </button>
         </div>
 
         <!-- TAJUK UTAMA & KOTAK CARIAN -->
@@ -108,6 +110,39 @@
         </footer>
 
     </div>
+
+    <!-- KONFIGURASI FIREBASE AUTH (LOG KELUAR) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDDC9PLSCOzna4caIsrfPSvfR3A_FczKDc",
+            authDomain: "sistem-makmal-fkkuitmpg.firebaseapp.com",
+            projectId: "sistem-makmal-fkkuitmpg",
+            storageBucket: "sistem-makmal-fkkuitmpg.firebasestorage.app",
+            messagingSenderId: "291806336887",
+            appId: "1:291806336887:web:a0d4fca1866459ead03372"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                if (!user.email.endsWith('@uitm.edu.my') && !user.email.endsWith('@student.uitm.edu.my')) {
+                    signOut(auth);
+                    window.location.href = "makmal.html";
+                }
+            } else {
+                window.location.href = "makmal.html";
+            }
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            signOut(auth).then(() => window.location.href = "makmal.html");
+        });
+    </script>
 
     <!-- SKRIP LOGIK SUPABASE & CARIAN -->
     <script>
