@@ -274,6 +274,7 @@
                     await new Promise((resolve) => {
                         Papa.parse(url, {
                             download: true,
+                            header: false,
                             skipEmptyLines: true,
                             complete: function(results) {
                                 const rows = results.data;
@@ -293,15 +294,17 @@
                                             uppercaseNama.includes('CHEMICAL NAME') || 
                                             uppercaseNama.includes('NAMA BAHAN') || 
                                             uppercaseNama.includes('FAKULTI') || 
+                                            uppercaseNama.includes('LECTURER') || 
                                             uppercaseNama === 'NAME') {
                                             continue;
                                         }
 
-                                        form     = formatTeksBersamaKoma(row[2]); // Bentuk
-                                        brand    = formatTeksBersamaKoma(row[3]); // Pemilik (Pensyarah)
-                                        casNo    = formatTeksBersamaKoma(row[4]); // No. CAS
-                                        lokasi   = formatTeksBersamaKoma(row[5]); // Lokasi Makmal
-                                        kuantiti = formatTeksBersamaKoma(row[6]); // Kuantiti Stok / Catatan
+                                        // SUSUNAN LAJUR GOOGLE SHEET PENSYARAH
+                                        casNo    = formatTeksBersamaKoma(row[2]); // Lajur C: CAS NUMBER
+                                        brand    = formatTeksBersamaKoma(row[3]); // Lajur D: OWNER (Pensyarah)
+                                        form     = formatTeksBersamaKoma(row[4]); // Lajur E: FORM (Liquid/Solid/Powder)
+                                        kuantiti = formatTeksBersamaKoma(row[6]); // Lajur G: Quantity (Stock Balance)
+                                        lokasi   = formatTeksBersamaKoma(row[8]); // Lajur I: LOCATION (Lokasi Makmal)
 
                                     } else {
                                         const rawNama = (row[1] || '').trim();
@@ -330,6 +333,7 @@
                                         brand = formatTeksBersamaKoma(row[8]);
                                     }
 
+                                    // Carian pautan Dokumen SDS
                                     let sdsLink = '';
                                     row.forEach(cell => {
                                         if (cell && (cell.includes('http://') || cell.includes('https://'))) {
@@ -405,7 +409,7 @@
         const auth = getAuth(app);
 
         const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjE0MjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
         const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
         async function kemaskiniLastSeen(user) {
