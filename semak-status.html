@@ -84,36 +84,71 @@
 
     </div>
 
-    <!-- MODAL EDIT PERMOHONAN -->
+    <!-- MODAL EDIT PERMOHONAN (TERMASUK EDIT RADAS & KUANTITI) -->
     <div id="modalEdit" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50 overflow-y-auto">
-        <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-xl">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-xl max-h-[90vh] flex flex-col">
             <div class="flex items-center justify-between border-b pb-3 mb-4">
-                <h3 class="font-bold text-base text-slate-900">Kemaskini Maklumat Permohonan</h3>
+                <h3 class="font-bold text-base text-slate-900">Kemaskini Maklumat & Item Permohonan</h3>
                 <button onclick="tutupModalEdit()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             
-            <form id="formEditPermohonan" class="space-y-4">
+            <form id="formEditPermohonan" class="space-y-4 overflow-y-auto pr-1 custom-scrollbar flex-1">
                 <input type="hidden" id="editId">
-                <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1">Nama Pemohon</label>
-                    <input type="text" id="editNama" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1">No. Telefon</label>
-                    <input type="text" id="editTel" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1">Tajuk Projek</label>
-                    <input type="text" id="editTajuk" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1">Nama Penyelia</label>
-                    <input type="text" id="editPenyelia" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Nama Pemohon</label>
+                        <input type="text" id="editNama" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">No. Telefon</label>
+                        <input type="text" id="editTel" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
                 </div>
 
-                <div class="flex justify-end space-x-2 pt-4 border-t">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Tajuk Projek</label>
+                        <input type="text" id="editTajuk" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Nama Penyelia</label>
+                        <input type="text" id="editPenyelia" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                </div>
+
+                <hr class="border-slate-100 my-2">
+
+                <!-- BAHAGIAN EDIT ALAT RADAS -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-xs font-bold text-slate-800">🔬 Senarai Alat Radas</label>
+                        <button type="button" onclick="tambahBarisRadasModal()" class="text-[11px] font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2 py-1 rounded-lg border border-emerald-200 transition">+ Tambah Radas</button>
+                    </div>
+                    <div id="containerEditRadas" class="space-y-2"></div>
+                </div>
+
+                <!-- BAHAGIAN EDIT BAHAN KIMIA -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-xs font-bold text-slate-800">🧪 Senarai Bahan Kimia</label>
+                        <button type="button" onclick="tambahBarisBahanModal()" class="text-[11px] font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2 py-1 rounded-lg border border-emerald-200 transition">+ Tambah Bahan</button>
+                    </div>
+                    <div id="containerEditBahan" class="space-y-2"></div>
+                </div>
+
+                <!-- BAHAGIAN EDIT PERALATAN -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-xs font-bold text-slate-800">⚙️ Senarai Peralatan Makmal</label>
+                        <button type="button" onclick="tambahBarisAlatModal()" class="text-[11px] font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2 py-1 rounded-lg border border-emerald-200 transition">+ Tambah Alat</button>
+                    </div>
+                    <div id="containerEditAlat" class="space-y-2"></div>
+                </div>
+
+                <div class="flex justify-end space-x-2 pt-4 border-t sticky bottom-0 bg-white">
                     <button type="button" onclick="tutupModalEdit()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-xs font-bold transition">Batal</button>
-                    <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition">Simpan Kemaskini</button>
+                    <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition">Simpan Semua Kemaskini</button>
                 </div>
             </form>
         </div>
@@ -125,7 +160,6 @@
     <!-- SKRIP SUPABASE & CARIAN STATUS -->
     <script>
         const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
-        // KUNCI SUPABASE ASAL ANDA YANG BETUL (2102831902)
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
         const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
@@ -316,6 +350,43 @@
             lucide.createIcons();
         }
 
+        // FUNGSI MEMAPARKAN ITEM DI DALAM MODAL
+        function tambahBarisRadasModal(nama = '', kuantiti = '') {
+            const container = document.getElementById('containerEditRadas');
+            const div = document.createElement('div');
+            div.className = "flex items-center space-x-2 item-radas-row";
+            div.innerHTML = `
+                <input type="text" placeholder="Nama Radas" value="${nama}" class="edit-radas-nama flex-1 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs">
+                <input type="text" placeholder="Kuantiti" value="${kuantiti}" class="edit-radas-kuantiti w-24 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs">
+                <button type="button" onclick="this.parentElement.remove()" class="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg border border-rose-200 text-xs">🗑️</button>
+            `;
+            container.appendChild(div);
+        }
+
+        function tambahBarisBahanModal(nama = '', kuantiti = '') {
+            const container = document.getElementById('containerEditBahan');
+            const div = document.createElement('div');
+            div.className = "flex items-center space-x-2 item-bahan-row";
+            div.innerHTML = `
+                <input type="text" placeholder="Nama Bahan" value="${nama}" class="edit-bahan-nama flex-1 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs">
+                <input type="text" placeholder="Kuantiti" value="${kuantiti}" class="edit-bahan-kuantiti w-24 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs">
+                <button type="button" onclick="this.parentElement.remove()" class="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg border border-rose-200 text-xs">🗑️</button>
+            `;
+            container.appendChild(div);
+        }
+
+        function tambahBarisAlatModal(nama = '', kuantiti = '') {
+            const container = document.getElementById('containerEditAlat');
+            const div = document.createElement('div');
+            div.className = "flex items-center space-x-2 item-alat-row";
+            div.innerHTML = `
+                <input type="text" placeholder="Nama Peralatan" value="${nama}" class="edit-alat-nama flex-1 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs">
+                <input type="text" placeholder="Kuantiti" value="${kuantiti}" class="edit-alat-kuantiti w-24 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs">
+                <button type="button" onclick="this.parentElement.remove()" class="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg border border-rose-200 text-xs">🗑️</button>
+            `;
+            container.appendChild(div);
+        }
+
         // FUNGSI BUKA MODAL EDIT PERMOHONAN
         function bukaModalEdit(id) {
             const rekod = dataRekodSemasa.find(item => item.id == id);
@@ -327,6 +398,24 @@
             document.getElementById('editTajuk').value = rekod.tajuk_projek || '';
             document.getElementById('editPenyelia').value = rekod.nama_penyelia || '';
 
+            // Bersihkan bekas item
+            document.getElementById('containerEditRadas').innerHTML = '';
+            document.getElementById('containerEditBahan').innerHTML = '';
+            document.getElementById('containerEditAlat').innerHTML = '';
+
+            // Isi senarai radas jika ada
+            if (rekod.senarai_radas && rekod.senarai_radas.length > 0) {
+                rekod.senarai_radas.forEach(r => tambahBarisRadasModal(r.nama, r.kuantiti));
+            }
+            // Isi senarai bahan kimia jika ada
+            if (rekod.senarai_bahan_kimia && rekod.senarai_bahan_kimia.length > 0) {
+                rekod.senarai_bahan_kimia.forEach(b => tambahBarisBahanModal(b.nama, b.kuantiti));
+            }
+            // Isi senarai peralatan jika ada
+            if (rekod.senarai_peralatan && rekod.senarai_peralatan.length > 0) {
+                rekod.senarai_peralatan.forEach(a => tambahBarisAlatModal(a.nama, a.kuantiti));
+            }
+
             document.getElementById('modalEdit').classList.remove('hidden');
             lucide.createIcons();
         }
@@ -335,16 +424,43 @@
             document.getElementById('modalEdit').classList.add('hidden');
         }
 
-        // SIMPAN KEMASKINI PERMOHONAN
+        // SIMPAN KEMASKINI PERMOHONAN DENGAN ITEM RADAS/BAHAN
         document.getElementById('formEditPermohonan').addEventListener('submit', async function(e) {
             e.preventDefault();
             const id = document.getElementById('editId').value;
+
+            // Kumpul semula senarai radas baharu
+            const radasList = [];
+            document.querySelectorAll('#containerEditRadas .item-radas-row').forEach(row => {
+                const nama = row.querySelector('.edit-radas-nama').value.trim();
+                const kuantiti = row.querySelector('.edit-radas-kuantiti').value.trim();
+                if (nama) radasList.push({ nama, kuantiti });
+            });
+
+            // Kumpul semula senarai bahan kimia baharu
+            const bahanList = [];
+            document.querySelectorAll('#containerEditBahan .item-bahan-row').forEach(row => {
+                const nama = row.querySelector('.edit-bahan-nama').value.trim();
+                const kuantiti = row.querySelector('.edit-bahan-kuantiti').value.trim();
+                if (nama) bahanList.push({ nama, kuantiti });
+            });
+
+            // Kumpul semula senarai peralatan baharu
+            const alatList = [];
+            document.querySelectorAll('#containerEditAlat .item-alat-row').forEach(row => {
+                const nama = row.querySelector('.edit-alat-nama').value.trim();
+                const kuantiti = row.querySelector('.edit-alat-kuantiti').value.trim();
+                if (nama) alatList.push({ nama, kuantiti });
+            });
 
             const updatePayload = {
                 nama_pemohon: document.getElementById('editNama').value,
                 no_telefon: document.getElementById('editTel').value,
                 tajuk_projek: document.getElementById('editTajuk').value,
-                nama_penyelia: document.getElementById('editPenyelia').value
+                nama_penyelia: document.getElementById('editPenyelia').value,
+                senarai_radas: radasList,
+                senarai_bahan_kimia: bahanList,
+                senarai_peralatan: alatList
             };
 
             const { error } = await supabaseClient
@@ -355,7 +471,7 @@
             if (error) {
                 alert("❌ Gagal mengemaskini permohonan: " + error.message);
             } else {
-                alert("✅ Permohonan berjaya dikemaskini!");
+                alert("✅ Permohonan & senarai item berjaya dikemaskini!");
                 tutupModalEdit();
                 semakStatus();
             }
