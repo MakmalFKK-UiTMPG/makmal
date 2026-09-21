@@ -67,7 +67,7 @@
                 <div>
                     <span class="text-xs font-bold uppercase tracking-wider text-emerald-600">Portals Semakan Digital</span>
                     <h1 class="text-xl sm:text-2xl font-bold text-slate-900 mt-0.5">Semakan Status Permohonan Bahan & Radas</h1>
-                    <p class="text-xs sm:text-sm text-slate-500 mt-1">Masukkan No. ID (Pelajar / Staf) anda untuk menyemak status permohonan.</p>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1">Masukkan No. ID (Pelajar / Staf) anda untuk melihat keseluruhan perincian permohonan dan catatan Pegawai Makmal.</p>
                 </div>
                 <div class="p-3 bg-emerald-50 text-emerald-600 rounded-2xl hidden sm:block">
                     <i data-lucide="file-search" class="w-8 h-8"></i>
@@ -134,7 +134,7 @@
 
                 <hr class="border-slate-100 my-2">
 
-                <!-- BAHAGIAN EDIT ALAT RADAS -->
+                <!-- EDIT RADAS -->
                 <div>
                     <div class="flex items-center justify-between mb-2">
                         <label class="text-xs font-bold text-slate-800">🔬 Senarai Alat Radas</label>
@@ -143,7 +143,7 @@
                     <div id="containerEditRadas" class="space-y-2"></div>
                 </div>
 
-                <!-- BAHAGIAN EDIT BAHAN KIMIA -->
+                <!-- EDIT BAHAN KIMIA -->
                 <div>
                     <div class="flex items-center justify-between mb-2">
                         <label class="text-xs font-bold text-slate-800">🧪 Senarai Bahan Kimia / Pakai Buang</label>
@@ -152,7 +152,7 @@
                     <div id="containerEditBahan" class="space-y-2"></div>
                 </div>
 
-                <!-- BAHAGIAN EDIT PERALATAN -->
+                <!-- EDIT PERALATAN -->
                 <div>
                     <div class="flex items-center justify-between mb-2">
                         <label class="text-xs font-bold text-slate-800">⚙️ Senarai Peralatan Makmal</label>
@@ -169,7 +169,7 @@
         </div>
     </div>
 
-    <!-- AREA SLIP CETAKAN -->
+    <!-- AREA BORANG CETAKAN LENGKAP -->
     <div id="slipCetakArea" class="p-8 bg-white text-slate-900"></div>
 
     <!-- SKRIP SUPABASE & CARIAN STATUS -->
@@ -482,65 +482,146 @@
             }
         });
 
-        // FUNGSI CETAK PERMOHONAN DENGAN PEMBAIKAN
+        // FUNGSI CETAK PERMOHONAN LENGKAP (SEKSYEN A SEHINGGA E)
         function cetakSlip(id) {
             const r = dataRekodSemasa.find(item => item.id == id);
             if (!r) return;
 
-            let itemsFormatted = '';
+            // Format Ahli Kumpulan
+            let ahliListHTML = '-';
+            if (r.ahli_kumpulan && r.ahli_kumpulan.length > 0) {
+                ahliListHTML = '<ol class="list-decimal list-inside">';
+                r.ahli_kumpulan.forEach(a => ahliListHTML += `<li>${a.nama} (${a.id || 'Tiada ID'})</li>`);
+                ahliListHTML += '</ol>';
+            }
+
+            // Format Alat Radas (Seksyen B)
+            let radasRows = '<tr><td colspan="2" class="border p-2 text-center text-slate-400 italic">Tiada alat radas dipohon</td></tr>';
             if (r.senarai_radas && r.senarai_radas.length > 0) {
-                itemsFormatted += `<p class="font-bold mt-2 text-xs">Alat Radas:</p><ul class="list-disc list-inside text-xs">`;
-                r.senarai_radas.forEach(rad => itemsFormatted += `<li>${rad.nama} - ${rad.kuantiti} unit</li>`);
-                itemsFormatted += `</ul>`;
+                radasRows = r.senarai_radas.map(rad => `
+                    <tr>
+                        <td class="border p-2">${rad.nama}</td>
+                        <td class="border p-2 text-center font-bold w-28">${rad.kuantiti} unit</td>
+                    </tr>
+                `).join('');
             }
+
+            // Format Bahan Kimia (Seksyen C)
+            let bahanRows = '<tr><td colspan="2" class="border p-2 text-center text-slate-400 italic">Tiada bahan kimia dipohon</td></tr>';
             if (r.senarai_bahan_kimia && r.senarai_bahan_kimia.length > 0) {
-                itemsFormatted += `<p class="font-bold mt-2 text-xs">Bahan Kimia / Pakai Buang:</p><ul class="list-disc list-inside text-xs">`;
-                r.senarai_bahan_kimia.forEach(b => itemsFormatted += `<li>${b.nama} - ${b.kuantiti}</li>`);
-                itemsFormatted += `</ul>`;
+                bahanRows = r.senarai_bahan_kimia.map(b => `
+                    <tr>
+                        <td class="border p-2">${b.nama}</td>
+                        <td class="border p-2 text-center font-bold w-28">${b.kuantiti}</td>
+                    </tr>
+                `).join('');
             }
+
+            // Format Peralatan (Seksyen D)
+            let peralatanRows = '<tr><td colspan="2" class="border p-2 text-center text-slate-400 italic">Tiada peralatan dipohon</td></tr>';
             if (r.senarai_peralatan && r.senarai_peralatan.length > 0) {
-                itemsFormatted += `<p class="font-bold mt-2 text-xs">Peralatan Makmal:</p><ul class="list-disc list-inside text-xs">`;
-                r.senarai_peralatan.forEach(p => itemsFormatted += `<li>${p.nama} - ${p.kuantiti} unit</li>`);
-                itemsFormatted += `</ul>`;
+                peralatanRows = r.senarai_peralatan.map(p => `
+                    <tr>
+                        <td class="border p-2">${p.nama}</td>
+                        <td class="border p-2 text-center font-bold w-28">${p.kuantiti} unit</td>
+                    </tr>
+                `).join('');
             }
 
             const area = document.getElementById('slipCetakArea');
             area.innerHTML = `
-                <div class="border-2 border-slate-800 p-8 rounded-xl max-w-2xl mx-auto">
-                    <div class="text-center border-b-2 border-slate-800 pb-4 mb-6">
-                        <h2 class="text-base font-bold uppercase">FAKULTI KEJURUTERAAN KIMIA UiTM PASIR GUDANG</h2>
-                        <h3 class="text-sm font-bold text-emerald-800 mt-1">BORANG CETAKAN KELULUSAN PERMOHONAN ALAT RADAS / BAHAN MAKMAL</h3>
-                    </div>
-
-                    <table class="w-full text-xs mb-6 border-collapse">
-                        <tr class="border-b"><td class="font-bold py-1.5 w-36">Nama Pemohon:</td><td>${r.nama_pemohon}</td></tr>
-                        <tr class="border-b"><td class="font-bold py-1.5">No. ID:</td><td>${r.no_id}</td></tr>
-                        <tr class="border-b"><td class="font-bold py-1.5">No. Telefon:</td><td>${r.no_telefon || '-'}</td></tr>
-                        <tr class="border-b"><td class="font-bold py-1.5">Nama Penyelia:</td><td>${r.nama_penyelia || '-'}</td></tr>
-                        <tr class="border-b"><td class="font-bold py-1.5">Tajuk Projek:</td><td>${r.tajuk_projek || '-'}</td></tr>
-                        <tr class="border-b"><td class="font-bold py-1.5">Status Permohonan:</td><td class="font-bold text-emerald-700">${r.status}</td></tr>
-                        <tr class="border-b"><td class="font-bold py-1.5">Catatan Pegawai:</td><td>${r.catatan_admin || '-'}</td></tr>
-                    </table>
-
-                    <div class="mb-6 p-4 bg-slate-50 border rounded-lg text-xs">
-                        <p class="font-bold text-slate-800">Senarai Bahan/Radas Diluluskan:</p>
-                        ${itemsFormatted || '-'}
-                    </div>
-
-                    <div class="mt-12 pt-8 border-t border-slate-400 flex justify-between text-xs">
-                        <div class="text-center">
-                            <p>_______________________</p>
-                            <p class="font-bold mt-1">Tandatangan Pemohon</p>
+                <div class="border-2 border-slate-900 p-8 rounded-xl max-w-3xl mx-auto font-sans text-xs text-slate-900 leading-relaxed">
+                    
+                    <!-- HEADER RASMI -->
+                    <div class="flex items-center justify-between border-b-2 border-slate-900 pb-4 mb-6">
+                        <div>
+                            <span class="font-bold text-[10px] text-emerald-700 uppercase tracking-widest block">PPM-FKK 01/ARBKPM (Ver.02)</span>
+                            <h2 class="text-base font-extrabold uppercase mt-0.5">FAKULTI KEJURUTERAAN KIMIA UiTM PASIR GUDANG</h2>
+                            <h3 class="text-xs font-bold text-slate-700">BORANG PERMOHONAN & KELULUSAN ALAT RADAS / BAHAN KIMIA / PERALATAN MAKMAL</h3>
                         </div>
-                        <div class="text-center">
-                            <p>_______________________</p>
-                            <p class="font-bold mt-1">Pengesahan Pegawai Makmal</p>
+                        <div class="text-right">
+                            <span class="block font-mono text-[10px] text-slate-500">Tarikh Mohon:</span>
+                            <span class="font-bold text-xs">${new Date(r.created_at || Date.now()).toLocaleDateString('ms-MY')}</span>
                         </div>
                     </div>
+
+                    <!-- SEKSYEN A: MAKLUMAT PEMOHON -->
+                    <div class="mb-5">
+                        <div class="bg-slate-100 p-1.5 font-bold uppercase border border-slate-300 mb-2">A. Maklumat Pemohon & Projek</div>
+                        <table class="w-full border-collapse">
+                            <tr class="border-b"><td class="font-bold py-1 w-36">Nama Pemohon:</td><td>${r.nama_pemohon}</td><td class="font-bold py-1 w-28">No. ID:</td><td>${r.no_id}</td></tr>
+                            <tr class="border-b"><td class="font-bold py-1">No. Telefon:</td><td>${r.no_telefon || '-'}</td><td class="font-bold py-1">Semester / Sesi:</td><td>${r.semester_sesi || '-'}</td></tr>
+                            <tr class="border-b"><td class="font-bold py-1">Tujuan Penggunaan:</td><td>${r.tujuan || '-'}</td><td class="font-bold py-1">Nama Penyelia:</td><td>${r.nama_penyelia || '-'}</td></tr>
+                            <tr class="border-b"><td class="font-bold py-1">Tajuk Projek:</td><td colspan="3">${r.tajuk_projek || '-'}</td></tr>
+                            <tr class="border-b"><td class="font-bold py-1">Ahli Kumpulan:</td><td colspan="3">${ahliListHTML}</td></tr>
+                        </table>
+                    </div>
+
+                    <!-- SEKSYEN B: BUTIRAN ALAT RADAS -->
+                    <div class="mb-5">
+                        <div class="bg-slate-100 p-1.5 font-bold uppercase border border-slate-300 mb-2">B. Butiran Penggunaan Alat Radas</div>
+                        <table class="w-full border-collapse border">
+                            <thead>
+                                <tr class="bg-slate-50 border-b font-bold"><th class="border p-1.5 text-left">Nama & Saiz Alat Radas</th><th class="border p-1.5 text-center w-28">Kuantiti</th></tr>
+                            </thead>
+                            <tbody>${radasRows}</tbody>
+                        </table>
+                    </div>
+
+                    <!-- SEKSYEN C: BUTIRAN BAHAN KIMIA -->
+                    <div class="mb-5">
+                        <div class="bg-slate-100 p-1.5 font-bold uppercase border border-slate-300 mb-2">C. Butiran Bahan Kimia / Pakai Buang</div>
+                        <table class="w-full border-collapse border">
+                            <thead>
+                                <tr class="bg-slate-50 border-b font-bold"><th class="border p-1.5 text-left">Nama Bahan Kimia / Pakai Buang</th><th class="border p-1.5 text-center w-28">Kuantiti</th></tr>
+                            </thead>
+                            <tbody>${bahanRows}</tbody>
+                        </table>
+                    </div>
+
+                    <!-- SEKSYEN D: BUTIRAN PERALATAN MAKMAL -->
+                    <div class="mb-5">
+                        <div class="bg-slate-100 p-1.5 font-bold uppercase border border-slate-300 mb-2">D. Butiran Penggunaan Peralatan Makmal</div>
+                        <table class="w-full border-collapse border">
+                            <thead>
+                                <tr class="bg-slate-50 border-b font-bold"><th class="border p-1.5 text-left">Nama Peralatan & No. Siri</th><th class="border p-1.5 text-center w-28">Kuantiti</th></tr>
+                            </thead>
+                            <tbody>${peralatanRows}</tbody>
+                        </table>
+                    </div>
+
+                    <!-- SEKSYEN E: PENGAKUAN PEMOHON -->
+                    <div class="mb-6 p-3 border border-slate-300 bg-slate-50 rounded">
+                        <div class="font-bold uppercase text-[10px] text-slate-700 mb-1">E. Pengakuan Pemohon:</div>
+                        <p class="text-[11px] italic">"Saya bersetuju bertanggungjawab menjaga keselamatan/kebersihan peralatan, menyimpan semula di tempat asal, dan membuang sisa bahan kimia mengikut prosedur yang betul."</p>
+                    </div>
+
+                    <!-- KELULUSAN & CATATAN PEGAWAI MAKMAL -->
+                    <div class="border-2 border-emerald-800 p-4 rounded bg-emerald-50/20 mb-8">
+                        <div class="flex items-center justify-between border-b border-emerald-800 pb-2 mb-2">
+                            <span class="font-bold text-xs uppercase text-emerald-900">Keputusan Kelulusan Pegawai Makmal:</span>
+                            <span class="font-extrabold text-sm uppercase text-emerald-700">${r.status || 'Lulus'}</span>
+                        </div>
+                        <p class="text-xs"><strong>Catatan Pegawai:</strong> ${r.catatan_admin || 'Permohonan diluluskan mengikut peraturan makmal FKK.'}</p>
+                    </div>
+
+                    <!-- TANDATANGAN PENGESAHAN -->
+                    <div class="mt-10 pt-4 border-t border-slate-400 flex justify-between text-xs">
+                        <div class="text-center w-48">
+                            <p class="mb-12">________________________</p>
+                            <p class="font-bold">${r.nama_pemohon}</p>
+                            <p class="text-[10px] text-slate-500">Tandatangan Pemohon</p>
+                        </div>
+                        <div class="text-center w-48">
+                            <p class="mb-12">________________________</p>
+                            <p class="font-bold">Pegawai Makmal FKK</p>
+                            <p class="text-[10px] text-slate-500">Cop & Pengesahan Makmal</p>
+                        </div>
+                    </div>
+
                 </div>
             `;
 
-            // Paparkan secara langsung dan buka dialog pencetakan
             setTimeout(() => {
                 window.print();
             }, 100);
