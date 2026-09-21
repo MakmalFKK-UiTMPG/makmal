@@ -23,6 +23,11 @@
             background: #cbd5e1;
             border-radius: 4px;
         }
+        @media print {
+            body * { visibility: hidden; }
+            #slipCetakArea, #slipCetakArea * { visibility: visible; }
+            #slipCetakArea { position: absolute; left: 0; top: 0; width: 100%; }
+        }
     </style>
 </head>
 <body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen">
@@ -79,11 +84,51 @@
 
     </div>
 
+    <!-- MODAL EDIT PERMOHONAN -->
+    <div id="modalEdit" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-xl">
+            <div class="flex items-center justify-between border-b pb-3 mb-4">
+                <h3 class="font-bold text-base text-slate-900">Kemaskini Maklumat Permohonan</h3>
+                <button onclick="tutupModalEdit()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            
+            <form id="formEditPermohonan" class="space-y-4">
+                <input type="hidden" id="editId">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Nama Pemohon</label>
+                    <input type="text" id="editNama" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">No. Telefon</label>
+                    <input type="text" id="editTel" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Tajuk Projek</label>
+                    <input type="text" id="editTajuk" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Nama Penyelia</label>
+                    <input type="text" id="editPenyelia" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+
+                <div class="flex justify-end space-x-2 pt-4 border-t">
+                    <button type="button" onclick="tutupModalEdit()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-xs font-bold transition">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition">Simpan Kemaskini</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- AREA SLIP CETAKAN -->
+    <div id="slipCetakArea" class="hidden p-8 bg-white text-slate-900"></div>
+
     <!-- SKRIP SUPABASE & CARIAN STATUS -->
     <script>
         const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjE0MjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
         const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        let dataRekodSemasa = [];
 
         window.onload = function() {
             lucide.createIcons();
@@ -133,6 +178,8 @@
                 return;
             }
 
+            dataRekodSemasa = data;
+
             let html = `
                 <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
                     <div class="p-4 bg-slate-900 text-white font-bold text-sm flex items-center space-x-2">
@@ -140,32 +187,35 @@
                         <span>Keputusan Carian Permohonan</span>
                     </div>
                     <div class="overflow-x-auto custom-scrollbar">
-                        <table class="w-full text-left border-collapse min-w-[850px]">
+                        <table class="w-full text-left border-collapse min-w-[950px]">
                             <thead>
                                 <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500">
                                     <th class="py-3 px-4 w-28">Tarikh</th>
                                     <th class="py-3 px-4 w-52">Pemohon & Projek</th>
                                     <th class="py-3 px-4">Senarai Item Dipohon</th>
                                     <th class="py-3 px-4 w-32">Status</th>
-                                    <th class="py-3 px-4 w-60">Catatan Pegawai</th>
+                                    <th class="py-3 px-4 w-52">Catatan Pegawai</th>
+                                    <th class="py-3 px-4 w-36 text-center">Tindakan</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100 text-sm">
             `;
 
             data.forEach(r => {
-                const tarikh = new Date(r.created_at).toLocaleDateString('ms-MY');
-                const statusTxt = r.status || 'Menunggu';
+                const tarikh = new Date(r.created_at || Date.now()).toLocaleDateString('ms-MY');
+                const statusTxt = r.status || 'Menunggu Kelulusan';
                 
+                let isLulus = statusTxt.toLowerCase().includes('lulus');
+                let isMenunggu = statusTxt.toLowerCase().includes('menunggu');
+
                 let statusBadge = '<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">Menunggu</span>';
-                if (statusTxt.toLowerCase().includes('lulus')) {
+                if (isLulus) {
                     statusBadge = '<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Lulus</span>';
-                }
-                if (statusTxt.toLowerCase().includes('tolak')) {
+                } else if (statusTxt.toLowerCase().includes('tolak')) {
                     statusBadge = '<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">Ditolak</span>';
                 }
 
-                // Bina Senarai Penuh Bahan Kimia
+                // Senarai Bahan Kimia
                 let bahanHTML = '';
                 if (r.senarai_bahan_kimia && r.senarai_bahan_kimia.length > 0) {
                     bahanHTML = `
@@ -178,7 +228,7 @@
                     `;
                 }
 
-                // Bina Senarai Penuh Alat Radas
+                // Senarai Alat Radas
                 let radasHTML = '';
                 if (r.senarai_radas && r.senarai_radas.length > 0) {
                     radasHTML = `
@@ -191,7 +241,7 @@
                     `;
                 }
 
-                // Bina Senarai Penuh Peralatan
+                // Senarai Peralatan
                 let peralatanHTML = '';
                 if (r.senarai_peralatan && r.senarai_peralatan.length > 0) {
                     peralatanHTML = `
@@ -208,6 +258,24 @@
                 let ahliHTML = '';
                 if (r.ahli_kumpulan && r.ahli_kumpulan.length > 0) {
                     ahliHTML = `<div class="mt-2 pt-2 border-t border-slate-100 text-xs text-slate-500"><strong>Ahli:</strong> ${r.ahli_kumpulan.map(a => a.nama).join(', ')}</div>`;
+                }
+
+                // Butang Tindakan (Kemaskini jika Menunggu, Cetak jika Lulus)
+                let tindakanHTML = '-';
+                if (isMenunggu) {
+                    tindakanHTML = `
+                        <button onclick="bukaModalEdit('${r.id}')" class="inline-flex items-center space-x-1 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 px-2.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer">
+                            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                            <span>Kemaskini</span>
+                        </button>
+                    `;
+                } else if (isLulus) {
+                    tindakanHTML = `
+                        <button onclick="cetakSlip('${r.id}')" class="inline-flex items-center space-x-1 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer shadow-sm">
+                            <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                            <span>Cetak Slip</span>
+                        </button>
+                    `;
                 }
 
                 html += `
@@ -229,9 +297,10 @@
                         <td class="py-3.5 px-4">${statusBadge}</td>
                         <td class="py-3.5 px-4">
                             ${r.catatan_admin 
-                                ? `<div class="p-3 bg-emerald-50/80 border border-emerald-200 rounded-xl text-xs text-slate-700"><strong class="text-emerald-800 block mb-1">Catatan Pegawai:</strong>${r.catatan_admin}</div>` 
-                                : '<span class="text-xs text-slate-400 italic">Belum ada catatan dari admin</span>'}
+                                ? `<div class="p-2.5 bg-emerald-50/80 border border-emerald-200 rounded-xl text-xs text-slate-700"><strong class="text-emerald-800 block mb-0.5">Catatan Pegawai:</strong>${r.catatan_admin}</div>` 
+                                : '<span class="text-xs text-slate-400 font-mono">-</span>'}
                         </td>
+                        <td class="py-3.5 px-4 text-center whitespace-nowrap">${tindakanHTML}</td>
                     </tr>
                 `;
             });
@@ -244,6 +313,111 @@
             `;
             divHasil.innerHTML = html;
             lucide.createIcons();
+        }
+
+        // FUNGSI BUKA MODAL EDIT PERMOHONAN
+        function bukaModalEdit(id) {
+            const rekod = dataRekodSemasa.find(item => item.id == id);
+            if (!rekod) return;
+
+            document.getElementById('editId').value = rekod.id;
+            document.getElementById('editNama').value = rekod.nama_pemohon || '';
+            document.getElementById('editTel').value = rekod.no_telefon || '';
+            document.getElementById('editTajuk').value = rekod.tajuk_projek || '';
+            document.getElementById('editPenyelia').value = rekod.nama_penyelia || '';
+
+            document.getElementById('modalEdit').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function tutupModalEdit() {
+            document.getElementById('modalEdit').classList.add('hidden');
+        }
+
+        // SIMPAN KEMASKINI PERMOHONAN
+        document.getElementById('formEditPermohonan').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const id = document.getElementById('editId').value;
+
+            const updatePayload = {
+                nama_pemohon: document.getElementById('editNama').value,
+                no_telefon: document.getElementById('editTel').value,
+                tajuk_projek: document.getElementById('editTajuk').value,
+                nama_penyelia: document.getElementById('editPenyelia').value
+            };
+
+            const { error } = await supabaseClient
+                .from('permohonan_bahan_radas')
+                .update(updatePayload)
+                .eq('id', id);
+
+            if (error) {
+                alert("❌ Gagal mengemaskini permohonan: " + error.message);
+            } else {
+                alert("✅ Permohonan berjaya dikemaskini!");
+                tutupModalEdit();
+                semakStatus();
+            }
+        });
+
+        // FUNGSI CETAK SLIP KELULUSAN
+        function cetakSlip(id) {
+            const r = dataRekodSemasa.find(item => item.id == id);
+            if (!r) return;
+
+            let itemsFormatted = '';
+            if (r.senarai_radas && r.senarai_radas.length > 0) {
+                itemsFormatted += `<p class="font-bold mt-2 text-xs">Alat Radas:</p><ul class="list-disc list-inside text-xs">`;
+                r.senarai_radas.forEach(rad => itemsFormatted += `<li>${rad.nama} - ${rad.kuantiti} unit</li>`);
+                itemsFormatted += `</ul>`;
+            }
+            if (r.senarai_bahan_kimia && r.senarai_bahan_kimia.length > 0) {
+                itemsFormatted += `<p class="font-bold mt-2 text-xs">Bahan Kimia:</p><ul class="list-disc list-inside text-xs">`;
+                r.senarai_bahan_kimia.forEach(b => itemsFormatted += `<li>${b.nama} - ${b.kuantiti}</li>`);
+                itemsFormatted += `</ul>`;
+            }
+            if (r.senarai_peralatan && r.senarai_peralatan.length > 0) {
+                itemsFormatted += `<p class="font-bold mt-2 text-xs">Peralatan Makmal:</p><ul class="list-disc list-inside text-xs">`;
+                r.senarai_peralatan.forEach(p => itemsFormatted += `<li>${p.nama} - ${p.kuantiti} unit</li>`);
+                itemsFormatted += `</ul>`;
+            }
+
+            const area = document.getElementById('slipCetakArea');
+            area.innerHTML = `
+                <div class="border-2 border-slate-800 p-8 rounded-xl max-w-2xl mx-auto">
+                    <div class="text-center border-b-2 border-slate-800 pb-4 mb-6">
+                        <h2 class="text-base font-bold uppercase">FAKULTI KEJURUTERAAN KIMIA UiTM PASIR GUDANG</h2>
+                        <h3 class="text-sm font-bold text-emerald-800 mt-1">SLIP KELULUSAN PERMOHONAN ALAT RADAS / BAHAN MAKMAL</h3>
+                    </div>
+
+                    <table class="w-full text-xs mb-6 border-collapse">
+                        <tr class="border-b"><td class="font-bold py-1.5 w-36">Nama Pemohon:</td><td>${r.nama_pemohon}</td></tr>
+                        <tr class="border-b"><td class="font-bold py-1.5">No. ID:</td><td>${r.no_id}</td></tr>
+                        <tr class="border-b"><td class="font-bold py-1.5">No. Telefon:</td><td>${r.no_telefon || '-'}</td></tr>
+                        <tr class="border-b"><td class="font-bold py-1.5">Nama Penyelia:</td><td>${r.nama_penyelia || '-'}</td></tr>
+                        <tr class="border-b"><td class="font-bold py-1.5">Tajuk Projek:</td><td>${r.tajuk_projek || '-'}</td></tr>
+                        <tr class="border-b"><td class="font-bold py-1.5">Status Permohonan:</td><td class="font-bold text-emerald-700">${r.status}</td></tr>
+                    </table>
+
+                    <div class="mb-6 p-4 bg-slate-50 border rounded-lg text-xs">
+                        <p class="font-bold text-slate-800">Senarai Bahan/Radas Diluluskan:</p>
+                        ${itemsFormatted || '-'}
+                    </div>
+
+                    <div class="mt-12 pt-8 border-t border-slate-400 flex justify-between text-xs">
+                        <div class="text-center">
+                            <p>_______________________</p>
+                            <p class="font-bold mt-1">Tandatangan Pemohon</p>
+                        </div>
+                        <div class="text-center">
+                            <p>_______________________</p>
+                            <p class="font-bold mt-1">Pengesahan Pegawai Makmal</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            window.print();
         }
     </script>
 </body>
