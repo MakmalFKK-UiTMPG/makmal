@@ -8,8 +8,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@lucide/web"></script>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <!-- Pustaka EmailJS untuk Notifikasi Emel -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
     <style>
         .custom-scrollbar::-webkit-scrollbar {
@@ -228,7 +226,7 @@
 
     </div>
 
-    <!-- KONFIGURASI FIREBASE & EMAILJS -->
+    <!-- KONFIGURASI FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -262,11 +260,6 @@
     </script>
 
     <script>
-        // INISIALISASI EMAILJS UNTUK NOTIFIKASI EMEL ADMIN
-        (function(){
-            emailjs.init("lIkOzetAaOEcNlzA2"); // Masukkan Public Key EmailJS anda di sini
-        })();
-
         const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjE0MjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
         const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
@@ -326,24 +319,45 @@
             tambahBarisPeralatan();
         };
 
-        // FUNGSI NOTIFIKASI EMEL KEPADA ADMIN VIA EMAILJS
+        // FUNGSI NOTIFIKASI EMEL KEPADA ADMIN VIA WEB3FORMS (TANPA LIMIT TEMPLATE)
         async function hantarNotifikasiEmelAdmin(payload) {
-            const templateParams = {
-                admin_email: 'nurha1559@uitm.edu.my', // Emel admin penerima
-                nama_pemohon: payload.nama_pemohon,
-                no_id: payload.no_id,
-                no_telefon: payload.no_telefon,
-                tujuan: payload.tujuan,
-                tajuk_projek: payload.tajuk_projek,
-                nama_penyelia: payload.nama_penyelia,
-                tarikh_permohonan: new Date().toLocaleString('ms-MY')
-            };
-
             try {
-                await emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams);
-                console.log("✅ Emel notifikasi berjaya dihantar kepada Pegawai Makmal!");
+                const response = await fetch("https://api.web3forms.com/submit", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Accept: "application/json",
+                    },
+                    body: JSON.stringify({
+                        // Gantikan dengan Access Key dari Web3Forms anda
+                        access_key: "TAMPAL_ACCESS_KEY_WEB3FORMS_ANDA", 
+                        
+                        subject: `[Notifikasi Permohonan Baru] - ${payload.nama_pemohon} (${payload.no_id})`,
+                        from_name: "Portal Makmal FKK",
+                        message: `
+Salam Pegawai Makmal / Admin FKK,
+
+Terdapat permohonan alat radas/bahan kimia/peralatan makmal baharu yang telah dihantar:
+
+- Nama Pemohon : ${payload.nama_pemohon}
+- No. ID       : ${payload.no_id}
+- No. Telefon  : ${payload.no_telefon}
+- Tujuan       : ${payload.tujuan}
+- Tajuk Projek : ${payload.tajuk_projek}
+- Penyelia     : ${payload.nama_penyelia}
+- Tarikh Mohon : ${new Date().toLocaleString('ms-MY')}
+
+Sila semak pangkalan data Supabase atau portal admin untuk tindakan kelulusan.
+                        `
+                    })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    console.log("✅ Emel notifikasi berjaya dihantar kepada Pegawai Makmal!");
+                }
             } catch (err) {
-                console.warn("⚠️ Notifikasi emel gagal (Sila pastikan EmailJS ID telah dikonfigurasi):", err);
+                console.warn("⚠️ Notifikasi emel gagal dihantar:", err);
             }
         }
 
@@ -403,7 +417,7 @@
                 btnHantar.disabled = false;
                 btnHantar.innerText = "Hantar Permohonan";
             } else {
-                // Hantar Notifikasi Emel kepada Admin
+                // Hantar Notifikasi Emel kepada Admin via Web3Forms
                 await hantarNotifikasiEmelAdmin(payload);
 
                 alert("✅ Permohonan anda telah berjaya dihantar untuk kelulusan Pegawai Makmal!");
