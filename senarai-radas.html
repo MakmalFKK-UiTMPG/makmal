@@ -58,7 +58,7 @@
         <div class="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-xl mb-6 flex items-center space-x-3 shadow-sm">
             <i data-lucide="info" class="w-5 h-5 text-amber-600 flex-shrink-0"></i>
             <p class="text-xs sm:text-sm font-medium">
-                <strong>Makluman:</strong> Rekod inventori alat radas yang dipaparkan adalah berdasarkan <strong>rekod pangkalan data bagi tahun 2020</strong>.
+                <strong>Makluman:</strong> Rekod inventori alat radas yang dipaparkan adalah berdasarkan <strong>rekod pangkalan data bagi tahun 2020</strong>[cite: 1].
             </p>
         </div>
 
@@ -67,7 +67,7 @@
             <div>
                 <span class="text-xs font-bold uppercase tracking-wider text-teal-600">Direktori Inventori</span>
                 <h1 class="text-xl sm:text-2xl font-bold text-slate-900 mt-0.5">Senarai Alat Radas Makmal FKK</h1>
-                <p class="text-xs sm:text-sm text-slate-500 mt-1">Status dan senarai alat radas dikemaskini</p>
+                <p class="text-xs sm:text-sm text-slate-500 mt-1">Status dan senarai alat radas dikemaskini secara langsung daripada Google Sheet.</p>
             </div>
             
             <div class="flex items-center space-x-3 w-full sm:w-auto">
@@ -194,7 +194,6 @@
 
     <!-- SKRIP UTAMA CSV GOOGLE SHEET -->
     <script>
-        // PAUTAN CSV ASAL DARI KOD ANDA (TIDAK DIUBAH)
         const csvUrlRadas = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRijQBFxjY_ck5fwNFisGxwCR9WTh9stEr0wyjPYobfIVj-SAUnWTbNK9lNg6rDfm9nDlEmUUuqUIn7/pub?gid=1009797141&single=true&output=csv';
 
         let senaraiRadas = [];
@@ -229,42 +228,51 @@
             }
         }
 
+        // PEMBETULAN KHAS MENGIKUT TEMPLAT GOOGLE SHEET ANDA
         function prosesRawCsv(rawRows) {
             let parsedItems = [];
-            let currentLab = 'MAKMAL UNKNOWN';
-            let currentLabUpdate = 'Kemaskini Automatik';
+            let currentLab = 'MAKMAL UTAMA';
+            let currentPic = '-';
 
             rawRows.forEach(row => {
-                const colA = row[0] ? row[0].toString().trim() : '';
-                const colB = row[1] ? row[1].toString().trim() : '';
-                const colC = row[2] ? row[2].toString().trim() : '';
-                const fullRowText = row.join(' ');
+                const fullRowText = row.join(' ').trim();
 
-                if (fullRowText.toLowerCase().includes('last update')) {
-                    const match = fullRowText.match(/last update\s*:\s*([^\s,]+(?:\s+[^\s,]+)?)/i);
-                    if (match && match[0]) currentLabUpdate = match[0];
+                // 1. Kesan Nama Makmal daripada perkataan "Lokasi;" / "Lokasi:"
+                if (fullRowText.toLowerCase().includes('lokasi')) {
+                    const matchLokasi = fullRowText.match(/lokasi\s*[:;]\s*([^PIC;]+)/i);
+                    if (matchLokasi && matchLokasi[1]) {
+                        currentLab = matchLokasi[1].trim();
+                    }
                 }
 
-                if (colA.toUpperCase().startsWith('MAKMAL')) {
-                    currentLab = colA;
-                    return;
-                } else if (colB.toUpperCase().startsWith('MAKMAL')) {
-                    currentLab = colB;
+                // 2. Kesan Nama PIC daripada perkataan "PIC;" / "PIC:"
+                if (fullRowText.toLowerCase().includes('pic')) {
+                    const matchPic = fullRowText.match(/pic\s*[:;]\s*(.+)/i);
+                    if (matchPic && matchPic[1]) {
+                        currentPic = matchPic[1].trim();
+                    }
+                }
+
+                const colA = row[0] ? row[0].toString().trim() : ''; // Bil
+                const colB = row[1] ? row[1].toString().trim() : ''; // Nama Alat Radas
+                const colD = row[3] ? row[3].toString().trim() : ''; // Kuantiti 2020
+                const colF = row[5] ? row[5].toString().trim() : ''; // Status Stok
+                const colG = row[6] ? row[6].toString().trim() : ''; // Catatan
+
+                // Abaikan baris header jadual
+                if (colA === 'Bil.' || colA === 'Bil' || colB === 'Nama Alat Radas' || colB === '' || isNaN(parseInt(colA))) {
                     return;
                 }
 
-                if (colA === 'Bil.' || colA === 'Bil' || colB === 'Bil.' || colB === 'Bil' || colC === 'Nama Radas' || colC === 'Nama Item' || colC === '') {
-                    return;
-                }
-
-                if (colC !== '' && colC !== '-') {
+                // Masukkan data barang
+                if (colB !== '') {
                     parsedItems.push({
                         Makmal: currentLab,
-                        TarikhKemaskini: currentLabUpdate,
-                        NamaRadas: colC,
-                        Kuantiti: row[4] ? row[4].trim() : '1 unit', 
-                        Status: row[5] ? row[5].trim() : 'Available',  
-                        PIC: row[6] ? row[6].trim() : '-'               
+                        NamaRadas: colB,
+                        Kuantiti: colD ? colD : '0 unit', 
+                        Status: colF ? colF : 'Available',  
+                        Catatan: colG ? colG : '-',
+                        PIC: currentPic               
                     });
                 }
             });
@@ -277,7 +285,7 @@
             const senaraiMakmal = new Set();
 
             data.forEach(item => {
-                if(item.Makmal && item.Makmal !== 'MAKMAL UNKNOWN') senaraiMakmal.add(item.Makmal);
+                if(item.Makmal) senaraiMakmal.add(item.Makmal);
             });
 
             labFilter.innerHTML = `<option value="all">Semua Makmal</option>`;
@@ -302,7 +310,7 @@
             data.forEach(item => {
                 const namaMakmal = item.Makmal;
                 if (!makmalGrouped[namaMakmal]) {
-                    makmalGrouped[namaMakmal] = { tarikh: item.TarikhKemaskini, items: [] };
+                    makmalGrouped[namaMakmal] = { pic: item.PIC, items: [] };
                 }
                 makmalGrouped[namaMakmal].items.push(item);
             });
@@ -327,11 +335,11 @@
 
                     rowsHtml += `
                         <tr class="item-row hover:bg-slate-50/80 transition border-b border-slate-100">
-                            <td class="py-3.5 px-4 text-center font-medium text-slate-400 w-16">${index + 1}</td>
-                            <td class="py-3.5 px-4 font-bold text-slate-800 w-1/2">${item.NamaRadas}</td>
-                            <td class="py-3.5 px-4 text-center font-semibold text-slate-700 w-32">${item.Kuantiti}</td>
-                            <td class="py-3.5 px-4 w-40">${statusBadge}</td>
-                            <td class="py-3.5 px-4 text-slate-600 font-medium w-48">${item.PIC}</td>
+                            <td class="py-3.5 px-4 text-center font-medium text-slate-400 w-12">${index + 1}</td>
+                            <td class="py-3.5 px-4 font-bold text-slate-800 text-left">${item.NamaRadas}</td>
+                            <td class="py-3.5 px-4 text-center font-semibold text-slate-700 w-32 whitespace-nowrap">${item.Kuantiti}</td>
+                            <td class="py-3.5 px-4 w-36 whitespace-nowrap">${statusBadge}</td>
+                            <td class="py-3.5 px-4 text-slate-600 font-medium text-left">${item.Catatan}</td>
                         </tr>
                     `;
                 });
@@ -343,17 +351,17 @@
                                 <i data-lucide="building-2" class="w-5 h-5 text-teal-400"></i>
                                 <h2 class="font-bold text-sm sm:text-base">${namaMakmal.toUpperCase()}</h2>
                             </div>
-                            <span class="text-xs text-slate-400 font-medium">${group.tarikh}</span>
+                            <span class="text-xs text-slate-300 font-medium">PIC: ${group.pic}</span>
                         </div>
                         <div class="overflow-x-auto custom-scrollbar">
-                            <table class="w-full text-left border-collapse table-auto min-w-[600px]">
+                            <table class="w-full text-left border-collapse">
                                 <thead>
                                     <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500">
-                                        <th class="py-3 px-4 w-16 text-center">Bil</th>
-                                        <th class="py-3 px-4 w-1/2">Nama Alat Radas & Saiz</th>
-                                        <th class="py-3 px-4 w-32 text-center">Kuantiti</th>
-                                        <th class="py-3 px-4 w-40">Status Stok</th>
-                                        <th class="py-3 px-4 w-48">Pegawai (PIC)</th>
+                                        <th class="py-3 px-4 w-12 text-center">Bil</th>
+                                        <th class="py-3 px-4 text-left">Nama Alat Radas</th>
+                                        <th class="py-3 px-4 w-32 text-center">Kuantiti (2020)</th>
+                                        <th class="py-3 px-4 w-36">Status Stok</th>
+                                        <th class="py-3 px-4 text-left">Catatan</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-100 text-sm">
