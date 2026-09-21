@@ -76,7 +76,7 @@
                    rel="noopener noreferrer"
                    class="inline-flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition shadow-sm border border-emerald-500 w-full sm:w-auto">
                     <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
-                    <span>Kemaskini(Staf Makmal)</span>
+                    <span>Kemaskini (Staf Makmal)</span>
                     <i data-lucide="external-link" class="w-3.5 h-3.5 opacity-70"></i>
                 </a>
 
@@ -194,9 +194,8 @@
 
     <!-- SKRIP UTAMA CSV GOOGLE SHEET -->
     <script>
+        // PAUTAN CSV ASAL DARI KOD ANDA (TIDAK DIUBAH)
         const csvUrlRadas = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRijQBFxjY_ck5fwNFisGxwCR9WTh9stEr0wyjPYobfIVj-SAUnWTbNK9lNg6rDfm9nDlEmUUuqUIn7/pub?gid=1009797141&single=true&output=csv';
-                            'https://docs.google.com/spreadsheets/d/e/2PACX-1vRijQBFxjY_ck5fwNFisGxwCR9WTh9stEr0wyjPYobfIVj-SAUnWTbNK9lNg6rDfm9nDlEmUUuqUIn7/pub?gid=1000183847&single=true&output=csv';
-                            'https://docs.google.com/spreadsheets/d/e/2PACX-1vRijQBFxjY_ck5fwNFisGxwCR9WTh9stEr0wyjPYobfIVj-SAUnWTbNK9lNg6rDfm9nDlEmUUuqUIn7/pub?gid=2047715628&single=true&output=csv';
 
         let senaraiRadas = [];
 
@@ -329,7 +328,7 @@
                     rowsHtml += `
                         <tr class="item-row hover:bg-slate-50/80 transition border-b border-slate-100">
                             <td class="py-3.5 px-4 text-center font-medium text-slate-400 w-16">${index + 1}</td>
-                            <td class="py-3.5 px-4 font-bold text-slate-800">${item.NamaRadas}</td>
+                            <td class="py-3.5 px-4 font-bold text-slate-800 w-1/2">${item.NamaRadas}</td>
                             <td class="py-3.5 px-4 text-center font-semibold text-slate-700 w-32">${item.Kuantiti}</td>
                             <td class="py-3.5 px-4 w-40">${statusBadge}</td>
                             <td class="py-3.5 px-4 text-slate-600 font-medium w-48">${item.PIC}</td>
@@ -347,11 +346,11 @@
                             <span class="text-xs text-slate-400 font-medium">${group.tarikh}</span>
                         </div>
                         <div class="overflow-x-auto custom-scrollbar">
-                            <table class="w-full text-left border-collapse min-w-[600px]">
+                            <table class="w-full text-left border-collapse table-auto min-w-[600px]">
                                 <thead>
                                     <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500">
                                         <th class="py-3 px-4 w-16 text-center">Bil</th>
-                                        <th class="py-3 px-4">Nama Alat Radas & Saiz</th>
+                                        <th class="py-3 px-4 w-1/2">Nama Alat Radas & Saiz</th>
                                         <th class="py-3 px-4 w-32 text-center">Kuantiti</th>
                                         <th class="py-3 px-4 w-40">Status Stok</th>
                                         <th class="py-3 px-4 w-48">Pegawai (PIC)</th>
