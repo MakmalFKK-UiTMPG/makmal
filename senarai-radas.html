@@ -67,7 +67,7 @@
             <div>
                 <span class="text-xs font-bold uppercase tracking-wider text-teal-600">Direktori Inventori</span>
                 <h1 class="text-xl sm:text-2xl font-bold text-slate-900 mt-0.5">Senarai Alat Radas Makmal FKK</h1>
-                <p class="text-xs sm:text-sm text-slate-500 mt-1">Status dan senarai alat radas akan dikemaskini dari semasa ke semasa</p>
+                <p class="text-xs sm:text-sm text-slate-500 mt-1">Status dan senarai alat radas akan dikemaskini dari semasa ke semasa.</p>
             </div>
             
             <div class="flex items-center space-x-3 w-full sm:w-auto">
@@ -241,16 +241,15 @@
             }
         }
 
-        // FUNGSI PEMPROSESAN CSV BERDASARKAN HASIL EXPORT GOOGLE SHEET
+        // PEMPROSESAN TEPAT MENGIKUT LAJUR A HINGGA H GOOGLE SHEET ANDA
         function prosesRawCsv(rawRows) {
             let parsedItems = [];
-            let currentLab = 'MAKMAL UNKNOWN';
+            let currentLab = 'MAKMAL UTAMA';
 
             rawRows.forEach(row => {
-                // Cantumkan keseluruhan baris untuk pemeriksaan kata kunci
                 const fullRowText = row.join(' ').trim();
 
-                // 1. Ekstrak Nama Makmal daripada baris yang ada perkataan "Lokasi"
+                // 1. Ekstrak Nama Makmal daripada perkataan "Lokasi;" (Baris 4 Dalam Sheet)
                 if (fullRowText.toLowerCase().includes('lokasi')) {
                     let parts = fullRowText.split(/[:;]/);
                     if (parts.length > 1) {
@@ -261,39 +260,28 @@
                     return;
                 }
 
-                // 2. Apabila Lajur A Kosong dalam Sheet, CSV akan menghasilkan indeks berikut:
-                // row[0] -> Bil. (1, 2, 3...)
-                // row[1] -> Nama Alat Radas (Beaker 50 ml)
-                // row[3] -> Kuantiti Sedia Ada 2020
-                // row[5] -> Status Stok
-                // row[6] -> Catatan
-                
-                // Cari nombor Bil (biasanya di row[0] atau row[1])
-                let colBil = row[0] ? row[0].toString().trim() : (row[1] ? row[1].toString().trim() : '');
-                let colNama = row[1] ? row[1].toString().trim() : (row[2] ? row[2].toString().trim() : '');
+                // 2. Baca Lajur mengikut susunan sebenar Google Sheet:
+                // row[1] = Lajur B (Bil.)
+                // row[2] = Lajur C (Nama Alat Radas)
+                // row[4] = Lajur E (Kuantiti Sedia Ada 2020)
+                // row[6] = Lajur G (Status Stok)
+                // row[7] = Lajur H (Catatan)
+                const valBil = row[1] ? row[1].toString().trim() : (row[0] ? row[0].toString().trim() : '');
+                const valNama = row[2] ? row[2].toString().trim() : (row[1] ? row[1].toString().trim() : '');
+                const valKuantiti = row[4] ? row[4].toString().trim() : (row[3] ? row[3].toString().trim() : '');
+                const valStatus = row[6] ? row[6].toString().trim() : (row[5] ? row[5].toString().trim() : '');
+                const valCatatan = row[7] ? row[7].toString().trim() : (row[6] ? row[6].toString().trim() : '');
 
-                // Jika row[0] bukan nombor tetapi row[1] ialah nombor (kes Lajur A ada dalam CSV)
-                if (isNaN(parseInt(colBil)) && !isNaN(parseInt(row[1]))) {
-                    colBil = row[1].toString().trim();
-                    colNama = row[2] ? row[2].toString().trim() : '';
-                }
+                // Tapis dan ambil hanya baris yang mempunyai nombor Bilangan sah (1, 2, 3...)
+                const isNum = !isNaN(parseInt(valBil)) && parseInt(valBil) > 0;
 
-                const isNum = !isNaN(parseInt(colBil)) && parseInt(colBil) > 0;
-
-                // Memastikan hanya baris barangan sebenar diproses (Abaikan "Inventori", "Bil.", dsb)
-                if (isNum && colNama !== '' && colNama !== 'Nama Alat Radas' && !colNama.toLowerCase().includes('inventori')) {
-                    
-                    // Ambil Kuantiti 2020, Status & Catatan secara dinamik mengikut kedudukan relatif
-                    let colKuantiti = row[3] ? row[3].toString().trim() : (row[4] ? row[4].toString().trim() : '0 unit');
-                    let colStatus = row[5] ? row[5].toString().trim() : (row[6] ? row[6].toString().trim() : 'Available');
-                    let colCatatan = row[6] ? row[6].toString().trim() : (row[7] ? row[7].toString().trim() : '-');
-
+                if (isNum && valNama !== '' && valNama !== 'Nama Alat Radas') {
                     parsedItems.push({
                         Makmal: currentLab,
-                        NamaRadas: colNama,
-                        Kuantiti: colKuantiti !== '' ? colKuantiti : '0 unit',
-                        Status: colStatus !== '' ? colStatus : 'Available',
-                        Catatan: colCatatan !== '' ? colCatatan : '-'
+                        NamaRadas: valNama,
+                        Kuantiti: valKuantiti !== '' ? valKuantiti : '0 unit',
+                        Status: valStatus !== '' ? valStatus : 'Available',
+                        Catatan: valCatatan !== '' ? valCatatan : '-'
                     });
                 }
             });
