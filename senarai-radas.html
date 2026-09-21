@@ -58,7 +58,7 @@
         <div class="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-xl mb-6 flex items-center space-x-3 shadow-sm">
             <i data-lucide="info" class="w-5 h-5 text-amber-600 flex-shrink-0"></i>
             <p class="text-xs sm:text-sm font-medium">
-                <strong>Makluman:</strong> Rekod inventori alat radas yang dipaparkan adalah berdasarkan <strong>rekod pangkalan data bagi tahun 2020</strong>.
+                <strong>Makluman:</strong> Rekod inventori alat radas yang dipaparkan adalah berdasarkan <strong>rekod pangkalan data bagi tahun 2020</strong>[cite: 1].
             </p>
         </div>
 
@@ -194,7 +194,6 @@
 
     <!-- SKRIP UTAMA CSV GOOGLE SHEET -->
     <script>
-        // SENARAI PAUTAN CSV GOOGLE SHEET DALAM BENTUK ARRAY SAH
         const senaraiPautanCsv = [
             'https://docs.google.com/spreadsheets/d/e/2PACX-1vRijQBFxjY_ck5fwNFisGxwCR9WTh9stEr0wyjPYobfIVj-SAUnWTbNK9lNg6rDfm9nDlEmUUuqUIn7/pub?gid=1009797141&single=true&output=csv',
             'https://docs.google.com/spreadsheets/d/e/2PACX-1vRijQBFxjY_ck5fwNFisGxwCR9WTh9stEr0wyjPYobfIVj-SAUnWTbNK9lNg6rDfm9nDlEmUUuqUIn7/pub?gid=1000183847&single=true&output=csv',
@@ -244,36 +243,35 @@
 
         function prosesRawCsv(rawRows) {
             let parsedItems = [];
-            let currentLab = 'MAKMAL UNKNOWN';
-            let currentPic = '-';
+            let currentLab = 'MAKMAL UTAMA';
 
             rawRows.forEach(row => {
                 const fullRowText = row.join(' ').trim();
 
-                // 1. Mengabaikan tajuk dokumen di atas
+                // 1. Lewati judul dokumen paling atas
                 if (fullRowText.toLowerCase().startsWith('inventori radas') || fullRowText.toLowerCase().startsWith('inventori')) {
                     return;
                 }
 
-                // 2. Mengesan Lokasi Makmal & PIC dari header atas
+                // 2. Deteksi Nama Makmal dari baris yang mengandung "Lokasi"
                 if (fullRowText.toLowerCase().includes('lokasi')) {
                     currentLab = fullRowText;
                     return;
                 }
 
                 const colA = row[0] ? row[0].toString().trim() : '';
-                const colB = row[1] ? row[1].toString().trim() : ''; // Nama Alat Radas sebenar (Beaker 50 ml, etc.)
+                const colB = row[1] ? row[1].toString().trim() : ''; // Nama Alat Radas (Beaker 50 ml, dll.)
                 const colD = row[3] ? row[3].toString().trim() : ''; // Kuantiti 2020
-                const colE = row[4] ? row[4].toString().trim() : ''; // Kuantiti simpanan alternatiff
+                const colE = row[4] ? row[4].toString().trim() : ''; // Kuantiti Cadangan
                 const colF = row[5] ? row[5].toString().trim() : ''; // Status Stok
                 const colG = row[6] ? row[6].toString().trim() : ''; // Catatan
 
-                // 3. Mengabaikan baris header jadual
+                // 3. Lewati header tabel
                 if (colA === 'Bil.' || colA === 'Bil' || colB === 'Nama Alat Radas' || colB === '' || colB.toLowerCase().includes('lokasi')) {
                     return;
                 }
 
-                // 4. Memasukkan rekod radas mengikut indeks lajur yang tepat
+                // 4. Masukkan data barang
                 if (colB !== '' && colB !== '-') {
                     parsedItems.push({
                         Makmal: currentLab,
@@ -293,7 +291,7 @@
             const senaraiMakmal = new Set();
 
             data.forEach(item => {
-                if(item.Makmal && item.Makmal !== 'MAKMAL UNKNOWN') senaraiMakmal.add(item.Makmal);
+                if(item.Makmal) senaraiMakmal.add(item.Makmal);
             });
 
             labFilter.innerHTML = `<option value="all">Semua Makmal</option>`;
