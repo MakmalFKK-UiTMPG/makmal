@@ -67,7 +67,7 @@
             <div>
                 <span class="text-xs font-bold uppercase tracking-wider text-teal-600">Direktori Inventori</span>
                 <h1 class="text-xl sm:text-2xl font-bold text-slate-900 mt-0.5">Senarai Alat Radas Makmal FKK</h1>
-                <p class="text-xs sm:text-sm text-slate-500 mt-1">Status dan senarai alat radas dikemaskini secara langsung (*live*) daripada Google Sheet.</p>
+                <p class="text-xs sm:text-sm text-slate-500 mt-1">Status dan senarai alat radas dikemaskini</p>
             </div>
             
             <div class="flex items-center space-x-3 w-full sm:w-auto">
@@ -76,7 +76,7 @@
                    rel="noopener noreferrer"
                    class="inline-flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition shadow-sm border border-emerald-500 w-full sm:w-auto">
                     <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
-                    <span>Kemaskini Google Sheet (Staf Makmal)</span>
+                    <span>Kemaskini(Staf Makmal)</span>
                     <i data-lucide="external-link" class="w-3.5 h-3.5 opacity-70"></i>
                 </a>
 
@@ -106,7 +106,7 @@
         <div id="bekasRadas">
             <div class="p-12 text-center text-slate-400 bg-white border border-slate-200 rounded-2xl shadow-sm">
                 <div class="w-8 h-8 border-4 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-                <p class="font-medium text-sm">Memuatkan data alat radas dari Google Sheet...</p>
+                <p class="font-medium text-sm">Memuatkan data alat radas...</p>
             </div>
         </div>
 
@@ -194,7 +194,9 @@
 
     <!-- SKRIP UTAMA CSV GOOGLE SHEET -->
     <script>
-        const csvUrlRadas = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT9_TAPPghJkgxCPABwbMNc6bKJPl08zOPPW2vp7hxLqy0zjW54WrC5M0dmEJmmeA/pub?gid=680702223&single=true&output=csv';
+        const csvUrlRadas = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRijQBFxjY_ck5fwNFisGxwCR9WTh9stEr0wyjPYobfIVj-SAUnWTbNK9lNg6rDfm9nDlEmUUuqUIn7/pub?gid=1009797141&single=true&output=csv';
+                            'https://docs.google.com/spreadsheets/d/e/2PACX-1vRijQBFxjY_ck5fwNFisGxwCR9WTh9stEr0wyjPYobfIVj-SAUnWTbNK9lNg6rDfm9nDlEmUUuqUIn7/pub?gid=1000183847&single=true&output=csv';
+                            'https://docs.google.com/spreadsheets/d/e/2PACX-1vRijQBFxjY_ck5fwNFisGxwCR9WTh9stEr0wyjPYobfIVj-SAUnWTbNK9lNg6rDfm9nDlEmUUuqUIn7/pub?gid=2047715628&single=true&output=csv';
 
         let senaraiRadas = [];
 
