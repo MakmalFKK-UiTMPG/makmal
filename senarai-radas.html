@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Senarai Alat Radas Makmal - Portal Makmal FKK</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <!-- Pustaka Supabase untuk fungsi Last Seen -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen">
+
+    <!-- SKRIN PEMUATAN LOG MASUK -->
+    <div id="loading-screen" class="flex flex-col items-center justify-center min-h-screen p-6 text-center">
+        <div class="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <h2 class="text-xl font-bold text-slate-800">Menyemak Pengesahan Log Masuk...</h2>
+        <p class="text-sm text-slate-500 mt-1">Sila tunggu sebentar.</p>
+    </div>
+
+    <!-- KANDUNGAN UTAMA (TERSEMBUNYI SEHINGGA SAH LOG MASUK) -->
+    <div id="main-content" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- NAVIGASI ATAS & BUTANG LOG KELUAR -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+            <div class="flex items-center space-x-3">
+                <a href="makmal.html" class="inline-flex items-center space-x-2 text-sm font-semibold text-slate-600 hover:text-indigo-600 transition group">
+                    <i data-lucide="arrow-left" class="w-4 h-4 transition-transform group-hover:-translate-x-1"></i>
+                    <span>Kembali ke Menu Utama</span>
+                </a>
+                <span class="text-slate-300">|</span>
+                <a href="bahan-radas.html" class="inline-flex items-center space-x-2 text-xs font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 px-3 py-1.5 rounded-lg border border-teal-200 transition">
+                    <i data-lucide="file-signature" class="w-3.5 h-3.5"></i>
+                    <span>Borang Pinjaman Alat Radas</span>
+                </a>
+            </div>
+            
+            <button id="logout-btn" class="inline-flex items-center justify-center space-x-2 bg-white hover:bg-rose-50 text-slate-700 hover:text-rose-600 px-4 py-2 rounded-xl font-semibold text-sm transition border border-slate-200 hover:border-rose-200 cursor-pointer shadow-sm">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+                <span>Log Keluar</span>
+            </button>
+        </div>
+
+        <!-- HEADER UTAMA -->
+        <header class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-teal-600">Direktori Inventori</span>
+                <h1 class="text-xl sm:text-2xl font-bold text-slate-900 mt-0.5">Senarai Alat Radas Makmal FKK</h1>
+                <p class="text-xs sm:text-sm text-slate-500 mt-1">Status dan senarai alat radas dikemaskini secara langsung (*live*) daripada Google Sheet.</p>
+            </div>
+            
+            <div class="flex items-center space-x-3 w-full sm:w-auto">
+                <!-- PAUTAN EDIT GOOGLE SHEET STAF MAKMAL -->
+                <a href="https://docs.google.com/spreadsheets/d/153J0APri9Lcmw4iXGaIHJ8wZmOBWxFJg/edit?usp=drive_link" 
+                   target="_blank" 
+                   rel="noopener noreferrer"
+                   class="inline-flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition shadow-sm border border-emerald-500 w-full sm:w-auto">
+                    <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+                    <span>Kemaskini Google Sheet (Staf Makmal)</span>
+                    <i data-lucide="external-link" class="w-3.5 h-3.5 opacity-70"></i>
+                </a>
+
+                <div class="p-3 bg-teal-50 text-teal-600 rounded-2xl hidden sm:block">
+                    <i data-lucide="test-tube-2" class="w-6 h-6"></i>
+                </div>
+            </div>
+        </header>
+
+        <!-- CARIAN REAL-TIME & DROPDOWN PENAPIS MAKMAL -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div class="relative md:col-span-2">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <i data-lucide="search" class="w-5 h-5"></i>
+                </div>
+                <input type="text" id="carianInput" onkeyup="cariRadas()" placeholder="Cari nama alat radas, saiz, jenama, atau makmal..." class="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent shadow-sm transition">
+            </div>
+
+            <div>
+                <select id="labFilter" onchange="filterMakmal()" class="w-full py-3 px-4 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-500 shadow-sm transition cursor-pointer">
+                    <option value="all">Semua Makmal</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- KANDUNGAN PAPARAN DATA RADAS -->
+        <div id="bekasRadas">
+            <div class="p-12 text-center text-slate-400 bg-white border border-slate-200 rounded-2xl shadow-sm">
+                <div class="w-8 h-8 border-4 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+                <p class="font-medium text-sm">Memuatkan data alat radas dari Google Sheet...</p>
+            </div>
+        </div>
+
+        <footer class="mt-12 text-center text-xs text-slate-400">
+            &copy; Hak Cipta Terpelihara Fakulti Kejuruteraan Kimia UiTM Pasir Gudang.
+        </footer>
+
+    </div>
+
+    <!-- MODUL FIREBASE AUTH & SUPABASE (KAWALAN KESELAMATAN & LAST SEEN) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDDC9PLSCOzna4caIsrfPSvfR3A_FczKDc",
+            authDomain: "sistem-makmal-fkkuitmpg.firebaseapp.com",
+            projectId: "sistem-makmal-fkkuitmpg",
+            storageBucket: "sistem-makmal-fkkuitmpg.firebasestorage.app",
+            messagingSenderId: "291806336887",
+            appId: "1:291806336887:web:a0d4fca1866459ead03372"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // TETAPAN SUPABASE UNTUK REKOD LAST SEEN
+        const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        async function kemaskiniLastSeen(user) {
+            try {
+                const userEmail = user.email || '';
+                const userName = user.displayName || userEmail.split('@')[0];
+
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+
+                const localFormattedTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+                await supabaseClient
+                    .from('kehadiran_pengguna')
+                    .upsert({ 
+                        email: userEmail, 
+                        nama: userName,
+                        last_online: localFormattedTime 
+                    }, { onConflict: 'email' });
+            } catch (err) {
+                console.error("❌ Ralat Kod Last Seen:", err);
+            }
+        }
+
+        // KAWALAN KESELAMATAN KETAT (LOG MASUK)
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const email = user.email || '';
+                if (email.endsWith('@uitm.edu.my') || email.endsWith('@student.uitm.edu.my')) {
+                    document.getElementById('loading-screen').style.display = 'none';
+                    document.getElementById('main-content').classList.remove('hidden');
+                    
+                    kemaskiniLastSeen(user);
+                    lucide.createIcons();
+                    muatDataGoogleSheet();
+                } else {
+                    signOut(auth);
+                    window.location.href = "makmal.html";
+                }
+            } else {
+                window.location.href = "makmal.html";
+            }
+        });
+
+        // FUNGSI LOG KELUAR
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            signOut(auth).then(() => {
+                window.location.href = "makmal.html";
+            }).catch((error) => {
+                alert("Ralat semasa log keluar: " + error.message);
+            });
+        });
+    </script>
+
+    <!-- SKRIP UTAMA UNTUK PAPARAN CSV GOOGLE SHEET -->
+    <script>
+        // PAUTAN PUBLISH TO WEB (CSV) DARI GOOGLE SHEET KHUSUS UNTUK TAB ALAT RADAS
+        // 💡 Masukkan pautan CSV Publish to Web bagi tab Alat Radas di sini:
+        const csvUrlRadas = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRijQBFxjY_ck5fwNFisGxwCR9WTh9stEr0wyjPYobfIVj-SAUnWTbNK9lNg6rDfm9nDlEmUUuqUIn7/pub?gid=0&single=true&output=csv';
+
+        let senaraiRadas = [];
+
+        function ambilDataCsv(url) {
+            return new Promise((resolve, reject) => {
+                Papa.parse(url, {
+                    download: true,
+                    header: false,
+                    skipEmptyLines: true,
+                    complete: (results) => resolve(results.data),
+                    error: (err) => reject(err)
+                });
+            });
+        }
+
+        async function muatDataGoogleSheet() {
+            try {
+                if (csvUrlRadas === 'PAUTAN_CSV_ALAT_RADAS_DI_SINI') {
+                    document.getElementById('bekasRadas').innerHTML = `
+                        <div class="p-8 text-center text-amber-600 bg-amber-50 border border-amber-200 rounded-2xl">
+                            ⚠️ Sila masukkan pautan CSV Publish to Web untuk Alat Radas pada baris kod ini.
+                        </div>
+                    `;
+                    return;
+                }
+
+                const rawData = await ambilDataCsv(csvUrlRadas);
+                senaraiRadas = prosesRawCsv(rawData);
+
+                binaPilihanMakmal(senaraiRadas);
+                paparkanRadas(senaraiRadas);
+
+            } catch (err) {
+                console.error("Gagal membaca pautan CSV:", err);
+                document.getElementById('bekasRadas').innerHTML = `
+                    <div class="p-8 text-center text-rose-500 bg-rose-50 border border-rose-200 rounded-2xl">
+                        ❌ Gagal membaca Google Sheets. Sila pastikan pautan CSV Publish to Web diatur dengan betul.
+                    </div>
+                `;
+            }
+        }
+
+        function prosesRawCsv(rawRows) {
+            let parsedItems = [];
+            let currentLab = 'MAKMAL UNKNOWN';
+            let currentLabUpdate = 'Kemaskini Automatik';
+
+            rawRows.forEach(row => {
+                const colB = row[1] ? row[1].toString().trim() : '';
+                const colC = row[2] ? row[2].toString().trim() : '';
+                const fullRowText = row.join(' ');
+
+                if (fullRowText.toLowerCase().includes('last update')) {
+                    const match = fullRowText.match(/last update\s*:\s*([^\s,]+(?:\s+[^\s,]+)?)/i);
+                    if (match && match[0]) currentLabUpdate = match[0];
+                }
+
+                if (colB.toUpperCase().startsWith('MAKMAL')) {
+                    currentLab = colB;
+                    return;
+                }
+
+                if (colB === 'Bil.' || colB === 'Bil' || colB === '' || colC === 'Nama Radas' || colC === 'Nama Item' || colC === '') {
+                    return;
+                }
+
+                if (colC !== '' && colC !== '-') {
+                    parsedItems.push({
+                        Makmal: currentLab,
+                        TarikhKemaskini: currentLabUpdate,
+                        NamaRadas: colC,
+                        SaizJenama: row[3] ? row[3].trim() : '-', 
+                        Kuantiti: row[4] ? row[4].trim() : '1 unit', 
+                        Status: row[5] ? row[5].trim() : 'Available',  
+                        PIC: row[6] ? row[6].trim() : '-'               
+                    });
+                }
+            });
+
+            return parsedItems;
+        }
+
+        function binaPilihanMakmal(data) {
+            const labFilter = document.getElementById('labFilter');
+            const senaraiMakmal = new Set();
+
+            data.forEach(item => {
+                if(item.Makmal) senaraiMakmal.add(item.Makmal);
+            });
+
+            labFilter.innerHTML = `<option value="all">Semua Makmal</option>`;
+            senaraiMakmal.forEach(makmal => {
+                const option = document.createElement('option');
+                option.value = makmal.toLowerCase().replace(/\s+/g, '-');
+                option.textContent = makmal;
+                labFilter.appendChild(option);
+            });
+        }
+
+        function paparkanRadas(data) {
+            const bekas = document.getElementById('bekasRadas');
+            bekas.innerHTML = '';
+
+            if (!data || data.length === 0) {
+                bekas.innerHTML = `<div class="p-8 text-center text-slate-400 bg-white border border-slate-200 rounded-2xl">Tiada rekod alat radas dijumpai.</div>`;
+                return;
+            }
+
+            const makmalGrouped = {};
+            data.forEach(item => {
+                const namaMakmal = item.Makmal;
+                if (!makmalGrouped[namaMakmal]) {
+                    makmalGrouped[namaMakmal] = { tarikh: item.TarikhKemaskini, items: [] };
+                }
+                makmalGrouped[namaMakmal].items.push(item);
+            });
+
+            Object.keys(makmalGrouped).forEach(namaMakmal => {
+                const labId = namaMakmal.toLowerCase().replace(/\s+/g, '-');
+                const group = makmalGrouped[namaMakmal];
+
+                let rowsHtml = '';
+                group.items.forEach((item, index) => {
+                    let statusBadge = '';
+                    const statusText = item.Status || 'Available';
+                    const statusLower = statusText.toLowerCase();
+
+                    if (statusLower.includes('stok terhad') || statusLower.includes('limited')) {
+                        statusBadge = `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">${statusText}</span>`;
+                    } else if (statusLower.includes('habis') || statusLower.includes('rosak') || statusLower.includes('tidak')) {
+                        statusBadge = `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">${statusText}</span>`;
+                    } else {
+                        statusBadge = `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">${statusText}</span>`;
+                    }
+
+                    rowsHtml += `
+                        <tr class="item-row hover:bg-slate-50/80 transition border-b border-slate-100">
+                            <td class="py-3.5 px-4 text-center font-medium text-slate-400">${index + 1}</td>
+                            <td class="py-3.5 px-4 font-bold text-slate-800">${item.NamaRadas}</td>
+                            <td class="py-3.5 px-4 text-slate-600 font-mono text-xs">${item.SaizJenama}</td>
+                            <td class="py-3.5 px-4 text-center font-semibold text-slate-700">${item.Kuantiti}</td>
+                            <td class="py-3.5 px-4">${statusBadge}</td>
+                            <td class="py-3.5 px-4 text-slate-600 font-medium">${item.PIC}</td>
+                        </tr>
+                    `;
+                });
+
+                const sectionHtml = `
+                    <div class="lab-section bg-white border border-slate-200 rounded-2xl shadow-sm mb-8 overflow-hidden" data-lab="${labId}">
+                        <div class="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <i data-lucide="building-2" class="w-5 h-5 text-teal-400"></i>
+                                <h2 class="font-bold text-sm sm:text-base">${namaMakmal.toUpperCase()}</h2>
+                            </div>
+                            <span class="text-xs text-slate-400 font-medium">${group.tarikh}</span>
+                        </div>
+                        <div class="overflow-x-auto custom-scrollbar">
+                            <table class="w-full text-left border-collapse min-w-[700px]">
+                                <thead>
+                                    <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                                        <th class="py-3 px-4 w-12 text-center">Bil</th>
+                                        <th class="py-3 px-4">Nama Alat Radas</th>
+                                        <th class="py-3 px-4">Saiz / Jenama</th>
+                                        <th class="py-3 px-4 w-28 text-center">Kuantiti</th>
+                                        <th class="py-3 px-4 w-40">Status Stok</th>
+                                        <th class="py-3 px-4 w-48">Pegawai (PIC)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 text-sm">
+                                    ${rowsHtml}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+                bekas.innerHTML += sectionHtml;
+            });
+
+            lucide.createIcons();
+        }
+
+        function cariRadas() {
+            let input = document.getElementById('carianInput').value.toLowerCase();
+            let labSections = document.querySelectorAll('.lab-section');
+
+            labSections.forEach(section => {
+                let rows = section.querySelectorAll('.item-row');
+                let hasMatch = false;
+
+                rows.forEach(row => {
+                    let text = row.innerText.toLowerCase();
+                    if (text.includes(input)) {
+                        row.style.display = "";
+                        hasMatch = true;
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+
+                section.style.display = hasMatch ? "" : "none";
+            });
+        }
+
+        function filterMakmal() {
+            let selectedLab = document.getElementById('labFilter').value;
+            let labSections = document.querySelectorAll('.lab-section');
+
+            document.getElementById('carianInput').value = "";
+
+            labSections.forEach(section => {
+                let rows = section.querySelectorAll('.item-row');
+                rows.forEach(row => row.style.display = "");
+
+                if (selectedLab === 'all' || section.getAttribute('data-lab') === selectedLab) {
+                    section.style.display = "";
+                } else {
+                    section.style.display = "none";
+                }
+            });
+        }
+
+        window.onload = function() {
+            lucide.createIcons();
+        };
+    </script>
+</body>
+</html>
