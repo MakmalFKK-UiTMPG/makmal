@@ -26,11 +26,11 @@
         }
     </style>
 </head>
-<body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen selection:bg-indigo-500 selection:text-white">
+<body class="bg-slate-50/70 font-sans text-slate-800 antialiased min-h-screen selection:bg-indigo-300 selection:text-slate-900">
 
     <!-- SKRIN LOADING ASAL -->
     <div id="loading-screen" class="flex flex-col items-center justify-center min-h-screen p-6 text-center">
-        <div class="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <div class="w-12 h-12 border-4 border-indigo-400 border-t-transparent rounded-full animate-spin mb-4"></div>
         <h2 class="text-xl font-bold text-slate-800">Menyemak Pengesahan Log Masuk...</h2>
         <p class="text-sm text-slate-500 mt-1">Sila tunggu sebentar.</p>
     </div>
@@ -38,26 +38,26 @@
     <!-- KANDUNGAN UTAMA PORTAL -->
     <div id="main-content" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        <!-- HEADER HERO ULTRA-MODEN -->
-        <header class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl mb-10 text-white relative overflow-hidden">
-            <!-- CORAK GEOMETRIK DEKORATIF -->
-            <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#818cf8_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
+        <!-- HEADER HERO SOFT ELEGANT -->
+        <header class="bg-gradient-to-r from-slate-800 via-indigo-900/90 to-sky-900 border border-slate-700/50 rounded-3xl p-6 sm:p-8 shadow-md mb-10 text-white relative overflow-hidden">
+            <!-- CORAK GEOMETRIK DEKORATIF SOFT -->
+            <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#a5b4fc_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
 
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 relative z-10">
                 <div class="flex items-center space-x-4">
-                    <div class="p-3.5 bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 rounded-2xl backdrop-blur-md">
+                    <div class="p-3.5 bg-indigo-400/20 border border-indigo-300/30 text-indigo-200 rounded-2xl backdrop-blur-md shadow-inner">
                         <i data-lucide="flask-conical" class="w-8 h-8"></i>
                     </div>
                     <div>
                         <div class="flex items-center space-x-2">
                             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                            <span class="text-xs font-bold uppercase tracking-widest text-indigo-300">UiTM Cawangan Johor • Kampus Pasir Gudang</span>
+                            <span class="text-xs font-bold uppercase tracking-widest text-indigo-200">UiTM Cawangan Johor • Kampus Pasir Gudang</span>
                         </div>
                         
                         <div class="flex flex-wrap items-center gap-3 mt-1">
-                            <h1 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">Portal Makmal Fakulti Kejuruteraan Kimia</h1>
+                            <h1 class="text-2xl md:text-3xl font-black text-white tracking-tight">Portal Makmal Fakulti Kejuruteraan Kimia</h1>
                             
-                            <a href="carta-organisasi.html" class="inline-flex items-center space-x-1.5 bg-white/10 hover:bg-white/20 text-indigo-200 hover:text-white px-3.5 py-1.5 rounded-xl text-xs font-bold transition border border-white/10 backdrop-blur-sm shadow-sm">
+                            <a href="carta-organisasi.html" class="inline-flex items-center space-x-1.5 bg-white/10 hover:bg-white/20 text-indigo-100 px-3.5 py-1.5 rounded-xl text-xs font-bold transition border border-white/15 backdrop-blur-sm shadow-sm">
                                 <i data-lucide="users" class="w-3.5 h-3.5"></i>
                                 <span>Tentang Kami</span>
                             </a>
@@ -65,7 +65,7 @@
                     </div>
                 </div>
 
-                <button id="logout-btn" class="inline-flex items-center justify-center space-x-2 bg-rose-500/20 hover:bg-rose-600 text-rose-200 hover:text-white px-4 py-2.5 rounded-xl font-bold text-xs transition border border-rose-500/30 self-start md:self-auto cursor-pointer shadow-md">
+                <button id="logout-btn" class="inline-flex items-center justify-center space-x-2 bg-rose-500/20 hover:bg-rose-500/30 text-rose-100 px-4 py-2.5 rounded-xl font-bold text-xs transition border border-rose-300/30 self-start md:self-auto cursor-pointer shadow-sm">
                     <i data-lucide="log-out" class="w-4 h-4"></i>
                     <span>Log Keluar</span>
                 </button>
@@ -76,23 +76,23 @@
         <section class="mb-12">
             <div class="flex items-center justify-between mb-6 px-1">
                 <div>
-                    <h2 class="text-lg font-bold text-slate-900">Menu Utama & Perkhidmatan Digital</h2>
-                    <p class="text-xs text-slate-500">Pilih perkhidmatan makmal yang dikehendaki di bawah.</p>
+                    <h2 class="text-lg font-bold text-slate-800">Menu Utama & Perkhidmatan Digital</h2>
+                    <p class="text-xs text-slate-500">Sistem navigasi perkhidmatan dan pengurusan makmal FKK</p>
                 </div>
             </div>
 
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
                 
-                <!-- 1. KAD DROPDOWN: PERALATAN MAKMAL -->
+                <!-- 1. KAD DROPDOWN: PERALATAN MAKMAL (SOFT SKY BLUE) -->
                 <div class="relative group">
-                    <div class="flex flex-col p-5 bg-white border border-slate-200 rounded-2xl hover:border-indigo-500 hover:shadow-lg transition-all duration-300 cursor-pointer h-full justify-between">
+                    <div class="flex flex-col p-5 bg-sky-50/60 border border-sky-100 rounded-2xl hover:bg-white hover:border-sky-300 hover:shadow-xl hover:shadow-sky-100/50 transition-all duration-300 cursor-pointer h-full justify-between">
                         <div>
-                            <div class="p-3 rounded-xl bg-blue-50 text-blue-600 w-fit group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                            <div class="p-3 rounded-xl bg-sky-100 text-sky-700 w-fit group-hover:bg-sky-500 group-hover:text-white transition-all duration-300 shadow-sm">
                                 <i data-lucide="microscope" class="w-6 h-6"></i>
                             </div>
-                            <span class="mt-4 block text-base font-bold text-slate-900 group-hover:text-indigo-600 transition">Peralatan Makmal</span>
+                            <span class="mt-4 block text-base font-bold text-slate-800 group-hover:text-sky-700 transition">Peralatan Makmal</span>
                         </div>
-                        <div class="mt-3 flex items-center justify-between text-xs font-bold text-indigo-600">
+                        <div class="mt-3 flex items-center justify-between text-xs font-bold text-sky-600">
                             <span>Senarai & Tempahan</span>
                             <i data-lucide="chevron-down" class="w-4 h-4 transition-transform group-hover:rotate-180"></i>
                         </div>
@@ -100,28 +100,28 @@
 
                     <!-- SUB-MENU DROPDOWN -->
                     <div class="absolute left-0 right-0 top-full pt-2 hidden group-hover:block z-50">
-                        <div class="bg-white border border-slate-200 rounded-2xl shadow-2xl py-2 min-w-[220px]">
-                            <a href="senarai-peralatan.html" class="flex items-center space-x-2.5 px-4 py-2.5 hover:bg-indigo-50 hover:text-indigo-600 transition text-xs font-semibold text-slate-700">
-                                <i data-lucide="list-search" class="w-4 h-4 text-slate-400"></i>
+                        <div class="bg-white border border-sky-100 rounded-2xl shadow-xl py-2 min-w-[220px]">
+                            <a href="senarai-peralatan.html" class="flex items-center space-x-2.5 px-4 py-2.5 hover:bg-sky-50 hover:text-sky-700 transition text-xs font-semibold text-slate-700">
+                                <i data-lucide="list-search" class="w-4 h-4 text-sky-400"></i>
                                 <span>Senarai Peralatan</span>
                             </a>
                             <div class="border-t border-slate-100 my-1"></div>
-                            <a href="tempahan.html" class="flex items-center space-x-2.5 px-4 py-2.5 hover:bg-emerald-50 hover:text-emerald-600 transition text-xs font-semibold text-slate-700">
-                                <i data-lucide="calendar-check-2" class="w-4 h-4 text-slate-400"></i>
+                            <a href="tempahan.html" class="flex items-center space-x-2.5 px-4 py-2.5 hover:bg-emerald-50 hover:text-emerald-700 transition text-xs font-semibold text-slate-700">
+                                <i data-lucide="calendar-check-2" class="w-4 h-4 text-emerald-400"></i>
                                 <span>Tempahan Peralatan</span>
                             </a>
                         </div>
                     </div>
                 </div>
 
-                <!-- 2. KAD DROPDOWN: INVENTORI KIMIA -->
+                <!-- 2. KAD DROPDOWN: INVENTORI KIMIA (SOFT WARM AMBER) -->
                 <div class="relative group">
-                    <div class="flex flex-col p-5 bg-white border border-slate-200 rounded-2xl hover:border-amber-500 hover:shadow-lg transition-all duration-300 cursor-pointer h-full justify-between">
+                    <div class="flex flex-col p-5 bg-amber-50/60 border border-amber-100 rounded-2xl hover:bg-white hover:border-amber-300 hover:shadow-xl hover:shadow-amber-100/50 transition-all duration-300 cursor-pointer h-full justify-between">
                         <div>
-                            <div class="p-3 rounded-xl bg-amber-50 text-amber-600 w-fit group-hover:bg-amber-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                            <div class="p-3 rounded-xl bg-amber-100 text-amber-700 w-fit group-hover:bg-amber-500 group-hover:text-white transition-all duration-300 shadow-sm">
                                 <i data-lucide="boxes" class="w-6 h-6"></i>
                             </div>
-                            <span class="mt-4 block text-base font-bold text-slate-900 group-hover:text-amber-600 transition">Inventori Kimia</span>
+                            <span class="mt-4 block text-base font-bold text-slate-800 group-hover:text-amber-700 transition">Inventori Kimia</span>
                         </div>
                         <div class="mt-3 flex items-center justify-between text-xs font-bold text-amber-600">
                             <span>Senarai & Daftar Masuk</span>
@@ -131,28 +131,28 @@
 
                     <!-- SUB-MENU DROPDOWN -->
                     <div class="absolute left-0 right-0 top-full pt-2 hidden group-hover:block z-50 min-w-[220px]">
-                        <div class="bg-white border border-slate-200 rounded-2xl shadow-2xl py-2">
+                        <div class="bg-white border border-amber-100 rounded-2xl shadow-xl py-2">
                             <a href="inventori.html" class="flex items-center space-x-2.5 px-4 py-2.5 hover:bg-amber-50 hover:text-amber-700 transition text-xs font-semibold text-slate-700">
-                                <i data-lucide="list-checks" class="w-4 h-4 text-slate-400"></i>
+                                <i data-lucide="list-checks" class="w-4 h-4 text-amber-400"></i>
                                 <span>Senarai Bahan Kimia</span>
                             </a>
                             <div class="border-t border-slate-100 my-1"></div>
-                            <a href="https://docs.google.com/forms/d/e/1FAIpQLSe_5syq-lajHFUtXM2-RblfciuiYuQ5eiuUmuZrdDl32yBC2Q/viewform?usp=sharing&ouid=116772226739060700883" target="_blank" class="flex items-center space-x-2.5 px-4 py-2.5 hover:bg-indigo-50 hover:text-indigo-600 transition text-xs font-semibold text-slate-700">
-                                <i data-lucide="external-link" class="w-4 h-4 text-slate-400"></i>
+                            <a href="https://docs.google.com/forms/d/e/1FAIpQLSe_5syq-lajHFUtXM2-RblfciuiYuQ5eiuUmuZrdDl32yBC2Q/viewform?usp=sharing&ouid=116772226739060700883" target="_blank" class="flex items-center space-x-2.5 px-4 py-2.5 hover:bg-indigo-50 hover:text-indigo-700 transition text-xs font-semibold text-slate-700">
+                                <i data-lucide="external-link" class="w-4 h-4 text-indigo-400"></i>
                                 <span>Daftar Bahan Kimia Baharu</span>
                             </a>
                         </div>
                     </div>
                 </div>
 
-                <!-- 3. KAD DROPDOWN: BAHAN & RADAS -->
+                <!-- 3. KAD DROPDOWN: BAHAN & RADAS (SOFT MINT TEAL) -->
                 <div class="relative group">
-                    <div class="flex flex-col p-5 bg-white border border-slate-200 rounded-2xl hover:border-teal-500 hover:shadow-lg transition-all duration-300 cursor-pointer h-full justify-between">
+                    <div class="flex flex-col p-5 bg-teal-50/60 border border-teal-100 rounded-2xl hover:bg-white hover:border-teal-300 hover:shadow-xl hover:shadow-teal-100/50 transition-all duration-300 cursor-pointer h-full justify-between">
                         <div>
-                            <div class="p-3 rounded-xl bg-teal-50 text-teal-600 w-fit group-hover:bg-teal-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                            <div class="p-3 rounded-xl bg-teal-100 text-teal-700 w-fit group-hover:bg-teal-500 group-hover:text-white transition-all duration-300 shadow-sm">
                                 <i data-lucide="test-tube-2" class="w-6 h-6"></i>
                             </div>
-                            <span class="mt-4 block text-base font-bold text-slate-900 group-hover:text-teal-600 transition">Bahan & Radas</span>
+                            <span class="mt-4 block text-base font-bold text-slate-800 group-hover:text-teal-700 transition">Bahan & Radas</span>
                         </div>
                         <div class="mt-3 flex items-center justify-between text-xs font-bold text-teal-600">
                             <span>Senarai & Pinjaman</span>
@@ -162,27 +162,27 @@
 
                     <!-- SUB-MENU DROPDOWN -->
                     <div class="absolute left-0 right-0 top-full pt-2 hidden group-hover:block z-50 min-w-[220px]">
-                        <div class="bg-white border border-slate-200 rounded-2xl shadow-2xl py-2">
+                        <div class="bg-white border border-teal-100 rounded-2xl shadow-xl py-2">
                             <a href="senarai-radas.html" class="flex items-center space-x-2.5 px-4 py-2.5 hover:bg-teal-50 hover:text-teal-700 transition text-xs font-semibold text-slate-700">
-                                <i data-lucide="clipboard-list" class="w-4 h-4 text-slate-400"></i>
+                                <i data-lucide="clipboard-list" class="w-4 h-4 text-teal-400"></i>
                                 <span>Senarai Alat Radas & Bahan</span>
                             </a>
                             <div class="border-t border-slate-100 my-1"></div>
-                            <a href="bahan-radas.html" class="flex items-center space-x-2.5 px-4 py-2.5 hover:bg-indigo-50 hover:text-indigo-600 transition text-xs font-semibold text-slate-700">
-                                <i data-lucide="file-signature" class="w-4 h-4 text-slate-400"></i>
+                            <a href="bahan-radas.html" class="flex items-center space-x-2.5 px-4 py-2.5 hover:bg-indigo-50 hover:text-indigo-700 transition text-xs font-semibold text-slate-700">
+                                <i data-lucide="file-signature" class="w-4 h-4 text-indigo-400"></i>
                                 <span>Pinjaman Alat Radas & Bahan</span>
                             </a>
                         </div>
                     </div>
                 </div>
 
-                <!-- 4. KAD MUAT TURUN BORANG -->
-                <a href="borang.html" class="flex flex-col p-5 bg-white border border-slate-200 rounded-2xl hover:border-purple-500 hover:shadow-lg transition-all duration-300 group justify-between">
+                <!-- 4. KAD MUAT TURUN BORANG (SOFT LAVENDER PURPLE) -->
+                <a href="borang.html" class="flex flex-col p-5 bg-purple-50/60 border border-purple-100 rounded-2xl hover:bg-white hover:border-purple-300 hover:shadow-xl hover:shadow-purple-100/50 transition-all duration-300 group justify-between">
                     <div>
-                        <div class="p-3 rounded-xl bg-purple-50 text-purple-600 w-fit group-hover:bg-purple-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                        <div class="p-3 rounded-xl bg-purple-100 text-purple-700 w-fit group-hover:bg-purple-500 group-hover:text-white transition-all duration-300 shadow-sm">
                             <i data-lucide="file-text" class="w-6 h-6"></i>
                         </div>
-                        <span class="mt-4 block text-base font-bold text-slate-900 group-hover:text-purple-600 transition">Borang & SOP Makmal</span>
+                        <span class="mt-4 block text-base font-bold text-slate-800 group-hover:text-purple-700 transition">Borang & SOP Makmal</span>
                     </div>
                     <div class="mt-3 flex items-center justify-between text-xs font-bold text-purple-600">
                         <span>Muat Turun Dokumen</span>
@@ -190,13 +190,13 @@
                     </div>
                 </a>
 
-                <!-- 5. KAD FASILITI KESELAMATAN -->
-                <a href="fasiliti-keselamatan.html" class="flex flex-col p-5 bg-white border border-slate-200 rounded-2xl hover:border-rose-500 hover:shadow-lg transition-all duration-300 group justify-between">
+                <!-- 5. KAD FASILITI KESELAMATAN (SOFT ROSE PINK) -->
+                <a href="fasiliti-keselamatan.html" class="flex flex-col p-5 bg-rose-50/60 border border-rose-100 rounded-2xl hover:bg-white hover:border-rose-300 hover:shadow-xl hover:shadow-rose-100/50 transition-all duration-300 group justify-between">
                     <div>
-                        <div class="p-3 rounded-xl bg-rose-50 text-rose-600 w-fit group-hover:bg-rose-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                        <div class="p-3 rounded-xl bg-rose-100 text-rose-700 w-fit group-hover:bg-rose-500 group-hover:text-white transition-all duration-300 shadow-sm">
                             <i data-lucide="shield-alert" class="w-6 h-6"></i>
                         </div>
-                        <span class="mt-4 block text-base font-bold text-slate-900 group-hover:text-rose-600 transition">Fasiliti Keselamatan</span>
+                        <span class="mt-4 block text-base font-bold text-slate-800 group-hover:text-rose-700 transition">Fasiliti Keselamatan</span>
                     </div>
                     <div class="mt-3 flex items-center justify-between text-xs font-bold text-rose-600">
                         <span>Semak Status Peralatan</span>
@@ -204,13 +204,13 @@
                     </div>
                 </a>
 
-                <!-- 6. KAD SISA TERJADUAL -->
-                <a href="sisa.html" class="flex flex-col p-5 bg-white border border-slate-200 rounded-2xl hover:border-emerald-500 hover:shadow-lg transition-all duration-300 group justify-between">
+                <!-- 6. KAD SISA TERJADUAL (SOFT EMERALD GREEN) -->
+                <a href="sisa.html" class="flex flex-col p-5 bg-emerald-50/60 border border-emerald-100 rounded-2xl hover:bg-white hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-100/50 transition-all duration-300 group justify-between">
                     <div>
-                        <div class="p-3 rounded-xl bg-emerald-50 text-emerald-600 w-fit group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                        <div class="p-3 rounded-xl bg-emerald-100 text-emerald-700 w-fit group-hover:bg-emerald-500 group-hover:text-white transition-all duration-300 shadow-sm">
                             <i data-lucide="biohazard" class="w-6 h-6"></i>
                         </div>
-                        <span class="mt-4 block text-base font-bold text-slate-900 group-hover:text-emerald-600 transition">Sisa Terjadual</span>
+                        <span class="mt-4 block text-base font-bold text-slate-800 group-hover:text-emerald-700 transition">Sisa Terjadual</span>
                     </div>
                     <div class="mt-3 flex items-center justify-between text-xs font-bold text-emerald-600">
                         <span>Pengurusan & Inventori</span>
@@ -218,13 +218,13 @@
                     </div>
                 </a>
 
-                <!-- 7. KAD ADMIN -->
-                <a href="admin.html" class="flex flex-col p-5 bg-white border border-slate-200 rounded-2xl hover:border-slate-800 hover:shadow-lg transition-all duration-300 group justify-between">
+                <!-- 7. KAD ADMIN (SOFT COOL SLATE) -->
+                <a href="admin.html" class="flex flex-col p-5 bg-slate-100/70 border border-slate-200 rounded-2xl hover:bg-white hover:border-slate-400 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 group justify-between">
                     <div>
-                        <div class="p-3 rounded-xl bg-slate-100 text-slate-700 w-fit group-hover:bg-slate-900 group-hover:text-white transition-all duration-300 shadow-sm">
+                        <div class="p-3 rounded-xl bg-slate-200 text-slate-700 w-fit group-hover:bg-slate-800 group-hover:text-white transition-all duration-300 shadow-sm">
                             <i data-lucide="settings" class="w-6 h-6"></i>
                         </div>
-                        <span class="mt-4 block text-base font-bold text-slate-900 group-hover:text-slate-900 transition">Admin</span>
+                        <span class="mt-4 block text-base font-bold text-slate-800 group-hover:text-slate-900 transition">Admin</span>
                     </div>
                     <div class="mt-3 flex items-center justify-between text-xs font-bold text-slate-600">
                         <span>Kawalan Sistem</span>
@@ -254,7 +254,7 @@
             <div class="pt-6">
                 <!-- ARAS 1 -->
                 <div id="aras-1" class="tab-content active grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div class="p-4 border border-slate-200 bg-slate-50/50 rounded-2xl hover:bg-white hover:shadow-md transition">
+                    <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-2xl hover:bg-white hover:border-slate-300 hover:shadow-md transition">
                         <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Pilot Plant</h3>
                         <div class="flex items-start space-x-2.5 text-xs text-slate-600">
                             <i data-lucide="user" class="w-4 h-4 text-indigo-500 mt-0.5"></i>
@@ -265,7 +265,7 @@
                         </div>
                     </div>
 
-                    <div class="p-4 border border-slate-200 bg-slate-50/50 rounded-2xl hover:bg-white hover:shadow-md transition">
+                    <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-2xl hover:bg-white hover:border-slate-300 hover:shadow-md transition">
                         <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Fluid Mechanics</h3>
                         <div class="flex items-start space-x-2.5 text-xs text-slate-600">
                             <i data-lucide="user" class="w-4 h-4 text-indigo-500 mt-0.5"></i>
@@ -276,7 +276,7 @@
                         </div>
                     </div>
 
-                    <div class="p-4 border border-slate-200 bg-slate-50/50 rounded-2xl hover:bg-white hover:shadow-md transition">
+                    <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-2xl hover:bg-white hover:border-slate-300 hover:shadow-md transition">
                         <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Process Control 1 (Bengkel)</h3>
                         <div class="flex items-start space-x-2.5 text-xs text-slate-600">
                             <i data-lucide="user" class="w-4 h-4 text-indigo-500 mt-0.5"></i>
@@ -287,7 +287,7 @@
                         </div>
                     </div>
 
-                    <div class="p-4 border border-slate-200 bg-slate-50/50 rounded-2xl hover:bg-white hover:shadow-md transition">
+                    <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-2xl hover:bg-white hover:border-slate-300 hover:shadow-md transition">
                         <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Process Control 2</h3>
                         <div class="flex items-start space-x-2.5 text-xs text-slate-600">
                             <i data-lucide="user" class="w-4 h-4 text-indigo-500 mt-0.5"></i>
@@ -301,7 +301,7 @@
 
                 <!-- ARAS 2 -->
                 <div id="aras-2" class="tab-content grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div class="p-4 border border-slate-200 bg-slate-50/50 rounded-2xl hover:bg-white hover:shadow-md transition">
+                    <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-2xl hover:bg-white hover:border-slate-300 hover:shadow-md transition">
                         <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Chemistry 1</h3>
                         <div class="flex items-start space-x-2.5 text-xs text-slate-600">
                             <i data-lucide="user" class="w-4 h-4 text-indigo-500 mt-0.5"></i>
@@ -312,7 +312,7 @@
                         </div>
                     </div>
 
-                    <div class="p-4 border border-slate-200 bg-slate-50/50 rounded-2xl hover:bg-white hover:shadow-md transition">
+                    <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-2xl hover:bg-white hover:border-slate-300 hover:shadow-md transition">
                         <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Chemistry 2</h3>
                         <div class="flex items-start space-x-2.5 text-xs text-slate-600">
                             <i data-lucide="user" class="w-4 h-4 text-indigo-500 mt-0.5"></i>
@@ -323,7 +323,7 @@
                         </div>
                     </div>
 
-                    <div class="p-4 border border-slate-200 bg-slate-50/50 rounded-2xl hover:bg-white hover:shadow-md transition">
+                    <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-2xl hover:bg-white hover:border-slate-300 hover:shadow-md transition">
                         <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Analytical and Analysis</h3>
                         <div class="flex items-start space-x-2.5 text-xs text-slate-600">
                             <i data-lucide="user" class="w-4 h-4 text-indigo-500 mt-0.5"></i>
@@ -334,7 +334,7 @@
                         </div>
                     </div>
 
-                    <div class="p-4 border border-slate-200 bg-slate-50/50 rounded-2xl hover:bg-white hover:shadow-md transition">
+                    <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-2xl hover:bg-white hover:border-slate-300 hover:shadow-md transition">
                         <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Heat Transfer & Thermodynamics</h3>
                         <div class="flex items-start space-x-2.5 text-xs text-slate-600">
                             <i data-lucide="user" class="w-4 h-4 text-indigo-500 mt-0.5"></i>
@@ -345,7 +345,7 @@
                         </div>
                     </div>
 
-                    <div class="p-4 border border-slate-200 bg-slate-50/50 rounded-2xl hover:bg-white hover:shadow-md transition">
+                    <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-2xl hover:bg-white hover:border-slate-300 hover:shadow-md transition">
                         <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Computer</h3>
                         <div class="flex items-start space-x-2.5 text-xs text-slate-600">
                             <i data-lucide="user" class="w-4 h-4 text-indigo-500 mt-0.5"></i>
@@ -359,7 +359,7 @@
 
                 <!-- ARAS 3 -->
                 <div id="aras-3" class="tab-content grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div class="p-4 border border-slate-200 bg-slate-50/50 rounded-2xl hover:bg-white hover:shadow-md transition">
+                    <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-2xl hover:bg-white hover:border-slate-300 hover:shadow-md transition">
                         <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Bio Process</h3>
                         <div class="flex items-start space-x-2.5 text-xs text-slate-600">
                             <i data-lucide="user" class="w-4 h-4 text-indigo-500 mt-0.5"></i>
@@ -369,7 +369,7 @@
                         </div>
                     </div>
 
-                    <div class="p-4 border border-slate-200 bg-slate-50/50 rounded-2xl hover:bg-white hover:shadow-md transition">
+                    <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-2xl hover:bg-white hover:border-slate-300 hover:shadow-md transition">
                         <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Environment</h3>
                         <div class="flex items-start space-x-2.5 text-xs text-slate-600">
                             <i data-lucide="user" class="w-4 h-4 text-indigo-500 mt-0.5"></i>
@@ -379,7 +379,7 @@
                         </div>
                     </div>
 
-                    <div class="p-4 border border-slate-200 bg-slate-50/50 rounded-2xl hover:bg-white hover:shadow-md transition">
+                    <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-2xl hover:bg-white hover:border-slate-300 hover:shadow-md transition">
                         <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Reaction Engineering</h3>
                         <div class="flex items-start space-x-2.5 text-xs text-slate-600">
                             <i data-lucide="user" class="w-4 h-4 text-indigo-500 mt-0.5"></i>
@@ -390,7 +390,7 @@
                         </div>
                     </div>
 
-                    <div class="p-4 border border-slate-200 bg-slate-50/50 rounded-2xl hover:bg-white hover:shadow-md transition">
+                    <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-2xl hover:bg-white hover:border-slate-300 hover:shadow-md transition">
                         <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Physic</h3>
                         <div class="flex items-start space-x-2.5 text-xs text-slate-600">
                             <i data-lucide="user" class="w-4 h-4 text-indigo-500 mt-0.5"></i>
@@ -404,7 +404,7 @@
 
                 <!-- ARAS 4 -->
                 <div id="aras-4" class="tab-content grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div class="p-4 border border-slate-200 bg-slate-50/50 rounded-2xl hover:bg-white hover:shadow-md transition">
+                    <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-2xl hover:bg-white hover:border-slate-300 hover:shadow-md transition">
                         <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Computer 1</h3>
                         <div class="flex items-start space-x-2.5 text-xs text-slate-600">
                             <i data-lucide="user" class="w-4 h-4 text-indigo-500 mt-0.5"></i>
@@ -415,7 +415,7 @@
                         </div>
                     </div>
 
-                    <div class="p-4 border border-slate-200 bg-slate-50/50 rounded-2xl hover:bg-white hover:shadow-md transition">
+                    <div class="p-4 border border-slate-100 bg-slate-50/50 rounded-2xl hover:bg-white hover:border-slate-300 hover:shadow-md transition">
                         <h3 class="font-bold text-slate-800 text-sm mb-2">Makmal Computer 2</h3>
                         <div class="flex items-start space-x-2.5 text-xs text-slate-600">
                             <i data-lucide="user" class="w-4 h-4 text-indigo-500 mt-0.5"></i>
