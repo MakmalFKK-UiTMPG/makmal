@@ -38,37 +38,43 @@
     <!-- KANDUNGAN UTAMA PORTAL -->
     <div id="main-content" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        <!-- HEADER HERO ULTRA-MODEN -->
-        <header class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl mb-10 text-white relative overflow-hidden">
+        <!-- HEADER HERO ULTRA-MODEN (KEMAS DENGAN SOKONGAN TELEFON BIMBIT) -->
+        <header class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-xl mb-8 sm:mb-10 text-white relative overflow-hidden">
             <!-- CORAK GEOMETRIK DEKORATIF -->
             <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#818cf8_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
 
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 relative z-10">
-                <div class="flex items-center space-x-4">
-                    <div class="p-3.5 bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 rounded-2xl backdrop-blur-md">
-                        <i data-lucide="flask-conical" class="w-8 h-8"></i>
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-5 relative z-10">
+                
+                <!-- TAJUK & IKON UTAMA -->
+                <div class="flex items-start space-x-3 sm:space-x-4">
+                    <div class="p-2.5 sm:p-3.5 bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 rounded-xl sm:rounded-2xl backdrop-blur-md shrink-0 mt-0.5">
+                        <i data-lucide="flask-conical" class="w-6 h-6 sm:w-8 sm:h-8"></i>
                     </div>
-                    <div>
-                        <div class="flex items-center space-x-2">
-                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                            <span class="text-xs font-bold uppercase tracking-widest text-indigo-300">UiTM Cawangan Johor • Kampus Pasir Gudang</span>
+                    <div class="flex-1">
+                        <div class="flex items-center space-x-1.5 mb-1">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+                            <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider sm:tracking-widest text-indigo-300">UiTM Cawangan Johor • Kampus Pasir Gudang</span>
                         </div>
                         
-                        <div class="flex flex-wrap items-center gap-3 mt-1">
-                            <h1 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">Portal Makmal Fakulti Kejuruteraan Kimia</h1>
-                            
-                            <a href="carta-organisasi.html" class="inline-flex items-center space-x-1.5 bg-white/10 hover:bg-white/20 text-indigo-200 hover:text-white px-3.5 py-1.5 rounded-xl text-xs font-bold transition border border-white/10 backdrop-blur-sm shadow-sm">
-                                <i data-lucide="users" class="w-3.5 h-3.5"></i>
-                                <span>Tentang Kami</span>
-                            </a>
-                        </div>
+                        <h1 class="text-lg sm:text-2xl md:text-3xl font-extrabold text-white tracking-tight leading-snug sm:leading-normal">
+                            Portal Makmal Fakulti Kejuruteraan Kimia
+                        </h1>
                     </div>
                 </div>
 
-                <button id="logout-btn" class="inline-flex items-center justify-center space-x-2 bg-rose-500/20 hover:bg-rose-600 text-rose-200 hover:text-white px-4 py-2.5 rounded-xl font-bold text-xs transition border border-rose-500/30 self-start md:self-auto cursor-pointer shadow-md">
-                    <i data-lucide="log-out" class="w-4 h-4"></i>
-                    <span>Log Keluar</span>
-                </button>
+                <!-- BUTANG NAVIGASI (TENTANG KAMI & LOG KELUAR) -->
+                <div class="flex items-center justify-between sm:justify-end gap-3 pt-3 border-t border-slate-800/80 sm:border-0 sm:pt-0">
+                    <a href="carta-organisasi.html" class="inline-flex items-center justify-center space-x-1.5 bg-white/10 hover:bg-white/20 text-indigo-200 hover:text-white px-3.5 py-2 rounded-xl text-xs font-bold transition border border-white/10 backdrop-blur-sm shadow-sm w-full sm:w-auto">
+                        <i data-lucide="users" class="w-3.5 h-3.5"></i>
+                        <span>Tentang Kami</span>
+                    </a>
+
+                    <button id="logout-btn" class="inline-flex items-center justify-center space-x-1.5 bg-rose-500/20 hover:bg-rose-600 text-rose-200 hover:text-white px-4 py-2 rounded-xl font-bold text-xs transition border border-rose-500/30 cursor-pointer shadow-md w-full sm:w-auto shrink-0">
+                        <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                        <span>Log Keluar</span>
+                    </button>
+                </div>
+
             </div>
         </header>
 
