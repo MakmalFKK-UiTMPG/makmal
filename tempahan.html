@@ -17,7 +17,6 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script type="text/javascript">
        (function(){
-          // ✅ Public Key EmailJS anda
           emailjs.init("lIkOzetAaOEcNlzA2");
        })();
     </script>
@@ -61,7 +60,7 @@
             border: 1px solid #fecdd3;
         }
         .slot-disabled {
-            background-color: #f1f5f9;
+            background-color: #f8fafc;
             color: #94a3b8;
             font-weight: 500;
             cursor: not-allowed;
@@ -100,15 +99,15 @@
             </div>
         </header>
 
-        <!-- 📢 PEMBERITAHUAN SYARAT TEMPAHAN (SELEWAT-LEWATNYA 1 HARI SEBELUM) -->
+        <!-- 📢 PEMBERITAHUAN SYARAT TEMPAHAN -->
         <div class="mb-8 p-4 bg-amber-50/90 border border-amber-200/90 rounded-2xl flex items-start space-x-3.5 shadow-sm">
             <div class="p-2 bg-amber-500 text-white rounded-xl shrink-0 mt-0.5">
                 <i data-lucide="bell-ring" class="w-5 h-5"></i>
             </div>
             <div>
-                <h3 class="text-xs font-extrabold uppercase tracking-wider text-amber-900">Pemberitahuan Penting Syarat Tempahan</h3>
+                <h3 class="text-xs font-extrabold uppercase tracking-wider text-amber-900">Pemberitahuan Penting</h3>
                 <p class="text-xs sm:text-sm font-semibold text-amber-800 mt-0.5 leading-relaxed">
-                    Tempahan peralatan hendaklah dibuat <span class="underline decoration-amber-500 font-extrabold text-amber-950">selewat-lewatnya SATU (1) HARI SEBELUM</span> tarikh penggunaan yang dirancang. Tempahan pada hari yang sama (*same-day booking*) tidak dibenarkan oleh sistem.
+                    Tempahan peralatan hendaklah dibuat <span class="underline decoration-amber-500 font-extrabold text-amber-950">selewat-lewatnya SATU (1) HARI SEBELUM</span> tarikh penggunaan. Tempahan baharu pada hari yang sama adalah tidak dibenarkan
                 </p>
             </div>
         </div>
@@ -131,26 +130,22 @@
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <!-- 1. NAMA PEMOHON -->
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Nama Pemohon</label>
                         <input type="text" id="nama_pemohon" required placeholder="Contoh: Ahmad Bin Ali" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
                     </div>
 
-                    <!-- 2. NOMBOR TELEFON -->
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Nombor Telefon</label>
                         <input type="tel" id="no_telefon" required placeholder="Contoh: 012-3456789" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
                     </div>
                 </div>
 
-                <!-- 3. TUJUAN PENGGUNAAN -->
                 <div class="mb-6">
                     <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Tujuan Penggunaan</label>
                     <textarea id="tujuan" rows="2" placeholder="FYP/research/LI..." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition"></textarea>
                 </div>
 
-                <!-- 4. PILIH PERALATAN -->
                 <div class="p-4 bg-indigo-50/60 border border-indigo-100 rounded-xl">
                     <label class="block text-xs font-bold uppercase tracking-wider text-indigo-900 mb-2">🔍 Pilih Peralatan Untuk Lihat Ketersediaan Slot</label>
                     <select id="nama_peralatan" required onchange="kemaskiniStatusTimetable()" class="w-full px-4 py-2.5 bg-white border border-indigo-200 rounded-xl text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition cursor-pointer">
@@ -211,7 +206,6 @@
                         <input type="date" id="tarikh_guna" required readonly class="w-full px-4 py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 cursor-not-allowed">
                     </div>
 
-                    <!-- 🛠️ PILIHAN DROPDOWN MASA MULA & TAMAT FLEKSIBEL -->
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Masa Mula</label>
                         <select id="masa_mula" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
@@ -287,7 +281,7 @@
 
     </div>
 
-    <!-- SKRIP FIREBASE (KESELAMATAN & LOG KELUAR) -->
+    <!-- SKRIP FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -325,7 +319,7 @@
         });
     </script>
 
-    <!-- SKRIP SUPABASE & LOGIK KEMASKINI TEMPAHAN -->
+    <!-- SKRIP SUPABASE & LOGIK TIMETABLE FIX -->
     <script>
         const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
@@ -362,6 +356,7 @@
             }
         }
 
+        // 🛠️ JANA JADUAL 2 MINGGU (DENGAN TANDA KOSONG / TUTUP)
         function janaTimetable2Minggu() {
             const tbody = document.getElementById('isiTimetable2Minggu');
             tbody.innerHTML = '';
@@ -388,7 +383,6 @@
                     let formatTarikhISO = formatTarikhStandard(tarikh);
                     let formatPapar = `${tarikh.getDate()}/${tarikh.getMonth()+1} (${hariNama[dayOfWeek]})`;
 
-                    // 🛠️ SEMAK SAMA ADA TARIKH ADALAH HARI INI ATAU SEBELUM (TIDAK MEMATUHI SYARAT H-1)
                     let adakahHariSamaAtauLepas = (tarikh.getTime() <= hariIni.getTime());
 
                     if (hariDijana === 5) {
@@ -400,30 +394,29 @@
                     let row = tbody.insertRow();
                     row.className = "hover:bg-slate-50/80 transition";
 
-                    // 🛠️ JIKA TARIKH HARI INI, KUNCIKAN SLOT BERSERTA NOTIS HARUS 1 HARI SEBELUM
-                    if (adakahHariSamaAtauLepas) {
-                        let htmlSlotDisabled = '';
-                        for (let s = 0; s < 9; s++) {
-                            htmlSlotDisabled += `<td class="p-1 border-b border-slate-100 text-center"><div class="slot-disabled" onclick="alert('⚠️ Tempahan hendaklah dibuat selewat-lewatnya 1 hari sebelum tarikh penggunaan! Tempahan pada hari yang sama tidak dibenarkan.')">🚫 Tutup (H-1)</div></td>`;
+                    let slotsHTML = '';
+                    senaraiSlotJam.forEach(jam => {
+                        let jamTamatMap = {
+                            "08:00":"09:00", "09:00":"10:00", "10:00":"11:00", 
+                            "11:00":"12:00", "12:00":"13:00", "13:00":"14:00", 
+                            "14:00":"15:00", "15:00":"16:00", "16:00":"17:00"
+                        };
+                        let jamTamat = jamTamatMap[jam];
+
+                        if (adakahHariSamaAtauLepas) {
+                            // Slot lalai hari ini = Tutup (tetapi boleh di-override oleh Supabase jika ada rekod tempahan)
+                            slotsHTML += `<td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_${jam}" class="slot-disabled" onclick="alert('⚠️ Tempahan hendaklah dibuat selewat-lewatnya 1 hari sebelum tarikh penggunaan! Tempahan pada hari yang sama tidak dibenarkan.')">🚫 Tutup (H-1)</div></td>`;
+                        } else {
+                            slotsHTML += `<td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_${jam}" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '${jam}', '${jamTamat}')">🟢 Kosong</div></td>`;
                         }
-                        row.innerHTML = `
-                            <td class="p-2.5 font-bold text-slate-400 text-center border-b border-slate-100 bg-slate-50">${formatPapar}<br><span class="text-[9px] text-amber-600 font-extrabold">(Hari Ini)</span></td>
-                            ${htmlSlotDisabled}
-                        `;
-                    } else {
-                        row.innerHTML = `
-                            <td class="p-2.5 font-bold text-slate-800 text-center border-b border-slate-100">${formatPapar}</td>
-                            <td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_08:00" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '08:00', '09:00')">🟢 Kosong</div></td>
-                            <td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_09:00" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '09:00', '10:00')">🟢 Kosong</div></td>
-                            <td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_10:00" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '10:00', '11:00')">🟢 Kosong</div></td>
-                            <td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_11:00" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '11:00', '12:00')">🟢 Kosong</div></td>
-                            <td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_12:00" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '12:00', '13:00')">🟢 Kosong</div></td>
-                            <td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_13:00" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '13:00', '14:00')">🟢 Kosong</div></td>
-                            <td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_14:00" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '14:00', '15:00')">🟢 Kosong</div></td>
-                            <td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_15:00" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '15:00', '16:00')">🟢 Kosong</div></td>
-                            <td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_16:00" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '16:00', '17:00')">🟢 Kosong</div></td>
-                        `;
-                    }
+                    });
+
+                    row.innerHTML = `
+                        <td class="p-2.5 font-bold ${adakahHariSamaAtauLepas ? 'text-slate-500 bg-slate-50' : 'text-slate-800'} text-center border-b border-slate-100">
+                            ${formatPapar} ${adakahHariSamaAtauLepas ? '<br><span class="text-[9px] text-amber-600 font-extrabold">(Hari Ini)</span>' : ''}
+                        </td>
+                        ${slotsHTML}
+                    `;
                     hariDijana++;
                 }
                 harimaju++;
@@ -433,7 +426,6 @@
         function dapatkanSlotDalamJulat(mula, tamat) {
             let slotTerlibat = [];
             let iMula = senaraiSlotJam.indexOf(mula);
-            
             let mapTamat = { "09:00":0, "10:00":1, "11:00":2, "12:00":3, "13:00":4, "14:00":5, "15:00":6, "16:00":7, "17:00":8 };
             let iTamat = mapTamat[tamat];
 
@@ -445,6 +437,7 @@
             return slotTerlibat;
         }
 
+        // 🛠️ PROSES OVERRIDE SLOT YANG DAH DITEMPAH DARI SUPABASE (TERMASUK HARI INI)
         async function kemaskiniStatusTimetable() {
             janaTimetable2Minggu();
 
@@ -475,11 +468,12 @@
                         
                         if (elSlot) {
                             const namaPemohon = rekod.nama_pemohon || 'Pengguna';
+                            // Override slot (walaupun hari ini) menjadi DITEMPAH
                             elSlot.className = "slot-booked";
                             elSlot.innerHTML = `🔴 Ditempah:<br><strong>${namaPemohon}</strong>`;
                             
                             elSlot.onclick = function() {
-                                alert(`❌ Slot ini telah pun ditempah oleh "${namaPemohon}" (${rekod.masa_mula} - ${rekod.masa_tamat}) untuk ${peralatanDipilih} pada tarikh ${rekod.tarikh_guna}. Sila pilih slot lain.`);
+                                alert(`❌ Slot ini telah ditempah oleh "${namaPemohon}" (${rekod.masa_mula} - ${rekod.masa_tamat}) bagi ${peralatanDipilih} pada tarikh ${rekod.tarikh_guna}.`);
                             };
                         }
                     });
@@ -495,7 +489,6 @@
                 return;
             }
 
-            // 🛠️ KAWALAN SEKATAN H-1 SEBELUM PENERIMAAN SEBAGAI NILAI INPUT
             const tarikhDipilih = new Date(tarikh);
             tarikhDipilih.setHours(0,0,0,0);
             
@@ -580,7 +573,6 @@
                     return;
                 }
 
-                // 🛠️ KAWALAN SEKATAN H-1 SEMASA SUBMIT BORANG
                 const tarikhGunaObj = new Date(tarikh_guna);
                 tarikhGunaObj.setHours(0,0,0,0);
                 
