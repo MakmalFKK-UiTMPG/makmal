@@ -55,6 +55,30 @@
       text-decoration: underline;
       font-weight: bold;
     }
+    .webview-warning {
+      display: none;
+      margin-top: 20px;
+      padding: 14px;
+      background-color: #fef3c7;
+      border: 1px solid #fde047;
+      color: #78350f;
+      border-radius: 8px;
+      font-size: 13px;
+      text-align: left;
+      line-height: 1.5;
+    }
+    .btn-copy {
+      background-color: #d97706;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      font-size: 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-weight: bold;
+      width: 100%;
+    }
   </style>
 </head>
 <body>
@@ -64,6 +88,13 @@
     <p id="status-text">Sila log masuk menggunakan e-mel rasmi UiTM untuk mengakses menu utama.</p>
     
     <button id="login-btn">🔑 Log Masuk dengan Google</button>
+
+    <!-- NOTIS AMARAN MESRA PENGGUNA IOS (WHATSAPP & TELEGRAM) -->
+    <div id="webview-alert" class="webview-warning">
+      💡 <strong>Nota Untuk Pengguna iOS (iPhone/iPad):</strong><br>
+      Sila buka pautan ini menggunakan pelayar <strong>Safari</strong> atau <strong>Chrome</strong> jika anda membukanya menerusi WhatsApp atau Telegram.
+      <button type="button" class="btn-copy" onclick="copyPortalLink()">📋 Salin Pautan Portal</button>
+    </div>
   </div>
 
   <script type="module">
@@ -97,11 +128,19 @@
 
     const loginBtn = document.getElementById('login-btn');
     const statusText = document.getElementById('status-text');
+    const webviewAlert = document.getElementById('webview-alert');
 
-    // MESEJ BANTUAN PENTADBIR SISTEM
-    const mesejBantuanAdmin = `<br><br>💬 Jika tidak berjaya log masuk, sila hubungi Pentadbir Sistem: <strong>Nurhaslina Hambari</strong> di talian <a href="https://wa.me/6073818516" target="_blank">07-3818516</a> (WhatsApp Pejabat).`;
+    const mesejBantuanAdmin = `<br><br>💬 Hubungi Pentadbir Sistem: <strong>Nurhaslina Hambari</strong> di talian <a href="https://wa.me/6073818516" target="_blank">07-3818516</a> (WhatsApp Pejabat).`;
 
-    // FUNGSI UTAMA SEMAKAN AKSES EMEL UITM
+    // 🛠️ PENGESAN IN-APP BROWSER WHATSAPP / TELEGRAM IOS
+    function isIOSInAppBrowser() {
+      const ua = navigator.userAgent || navigator.vendor || window.opera;
+      const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+      const isWebView = /WhatsApp|Telegram|FBAN|FBAV|Instagram|Line/i.test(ua);
+      return isIOS && isWebView;
+    }
+
+    // SEMAK EMAIL RASMI UITM
     function semakAksesEmail(user) {
       const email = user.email || '';
       if (email.endsWith('@uitm.edu.my') || email.endsWith('@student.uitm.edu.my')) {
@@ -117,14 +156,19 @@
       }
     }
 
-    // SEMAK STATUS DAH LOG MASUK
+    // JIKA DIKESAN DALAM WHATSAPP / TELEGRAM IPHONE, TUNJUKKAN NOTIS
+    if (isIOSInAppBrowser()) {
+      webviewAlert.style.display = 'block';
+    }
+
+    // SEMAK STATUS LOG MASUK SEDIA ADA
     onAuthStateChanged(auth, (user) => {
       if (user) {
         semakAksesEmail(user);
       }
     });
 
-    // PROSES LOG MASUK POPUP PINTAR LOKAL
+    // PROSES LOG MASUK STABIL
     loginBtn.addEventListener('click', async () => {
       loginBtn.disabled = true;
       loginBtn.innerText = "⏳ Sedang Memproses...";
@@ -147,6 +191,15 @@
         }
       }
     });
+
+    // FUNGSI SALIN PAUTAN AUTOMATIK
+    window.copyPortalLink = function() {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        alert("✅ Pautan berjaya disalin! Sila buka aplikasi Safari atau Chrome dan 'Paste' pautan ini di address bar.");
+      }).catch(() => {
+        alert("Pautan portal: " + window.location.href);
+      });
+    };
   </script>
 </body>
 </html>
