@@ -48,6 +48,16 @@
       padding: 10px; 
       border-radius: 5px; 
     }
+    .tip-box {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #666;
+      background-color: #eef2f7;
+      padding: 10px;
+      border-radius: 6px;
+      border-left: 4px solid #1a73e8;
+      text-align: left;
+    }
   </style>
 </head>
 <body>
@@ -57,6 +67,11 @@
     <p id="status-text">Sila log masuk menggunakan e-mel rasmi UiTM untuk mengakses menu utama.</p>
     
     <button id="login-btn">🔑 Log Masuk dengan Google</button>
+
+    <div class="tip-box">
+      💡 <strong>Pengguna WhatsApp / iPhone:</strong><br>
+      Jika menghadapi masalah log masuk, tekan butang tiga titik (<strong>...</strong>) di penjuru skrin dan pilih <strong>"Open in Safari"</strong> atau <strong>"Open in Chrome"</strong>.
+    </div>
   </div>
 
   <script type="module">
@@ -64,6 +79,7 @@
     import { 
       getAuth, 
       GoogleAuthProvider, 
+      signInWithPopup, 
       signInWithRedirect, 
       getRedirectResult, 
       onAuthStateChanged, 
@@ -86,47 +102,70 @@
     const loginBtn = document.getElementById('login-btn');
     const statusText = document.getElementById('status-text');
 
-    // 1. MULA PROSES LOG MASUK DENGAN REDIRECT (MENGELAKKAN POPUP BLOCKER IPHONE)
-    loginBtn.addEventListener('click', () => {
-      loginBtn.disabled = true;
-      loginBtn.innerText = "⏳ Sedang Memproses...";
-      signInWithRedirect(auth, provider);
-    });
+    // FUNGSI SEMAKAN EMEL RASMI UITM
+    function semakAksesEmail(user) {
+      const email = user.email || '';
+      if (email.endsWith('@uitm.edu.my') || email.endsWith('@student.uitm.edu.my')) {
+        statusText.innerHTML = `<span style="color: #27ae60; font-weight: bold;">Log masuk berjaya! Mengalihkan...</span>`;
+        setTimeout(() => {
+          window.location.href = "makmal.html";
+        }, 800);
+      } else {
+        statusText.innerHTML = `<div class="error">Akses Ditolak!<br>E-mel (${email}) bukan e-mel rasmi UiTM.</div>`;
+        signOut(auth);
+        loginBtn.disabled = false;
+        loginBtn.innerText = "🔑 Log Masuk dengan Google";
+      }
+    }
 
-    // 2. SEMAK DAPATKAN KEPUTUSAN REDIRECT DARI GOOGLE
+    // 1. SEMAK APABILA KEMBALI DARIPADA PROSES REDIRECT (JIKA DIPANGGIL)
     getRedirectResult(auth)
       .then((result) => {
         if (result && result.user) {
-          const user = result.user;
-          const email = user.email || '';
-
-          if (email.endsWith('@uitm.edu.my') || email.endsWith('@student.uitm.edu.my')) {
-            statusText.innerHTML = `<span style="color: #27ae60; font-weight: bold;">Log masuk berjaya! Mengalihkan...</span>`;
-            setTimeout(() => {
-              window.location.href = "makmal.html";
-            }, 1000);
-          } else {
-            statusText.innerHTML = `<div class="error">Akses Ditolak!<br>E-mel (${email}) bukan e-mel rasmi UiTM.</div>`;
-            signOut(auth);
-            loginBtn.disabled = false;
-            loginBtn.innerText = "🔑 Log Masuk dengan Google";
-          }
+          semakAksesEmail(result.user);
         }
       })
       .catch((error) => {
-        console.error("Firebase Auth Redirect Error:", error);
-        statusText.innerHTML = `<div class="error">Ralat: ${error.message}</div>`;
-        loginBtn.disabled = false;
-        loginBtn.innerText = "🔑 Log Masuk dengan Google";
+        console.warn("Redirect result error:", error);
       });
 
-    // 3. SEMAK SAMA ADA PENGGUNA MEMANG DAH SEDIA LOG MASUK
+    // 2. SEMAK STATUS PENDAFTARAN SEDIA ADA
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        const email = user.email || '';
-        if (email.endsWith('@uitm.edu.my') || email.endsWith('@student.uitm.edu.my')) {
-          statusText.innerHTML = `<span style="color: #27ae60; font-weight: bold;">Log masuk berjaya! Mengalihkan...</span>`;
-          window.location.href = "makmal.html";
+        semakAksesEmail(user);
+      }
+    });
+
+    // 3. LOGIK LOG MASUK HYBRID PINTAR
+    loginBtn.addEventListener('click', async () => {
+      loginBtn.disabled = true;
+      loginBtn.innerText = "⏳ Sedang Memproses...";
+
+      try {
+        // PERCUBAAN 1: Gunakan Popup (Sangat stabil di WhatsApp In-App Browser)
+        const result = await signInWithPopup(auth, provider);
+        semakAksesEmail(result.user);
+      } catch (error) {
+        console.error("Popup Error:", error.code, error.message);
+
+        // JIKA POPUP DISEKAT OLEH PELAYAR (Cth: Safari iPhone)
+        if (error.code === 'auth/popup-blocked' || error.code === 'auth/cancelled-popup-request') {
+          try {
+            // PERCUBAAN 2: Beralih ke Redirect secara automatik
+            await signInWithRedirect(auth, provider);
+          } catch (redirectErr) {
+            statusText.innerHTML = `<div class="error">Ralat Log Masuk: Sila buka pautan ini di luar aplikasi WhatsApp (Guna Safari/Chrome).</div>`;
+            loginBtn.disabled = false;
+            loginBtn.innerText = "🔑 Log Masuk dengan Google";
+          }
+        } else if (error.code !== 'auth/popup-closed-by-user') {
+          statusText.innerHTML = `<div class="error">Ralat: ${error.message}</div>`;
+          loginBtn.disabled = false;
+          loginBtn.innerText = "🔑 Log Masuk dengan Google";
+        } else {
+          // Pengguna menutup tetingkap popup sendiri
+          loginBtn.disabled = false;
+          loginBtn.innerText = "🔑 Log Masuk dengan Google";
         }
       }
     });
