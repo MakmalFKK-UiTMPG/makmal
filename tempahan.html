@@ -43,8 +43,9 @@
             padding: 8px 6px;
             border: 1px solid #a7f3d0;
             transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
         }
-        .slot-available:hover { 
+        .slot-available:active, .slot-available:hover { 
             background-color: #d1fae5; 
             border-color: #10b981; 
             transform: translateY(-1px);
@@ -100,7 +101,7 @@
         </header>
 
         <!-- PEMBERITAHUAN SYARAT TEMPAHAN -->
-        <div class="mb-8 p-4 bg-amber-50/90 border border-amber-200/90 rounded-2xl flex items-start space-x-3.5 shadow-sm">
+        <div class="mb-6 p-4 bg-amber-50/90 border border-amber-200/90 rounded-2xl flex items-start space-x-3.5 shadow-sm">
             <div class="p-2 bg-amber-500 text-white rounded-xl shrink-0 mt-0.5">
                 <i data-lucide="bell-ring" class="w-5 h-5"></i>
             </div>
@@ -108,6 +109,19 @@
                 <h3 class="text-xs font-extrabold uppercase tracking-wider text-amber-900">Pemberitahuan Penting</h3>
                 <p class="text-xs sm:text-sm font-semibold text-amber-800 mt-0.5 leading-relaxed">
                     Tempahan peralatan hendaklah dibuat <span class="underline decoration-amber-500 font-extrabold text-amber-950">selewat-lewatnya SATU (1) HARI SEBELUM</span> tarikh penggunaan. Tempahan baharu pada hari yang sama adalah tidak dibenarkan.
+                </p>
+            </div>
+        </div>
+
+        <!-- PEMBERITAHUAN UNTUK HOT PLATE & WEIGHING BALANCE -->
+        <div class="mb-8 p-4 bg-blue-50 border border-blue-200/90 rounded-2xl flex items-start space-x-3.5 shadow-sm">
+            <div class="p-2 bg-blue-600 text-white rounded-xl shrink-0 mt-0.5">
+                <i data-lucide="clock-alert" class="w-5 h-5"></i>
+            </div>
+            <div>
+                <h3 class="text-xs font-extrabold uppercase tracking-wider text-blue-900">Syarat Khas Tempahan Hot Plate & Weighing Balance</h3>
+                <p class="text-xs sm:text-sm font-semibold text-blue-800 mt-0.5 leading-relaxed">
+                    Peralatan <strong class="text-blue-950 underline">Hot Plate</strong> dan <strong class="text-blue-950 underline">Weighing Balance</strong> hanya <u>WAJIB ditempah sekiranya tempoh penggunaan MELEBIHI 1 JAM</u>. Bagi penggunaan kurang dari 1 jam, pengguna boleh terus menggunakannya mengikut kekosongan semasa.
                 </p>
             </div>
         </div>
@@ -146,7 +160,7 @@
                     <textarea id="tujuan" rows="2" placeholder="FYP/research/LI..." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition"></textarea>
                 </div>
 
-                <!-- 🔍 PILIHAN PERALATAN (TEKS KUANTITI DIBUANG) -->
+                <!-- PILIHAN PERALATAN -->
                 <div class="p-4 bg-indigo-50/60 border border-indigo-100 rounded-xl space-y-4">
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-indigo-900 mb-2">🔍 Pilih Nama Peralatan</label>
@@ -155,20 +169,19 @@
                             <option value="Vacuum Furnace">Vacuum Furnace</option>
                             <option value="Muffle Furnace">Muffle Furnace</option>
                             <option value="Flocculation Device (Jar Test)">Flocculation Device (Jar Test)</option>
-                            <option value="Weighing Balance">Weighing Balance</option>
-                            <option value="Hot Plate">Hot Plate</option>
-                            <option value="Weighing Balance">Weighing Balance</option>
+                            <option value="Weighing Balance">Weighing Balance (Hanya jika > 1 jam)</option>
+                            <option value="Hot Plate">Hot Plate (Hanya jika > 1 jam)</option>
                             <option value="Laboratory Oven">Laboratory Oven</option>
                             <option value="UV-VIS">UV-VIS</option>
                             <option value="FTIR">FTIR</option>
                             <option value="SEM">SEM</option>
                             <option value="TGA">TGA</option>
-                           <option value="DSC">DSC</option>
-                           <option value="ICP_OES">ICP_OES</option>
+                            <option value="DSC">DSC</option>
+                            <option value="ICP_OES">ICP_OES</option>
                         </select>
                     </div>
 
-                    <!-- 🛠️ DROPDOWN NOMBOR UNIT AUTOMATIK -->
+                    <!-- DROPDOWN NOMBOR UNIT AUTOMATIK -->
                     <div id="bekasPilihanUnit" class="hidden animate-fadeIn">
                         <label class="block text-xs font-bold uppercase tracking-wider text-indigo-900 mb-2">⚙️ Pilih Unit Peralatan</label>
                         <select id="unit_peralatan" onchange="kemaskiniStatusTimetable()" class="w-full px-4 py-2.5 bg-indigo-100/70 border border-indigo-300 rounded-xl text-sm font-bold text-indigo-950 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition cursor-pointer">
@@ -268,7 +281,7 @@
             <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
                 <div>
                     <h3 class="text-base font-bold text-slate-900">Status Tempahan Semasa (Aktif)</h3>
-                    <p class="text-xs text-slate-500 mt-0.5">Senarai permohonan tempahan instrumen yang sedang diproses atau telah diluluskan.</p>
+                    <p class="text-xs text-slate-500 mt-0.5">Senarai permohonan tempahan penggunaan alat yang sedang diproses atau telah diluluskan.</p>
                 </div>
             </div>
 
@@ -336,7 +349,7 @@
         });
     </script>
 
-    <!-- SKRIP SUPABASE & LOGIK TIMETABLE FIX -->
+    <!-- SKRIP SUPABASE & LOGIK TIMETABLE -->
     <script>
         const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
@@ -346,9 +359,9 @@
         let idTempahanSedangEdit = null; 
         const senaraiSlotJam = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00"];
 
-        // TETAPAN PETAPAKAN UNIT PERALATAN (KUANTITI UNIT DILENGKAPKAN)
+        // TETAPAN PETAPAKAN UNIT PERALATAN
         const tetapanUnitPeralatan = {
-            "Hot Plate": 11,
+            "Hot Plate": 8,
             "Weighing Balance": 5,
             "Flocculation Device (Jar Test)": 2,
             "Laboratory Oven": 4
@@ -361,11 +374,16 @@
             return `${yyyy}-${mm}-${dd}`;
         }
 
-        // 🛠️ LOGIK MENJANA BANTUAN KOTAK UNIT PERALATAN DINAMIK (TEXT KEMAS)
+        // LOGIK MENJANA KOTAK UNIT PERALATAN DINAMIK & PERINGATAN KHAS
         function kemaskiniPilihanUnit() {
             const namaAlat = document.getElementById('nama_peralatan').value;
             const bekasUnit = document.getElementById('bekasPilihanUnit');
             const selectUnit = document.getElementById('unit_peralatan');
+
+            // POPUP AMARAN UNTUK HOT PLATE & WEIGHING BALANCE
+            if (namaAlat === 'Hot Plate' || namaAlat === 'Weighing Balance') {
+                alert(`📌 PERINGATAN SYARAT TEMPAHAN:\n\nPenggunaan ${namaAlat} kurang daripada 1 jam TIDAK PERLU DITEMPAH.\n\nSila pastikan anda membuat tempahan HANYA jika tempoh penggunaan anda MELEBIHI 1 JAM.`);
+            }
 
             selectUnit.innerHTML = '';
 
@@ -386,7 +404,6 @@
             kemaskiniStatusTimetable();
         }
 
-        // 🛠️ MENDAPATKAN NAMA PENUH UNTUK DATABASE (CONTOH: "Hot Plate - Unit 1")
         function dapatkanNamaPeralatanPenuh() {
             const namaAlat = document.getElementById('nama_peralatan').value;
             const selectUnit = document.getElementById('unit_peralatan');
@@ -582,7 +599,6 @@
             document.getElementById('no_telefon').value = rekod.no_telefon || '';
             document.getElementById('tujuan').value = rekod.tujuan || '';
 
-            // PECAHKAN NAMA DENGAN UNIT JIKA ADA
             let namaAsal = rekod.nama_peralatan || '';
             if (namaAsal.includes(' - Unit ')) {
                 let bahagian = namaAsal.split(' - ');
