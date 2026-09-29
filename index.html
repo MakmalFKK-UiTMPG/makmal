@@ -4,10 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Log Masuk - Portal Makmal FKK UiTM</title>
-  <!-- TAILWIND CSS CDN UNTUK TAMPILAN MODEN & WOW -->
+  <!-- TAILWIND CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- LUCIDE ICONS CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- GOOGLE FONTS (PLAYFAIR DISPLAY ITALIC UNTUK TULISAN CONDONG BEAUTIFUL) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,600;1,700&display=swap" rel="stylesheet">
+  
   <style>
     @keyframes pulseGlow {
       0%, 100% { transform: scale(1); opacity: 0.8; }
@@ -15,6 +20,11 @@
     }
     .glow-effect {
       animation: pulseGlow 4s infinite ease-in-out;
+    }
+    /* STIL FON CONDONG ELEGAN */
+    .font-script {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
     }
   </style>
 </head>
@@ -24,15 +34,15 @@
   <div class="absolute -top-32 -left-32 w-96 h-96 bg-indigo-600/30 rounded-full blur-3xl glow-effect pointer-events-none"></div>
   <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl glow-effect pointer-events-none"></div>
 
-  <!-- KAD UTAMA LOG MASUK (LENCANA DI TENGAH BANNER) -->
+  <!-- KAD UTAMA LOG MASUK -->
   <main class="max-w-md w-full bg-white/95 backdrop-blur-xl border border-slate-200/80 rounded-3xl overflow-hidden shadow-2xl relative z-10 transition-all">
     
     <!-- BANNER GAMBAR BANGUNAN UITM -->
     <div class="h-44 w-full bg-cover bg-center relative bg-slate-800" style="background-image: url('bangunan-fkk.jpeg');">
-      <!-- Overlay Gradient & Lencana UiTM Tepat Di Tengah -->
+      <!-- Overlay Gradient & Tulisan "Selamat Datang ke" Condong di Tengah -->
       <div class="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent flex items-end justify-center p-5">
-        <span class="inline-flex items-center px-4 py-1.5 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-indigo-600/90 text-white shadow-lg backdrop-blur-md border border-white/20">
-          UiTM Pasir Gudang
+        <span class="inline-flex items-center px-4 py-1.5 rounded-full text-sm sm:text-base font-script text-amber-200 shadow-lg backdrop-blur-md bg-slate-900/60 border border-amber-300/30">
+          Selamat Datang ke
         </span>
       </div>
     </div>
@@ -56,12 +66,12 @@
         <span class="text-sm font-bold">Log Masuk dengan Google</span>
       </button>
 
-      <!-- NOTIS AMARAN MESRA PENGGUNA IOS (WHATSAPP & TELEGRAM) -->
+      <!-- NOTIS PEMBERITAHUAN MESRA PENGGUNA IOS (WHATSAPP & TELEGRAM) -->
       <div id="webview-alert" class="hidden mt-6 p-4 bg-amber-50 border border-amber-200/90 rounded-2xl text-left shadow-sm">
         <div class="flex items-start space-x-3">
           <i data-lucide="smartphone" class="w-5 h-5 text-amber-600 shrink-0 mt-0.5"></i>
           <div class="text-xs text-amber-900 leading-relaxed">
-            <strong class="font-extrabold text-amber-950">💡Untuk Pengguna iOS (iPhone/iPad):</strong><br>
+            <strong class="font-extrabold text-amber-950">Untuk Pengguna iOS (iPhone/iPad):</strong><br>
             Sila buka pautan ini menggunakan pelayar <strong class="text-indigo-700">Safari</strong> atau <strong class="text-indigo-700">Chrome</strong> jika anda membuka pautan menerusi WhatsApp atau Telegram.
           </div>
         </div>
@@ -113,7 +123,7 @@
 
     const mesejBantuanAdmin = `<br><br>💬 Hubungi Pentadbir Sistem: <strong>Nurhaslina Hambari</strong> di talian <a href="https://wa.me/6073818516" target="_blank" class="text-indigo-600 font-bold underline">07-3818516</a> (WhatsApp Pejabat).`;
 
-    // 🛠️️ PENGESAN IN-APP BROWSER WHATSAPP / TELEGRAM IOS
+    // 🛠 PENGESAN IN-APP BROWSER WHATSAPP / TELEGRAM IOS
     function isIOSInAppBrowser() {
       const ua = navigator.userAgent || navigator.vendor || window.opera;
       const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
@@ -190,7 +200,7 @@
     // FUNGSI SALIN PAUTAN AUTOMATIK
     window.copyPortalLink = function() {
       navigator.clipboard.writeText(window.location.href).then(() => {
-        alert("✅ Pautan berjaya disalin! Sila buka aplikasi Safari atau Chrome dan 'Paste' pautan ini di Address Bar.");
+        alert("✅ Pautan berjaya disalin! Sila buka aplikasi Safari atau Chrome dan 'Paste' pautan ini di Address Bar (Bar Alamat).");
       }).catch(() => {
         alert("Pautan portal: " + window.location.href);
       });
