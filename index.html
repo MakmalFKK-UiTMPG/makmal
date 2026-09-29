@@ -1,214 +1,152 @@
 <!DOCTYPE html>
-
 <html lang="ms">
-
 <head>
-
   <meta charset="UTF-8">
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Log Masuk - Portal Makmal FKK UiTM</title>
-
   <style>
-
     body { 
-
       font-family: Arial, sans-serif; 
-
       text-align: center; 
-
       padding: 50px 20px; 
-
       background-color: #f4f6f9; 
-
       margin: 0;
-
     }
-
     .card { 
-
       background: white; 
-
       padding: 35px; 
-
       border-radius: 10px; 
-
       display: inline-block; 
-
       box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
-
       max-width: 400px; 
-
       width: 100%; 
-
       box-sizing: border-box;
-
     }
-
     h2 { color: #2c3e50; margin-bottom: 10px; }
-
     p { color: #7f8c8d; font-size: 14px; line-height: 1.5; }
-
     button { 
-
       background-color: #1a73e8; 
-
       color: white; 
-
       border: none; 
-
       padding: 12px 24px; 
-
       font-size: 15px; 
-
       border-radius: 5px; 
-
       cursor: pointer; 
-
       margin-top: 20px; 
-
       font-weight: bold; 
-
       width: 100%;
-
       transition: background 0.2s;
-
     }
-
     button:hover { background-color: #1557b0; }
-
+    button:disabled { background-color: #a0c3ff; cursor: not-allowed; }
     .error { 
-
       color: #d93025; 
-
       font-weight: bold; 
-
       margin-top: 15px; 
-
-      font-size: 14px; 
-
+      font-size: 13px; 
       background: #fce8e6; 
-
-      padding: 10px; 
-
-      border-radius: 5px; 
-
+      padding: 12px; 
+      border-radius: 8px; 
+      text-align: left;
+      line-height: 1.5;
     }
-
+    .error a {
+      color: #1a73e8;
+      text-decoration: underline;
+      font-weight: bold;
+    }
   </style>
-
 </head>
-
 <body>
 
-
-
   <div class="card">
-
     <h2>Portal Makmal FKK UiTM Pasir Gudang</h2>
-
     <p id="status-text">Sila log masuk menggunakan e-mel rasmi UiTM untuk mengakses menu utama.</p>
-
     
-
     <button id="login-btn">🔑 Log Masuk dengan Google</button>
-
   </div>
 
-
-
   <script type="module">
-
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-
-    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-
+    import { 
+      getAuth, 
+      GoogleAuthProvider, 
+      signInWithPopup, 
+      setPersistence, 
+      browserLocalPersistence,
+      onAuthStateChanged, 
+      signOut 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     const firebaseConfig = {
-
       apiKey: "AIzaSyDDC9PLSCOzna4caIsrfPSvfR3A_FczKDc",
-
       authDomain: "sistem-makmal-fkkuitmpg.firebaseapp.com",
-
       projectId: "sistem-makmal-fkkuitmpg",
-
       storageBucket: "sistem-makmal-fkkuitmpg.firebasestorage.app",
-
       messagingSenderId: "291806336887",
-
       appId: "1:291806336887:web:a0d4fca1866459ead03372"
-
     };
 
-
-
     const app = initializeApp(firebaseConfig);
-
     const auth = getAuth(app);
-
     const provider = new GoogleAuthProvider();
 
-
-
-    const loginBtn = document.getElementById('login-btn');
-
-    const statusText = document.getElementById('status-text');
-
-
-
-    loginBtn.addEventListener('click', () => {
-
-      signInWithPopup(auth, provider)
-
-        .then((result) => {
-
-          const user = result.user;
-
-          const email = user.email;
-
-
-
-          if (email.endsWith('@uitm.edu.my') || email.endsWith('@student.uitm.edu.my')) {
-
-            statusText.innerHTML = `<span style="color: #27ae60; font-weight: bold;">Log masuk berjaya! Mengalihkan...</span>`;
-
-            
-
-            setTimeout(() => {
-
-              window.location.href = "makmal.html";
-
-            }, 1000);
-
-
-
-          } else {
-
-            statusText.innerHTML = `<div class="error">Akses Ditolak!<br>E-mel (${email}) bukan e-mel rasmi UiTM.</div>`;
-
-            signOut(auth);
-
-          }
-
-        })
-
-        .catch((error) => {
-
-          console.error("Firebase Auth Error:", error);
-
-          statusText.innerHTML = `<div class="error">Ralat: ${error.message}</div>`;
-
-        });
-
+    provider.setCustomParameters({
+      prompt: 'select_account'
     });
 
+    const loginBtn = document.getElementById('login-btn');
+    const statusText = document.getElementById('status-text');
+
+    // MESEJ BANTUAN PENTADBIR SISTEM
+    const mesejBantuanAdmin = `<br><br>💬 Jika tidak berjaya log masuk, sila hubungi Pentadbir Sistem: <strong>Nurhaslina Hambari</strong> di talian <a href="https://wa.me/6073818516" target="_blank">07-3818516</a> (WhatsApp Pejabat).`;
+
+    // FUNGSI UTAMA SEMAKAN AKSES EMEL UITM
+    function semakAksesEmail(user) {
+      const email = user.email || '';
+      if (email.endsWith('@uitm.edu.my') || email.endsWith('@student.uitm.edu.my')) {
+        statusText.innerHTML = `<span style="color: #27ae60; font-weight: bold;">Log masuk berjaya! Mengalihkan...</span>`;
+        setTimeout(() => {
+          window.location.href = "makmal.html";
+        }, 600);
+      } else {
+        statusText.innerHTML = `<div class="error">❌ Akses Ditolak!<br>E-mel (${email}) bukan e-mel rasmi UiTM.${mesejBantuanAdmin}</div>`;
+        signOut(auth);
+        loginBtn.disabled = false;
+        loginBtn.innerText = "🔑 Log Masuk dengan Google";
+      }
+    }
+
+    // SEMAK STATUS DAH LOG MASUK
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        semakAksesEmail(user);
+      }
+    });
+
+    // PROSES LOG MASUK POPUP PINTAR LOKAL
+    loginBtn.addEventListener('click', async () => {
+      loginBtn.disabled = true;
+      loginBtn.innerText = "⏳ Sedang Memproses...";
+
+      try {
+        await setPersistence(auth, browserLocalPersistence);
+        const result = await signInWithPopup(auth, provider);
+        semakAksesEmail(result.user);
+      } catch (error) {
+        console.error("Auth Error:", error);
+        loginBtn.disabled = false;
+        loginBtn.innerText = "🔑 Log Masuk dengan Google";
+
+        if (error.code === 'auth/popup-blocked') {
+          statusText.innerHTML = `<div class="error">⚠️ Tetingkap Disekat!<br>Sila benarkan 'Pop-ups' dalam tetapan pelayar anda.${mesejBantuanAdmin}</div>`;
+        } else if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
+          statusText.innerText = "Sila tekan butang sekali lagi untuk meneruskan log masuk.";
+        } else {
+          statusText.innerHTML = `<div class="error">Ralat Log Masuk: ${error.message}${mesejBantuanAdmin}</div>`;
+        }
+      }
+    });
   </script>
-
 </body>
-
 </html>
-
-  
-
