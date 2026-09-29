@@ -1,3 +1,14 @@
+Betul, kalau buat Hot Plate 1 hingga 11 satu persatu dalam dropdown <select>, senarai itu akan jadi sangat panjang dan kurang mesra pengguna pada skrin telefon bimbit.
+💡 Solusi Bertaraf Profesional & Kemas: "Dropdown Bertingkat / Dua Peringkat"
+Kita boleh pisahkan borang tersebut secara pintar:
+ * Menu 1 (Pilih Nama Peralatan): Hanya ada pilihan umum sahaja (Hot Plate, Weighing Balance, Flocculation Device (Jar Test)).
+ * Menu 2 (Pilih Nombor Unit): Dropdown kedua ini hanya akan muncul secara automatik selepas pengguna memilih peralatan yang mempunyai lebih daripada 1 unit!
+📱 Gambaran Paparan Antaramuka (UI):
+ * Jika pilih Vacuum Furnace \rightarrow Unit pilihan tidak muncul (sebab memang ada 1 unit sahaja).
+ * Jika pilih Hot Plate \rightarrow Kotak pilihan baharu muncul di sebelah/bawahnya:
+   > Unit Hot Plate: [ Unit 1 ] / [ Unit 2 ] ... hingga [ Unit 11 ].
+   > 
+Kod Full tempahan.html (Dengan Dropdown Unit Dinamik & Kemas):
 <!DOCTYPE html>
 <html lang="ms">
 <head>
@@ -13,7 +24,7 @@
     <!-- SUPABASE SDK -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     
-    <!-- ✉️ SDK EMAILJS UNTUK NOTIFIKASI EMEL -->
+    <!-- SDK EMAILJS UNTUK NOTIFIKASI EMEL -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script type="text/javascript">
        (function(){
@@ -99,7 +110,7 @@
             </div>
         </header>
 
-        <!-- 📢 PEMBERITAHUAN SYARAT TEMPAHAN -->
+        <!-- PEMBERITAHUAN SYARAT TEMPAHAN -->
         <div class="mb-8 p-4 bg-amber-50/90 border border-amber-200/90 rounded-2xl flex items-start space-x-3.5 shadow-sm">
             <div class="p-2 bg-amber-500 text-white rounded-xl shrink-0 mt-0.5">
                 <i data-lucide="bell-ring" class="w-5 h-5"></i>
@@ -107,7 +118,7 @@
             <div>
                 <h3 class="text-xs font-extrabold uppercase tracking-wider text-amber-900">Pemberitahuan Penting</h3>
                 <p class="text-xs sm:text-sm font-semibold text-amber-800 mt-0.5 leading-relaxed">
-                    Tempahan peralatan hendaklah dibuat <span class="underline decoration-amber-500 font-extrabold text-amber-950">selewat-lewatnya SATU (1) HARI SEBELUM</span> tarikh penggunaan. Tempahan baharu pada hari yang sama adalah tidak dibenarkan
+                    Tempahan peralatan hendaklah dibuat <span class="underline decoration-amber-500 font-extrabold text-amber-950">selewat-lewatnya SATU (1) HARI SEBELUM</span> tarikh penggunaan. Tempahan baharu pada hari yang sama adalah tidak dibenarkan.
                 </p>
             </div>
         </div>
@@ -146,17 +157,30 @@
                     <textarea id="tujuan" rows="2" placeholder="FYP/research/LI..." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition"></textarea>
                 </div>
 
-                <div class="p-4 bg-indigo-50/60 border border-indigo-100 rounded-xl">
-                    <label class="block text-xs font-bold uppercase tracking-wider text-indigo-900 mb-2">🔍 Pilih Peralatan Untuk Lihat Ketersediaan Slot</label>
-                    <select id="nama_peralatan" required onchange="kemaskiniStatusTimetable()" class="w-full px-4 py-2.5 bg-white border border-indigo-200 rounded-xl text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition cursor-pointer">
-                        <option value="">-- Sila Pilih Peralatan --</option>
-                        <option value="Vacuum Furnace">Vacuum Furnace</option>
-                        <option value="Muffle Furnace">Muffle Furnace</option>
-                        <option value="UV-VIS">UV-VIS</option>
-                        <option value="FTIR">FTIR</option>
-                        <option value="SEM">SEM</option>
-                        <option value="TGA">TGA</option>
-                    </select>
+                <!-- 🔍 PILIHAN PERALATAN & KOTAK UNIT AUTOMATIK -->
+                <div class="p-4 bg-indigo-50/60 border border-indigo-100 rounded-xl space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-indigo-900 mb-2">🔍 Pilih Nama Peralatan</label>
+                        <select id="nama_peralatan" required onchange="kemaskiniPilihanUnit()" class="w-full px-4 py-2.5 bg-white border border-indigo-200 rounded-xl text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition cursor-pointer">
+                            <option value="">-- Sila Pilih Peralatan --</option>
+                            <option value="Vacuum Furnace">Vacuum Furnace</option>
+                            <option value="Muffle Furnace">Muffle Furnace</option>
+                            <option value="UV-VIS">UV-VIS</option>
+                            <option value="FTIR">FTIR</option>
+                            <option value="SEM">SEM</option>
+                            <option value="TGA">TGA</option>
+                            <option value="Flocculation Device (Jar Test)">Flocculation Device (Jar Test) - (2 Unit)</option>
+                            <option value="Weighing Balance">Weighing Balance - (5 Unit)</option>
+                            <option value="Hot Plate">Hot Plate - (11 Unit)</option>
+                        </select>
+                    </div>
+
+                    <!-- 🛠️ DROPDOWN DUA PERINGKAT: MUNCUL APABILA ALAT ADA BERBILANG UNIT -->
+                    <div id="bekasPilihanUnit" class="hidden animate-fadeIn">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-indigo-900 mb-2">⚙️ Pilih Nombor Unit Peralatan</label>
+                        <select id="unit_peralatan" onchange="kemaskiniStatusTimetable()" class="w-full px-4 py-2.5 bg-indigo-100/70 border border-indigo-300 rounded-xl text-sm font-bold text-indigo-950 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition cursor-pointer">
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -329,11 +353,54 @@
         let idTempahanSedangEdit = null; 
         const senaraiSlotJam = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00"];
 
+        // TETAPAN PETAPAKAN UNIT PERALATAN (KUANTITI UNIT DILENGKAPKAN)
+        const tetapanUnitPeralatan = {
+            "Hot Plate": 11,
+            "Weighing Balance": 5,
+            "Flocculation Device (Jar Test)": 2
+        };
+
         function formatTarikhStandard(d) {
             let yyyy = d.getFullYear();
             let mm = String(d.getMonth() + 1).padStart(2, '0');
             let dd = String(d.getDate()).padStart(2, '0');
             return `${yyyy}-${mm}-${dd}`;
+        }
+
+        // 🛠️ LOGIK MENJANA BANTUAN KOTAK UNIT PERALATAN DINAMIK
+        function kemaskiniPilihanUnit() {
+            const namaAlat = document.getElementById('nama_peralatan').value;
+            const bekasUnit = document.getElementById('bekasPilihanUnit');
+            const selectUnit = document.getElementById('unit_peralatan');
+
+            selectUnit.innerHTML = '';
+
+            if (tetapanUnitPeralatan[namaAlat]) {
+                const jumlahUnit = tetapanUnitPeralatan[namaAlat];
+                bekasUnit.classList.remove('hidden');
+
+                for (let i = 1; i <= jumlahUnit; i++) {
+                    const opt = document.createElement('option');
+                    opt.value = `Unit ${i}`;
+                    opt.innerText = `Pilih: ${namaAlat} - Unit ${i}`;
+                    selectUnit.appendChild(opt);
+                }
+            } else {
+                bekasUnit.classList.add('hidden');
+            }
+
+            kemaskiniStatusTimetable();
+        }
+
+        // 🛠️ MENDAPATKAN NAMA PENUH UNTUK DATABASE (CONTOH: "Hot Plate - Unit 1")
+        function dapatkanNamaPeralatanPenuh() {
+            const namaAlat = document.getElementById('nama_peralatan').value;
+            const selectUnit = document.getElementById('unit_peralatan');
+
+            if (tetapanUnitPeralatan[namaAlat] && selectUnit.value) {
+                return `${namaAlat} - ${selectUnit.value}`;
+            }
+            return namaAlat;
         }
 
         async function hantarNotifikasiTempahan(dataTempahan) {
@@ -356,7 +423,6 @@
             }
         }
 
-        // 🛠️ JANA JADUAL 2 MINGGU (DENGAN TANDA KOSONG / TUTUP)
         function janaTimetable2Minggu() {
             const tbody = document.getElementById('isiTimetable2Minggu');
             tbody.innerHTML = '';
@@ -404,7 +470,6 @@
                         let jamTamat = jamTamatMap[jam];
 
                         if (adakahHariSamaAtauLepas) {
-                            // Slot lalai hari ini = Tutup (tetapi boleh di-override oleh Supabase jika ada rekod tempahan)
                             slotsHTML += `<td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_${jam}" class="slot-disabled" onclick="alert('⚠️ Tempahan hendaklah dibuat selewat-lewatnya 1 hari sebelum tarikh penggunaan! Tempahan pada hari yang sama tidak dibenarkan.')">🚫 Tutup (H-1)</div></td>`;
                         } else {
                             slotsHTML += `<td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_${jam}" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '${jam}', '${jamTamat}')">🟢 Kosong</div></td>`;
@@ -437,20 +502,19 @@
             return slotTerlibat;
         }
 
-        // 🛠️ PROSES OVERRIDE SLOT YANG DAH DITEMPAH DARI SUPABASE (TERMASUK HARI INI)
         async function kemaskiniStatusTimetable() {
             janaTimetable2Minggu();
 
-            const peralatanDipilih = document.getElementById('nama_peralatan').value;
+            const peralatanDicari = dapatkanNamaPeralatanPenuh();
             const penerangan = document.getElementById('peneranganJadual');
 
-            if (!peralatanDipilih) {
+            if (!document.getElementById('nama_peralatan').value) {
                 if(penerangan) penerangan.innerHTML = '⚠️ Sila pilih peralatan di Langkah 1 dahulu untuk melihat status ketersediaan slot.';
                 return;
             }
 
             if(penerangan) {
-                penerangan.innerHTML = `Paparan Ketersediaan Slot Bagi Peralatan: <span class="text-indigo-600 font-bold">${peralatanDipilih}</span>`;
+                penerangan.innerHTML = `Paparan Ketersediaan Slot Bagi Peralatan: <span class="text-indigo-600 font-bold">${peralatanDicari}</span>`;
             }
 
             await muatTurunTempahan();
@@ -459,7 +523,7 @@
                 const st = String(rekod.status || '').toLowerCase();
                 const adakahDibatalkan = (st === 'ditolak' || st === 'batal' || st === 'dibatalkan');
 
-                if (rekod.nama_peralatan === peralatanDipilih && !adakahDibatalkan && rekod.id !== idTempahanSedangEdit) {
+                if (rekod.nama_peralatan === peralatanDicari && !adakahDibatalkan && rekod.id !== idTempahanSedangEdit) {
                     let slotTerlibat = dapatkanSlotDalamJulat(rekod.masa_mula, rekod.masa_tamat);
                     
                     slotTerlibat.forEach(masaClean => {
@@ -468,12 +532,11 @@
                         
                         if (elSlot) {
                             const namaPemohon = rekod.nama_pemohon || 'Pengguna';
-                            // Override slot (walaupun hari ini) menjadi DITEMPAH
                             elSlot.className = "slot-booked";
                             elSlot.innerHTML = `🔴 Ditempah:<br><strong>${namaPemohon}</strong>`;
                             
                             elSlot.onclick = function() {
-                                alert(`❌ Slot ini telah ditempah oleh "${namaPemohon}" (${rekod.masa_mula} - ${rekod.masa_tamat}) bagi ${peralatanDipilih} pada tarikh ${rekod.tarikh_guna}.`);
+                                alert(`❌ Slot ini telah ditempah oleh "${namaPemohon}" (${rekod.masa_mula} - ${rekod.masa_tamat}) bagi ${peralatanDicari} pada tarikh ${rekod.tarikh_guna}.`);
                             };
                         }
                     });
@@ -524,7 +587,19 @@
             document.getElementById('nama_pemohon').value = rekod.nama_pemohon || '';
             document.getElementById('no_telefon').value = rekod.no_telefon || '';
             document.getElementById('tujuan').value = rekod.tujuan || '';
-            document.getElementById('nama_peralatan').value = rekod.nama_peralatan || '';
+
+            // PECAHKAN NAMA DENGAN UNIT JIKA ADA
+            let namaAsal = rekod.nama_peralatan || '';
+            if (namaAsal.includes(' - Unit ')) {
+                let bahagian = namaAsal.split(' - ');
+                document.getElementById('nama_peralatan').value = bahagian[0];
+                kemaskiniPilihanUnit();
+                document.getElementById('unit_peralatan').value = bahagian[1];
+            } else {
+                document.getElementById('nama_peralatan').value = namaAsal;
+                kemaskiniPilihanUnit();
+            }
+
             document.getElementById('tarikh_guna').value = rekod.tarikh_guna || '';
             document.getElementById('masa_mula').value = rekod.masa_mula || '';
             document.getElementById('masa_tamat').value = rekod.masa_tamat || '';
@@ -540,6 +615,7 @@
         window.batalModEdit = function() {
             idTempahanSedangEdit = null;
             document.getElementById('formTempahan').reset();
+            document.getElementById('bekasPilihanUnit').classList.add('hidden');
             document.getElementById('bannerKemaskini').classList.add('hidden');
             document.getElementById('labelBtnHantar').innerText = "Hantar Tempahan";
             kemaskiniStatusTimetable();
@@ -561,7 +637,7 @@
                 const nama_pemohon = document.getElementById('nama_pemohon').value;
                 const no_telefon = document.getElementById('no_telefon').value;
                 const tujuan = document.getElementById('tujuan').value;
-                const nama_peralatan = document.getElementById('nama_peralatan').value;
+                const nama_peralatan = dapatkanNamaPeralatanPenuh();
                 const tarikh_guna = document.getElementById('tarikh_guna').value;
                 const masa_mula = document.getElementById('masa_mula').value;
                 const masa_tamat = document.getElementById('masa_tamat').value;
@@ -620,7 +696,7 @@
                 }
 
                 if (adaBertindih) {
-                    alert(`❌ MAAF! Sesetengah/Kesemua slot bagi peralatan (${nama_peralatan}) dari ${masa_mula} hingga ${masa_tamat} pada tarikh ${tarikh_guna} telah pun ditempah. Sila pilih julat masa lain.`);
+                    alert(`❌ MAAF! Sesetengah/Kesemua slot bagi peralatan (${nama_peralatan}) dari ${masa_mula} hingga ${masa_tamat} pada tarikh ${tarikh_guna} telah pun ditempah. Sila pilih julat masa lain atau unit lain.`);
                     await kemaskiniStatusTimetable();
                     btnHantar.disabled = false;
                     btnHantar.innerText = idTempahanSedangEdit ? "Kemaskini Tempahan" : "Hantar Tempahan";
@@ -666,6 +742,7 @@
                     } else {
                         alert(`✅ Tempahan berjaya dihantar untuk tempoh ${masa_mula} hingga ${masa_tamat}!`);
                         document.getElementById('formTempahan').reset();
+                        document.getElementById('bekasPilihanUnit').classList.add('hidden');
                     }
 
                     btnHantar.disabled = false;
@@ -745,3 +822,4 @@
     </script>
 </body>
 </html>
+
