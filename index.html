@@ -24,19 +24,16 @@
   <div class="absolute -top-32 -left-32 w-96 h-96 bg-indigo-600/30 rounded-full blur-3xl glow-effect pointer-events-none"></div>
   <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl glow-effect pointer-events-none"></div>
 
-  <!-- KAD UTAMA LOG MASUK (GAYA 2: BANNER GAMBAR BANGUNAN) -->
+  <!-- KAD UTAMA LOG MASUK (LENCANA DI TENGAH BANNER) -->
   <main class="max-w-md w-full bg-white/95 backdrop-blur-xl border border-slate-200/80 rounded-3xl overflow-hidden shadow-2xl relative z-10 transition-all">
     
     <!-- BANNER GAMBAR BANGUNAN UITM -->
-    <div class="h-44 w-full bg-cover bg-center relative bg-slate-800" style="background-image: url('bangunan-fkk.jpeg');">
-      <!-- Overlay Gradient & Badge UiTM -->
-      <div class="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent flex items-end p-5 justify-between">
-        <span class="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-indigo-600/90 text-white shadow-lg backdrop-blur-md border border-white/20">
+    <div class="h-44 w-full bg-cover bg-center relative bg-slate-800" style="background-image: url('bangunan-uitm.jpeg');">
+      <!-- Overlay Gradient & Lencana UiTM Tepat Di Tengah -->
+      <div class="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent flex items-end justify-center p-5">
+        <span class="inline-flex items-center px-4 py-1.5 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-indigo-600/90 text-white shadow-lg backdrop-blur-md border border-white/20">
           🏛️ UiTM Pasir Gudang
         </span>
-        <div class="w-12 h-12 bg-white/90 backdrop-blur-md p-1.5 rounded-2xl shadow-md border border-white/40 flex items-center justify-center">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Logo_UiTM.png/600px-Logo_UiTM.png" alt="Logo UiTM" class="w-full h-full object-contain">
-        </div>
       </div>
     </div>
 
@@ -116,7 +113,7 @@
 
     const mesejBantuanAdmin = `<br><br>💬 Hubungi Pentadbir Sistem: <strong>Nurhaslina Hambari</strong> di talian <a href="https://wa.me/6073818516" target="_blank" class="text-indigo-600 font-bold underline">07-3818516</a> (WhatsApp Pejabat).`;
 
-    // 🛠️ PENGESAN IN-APP BROWSER WHATSAPP / TELEGRAM IOS
+    // 🛠️️ PENGESAN IN-APP BROWSER WHATSAPP / TELEGRAM IOS
     function isIOSInAppBrowser() {
       const ua = navigator.userAgent || navigator.vendor || window.opera;
       const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
