@@ -38,6 +38,7 @@
       transition: background 0.2s;
     }
     button:hover { background-color: #1557b0; }
+    button:disabled { background-color: #a0c3ff; cursor: not-allowed; }
     .error { 
       color: #d93025; 
       font-weight: bold; 
@@ -60,7 +61,14 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { 
+      getAuth, 
+      GoogleAuthProvider, 
+      signInWithRedirect, 
+      getRedirectResult, 
+      onAuthStateChanged, 
+      signOut 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDDC9PLSCOzna4caIsrfPSvfR3A_FczKDc",
@@ -78,28 +86,49 @@
     const loginBtn = document.getElementById('login-btn');
     const statusText = document.getElementById('status-text');
 
+    // 1. MULA PROSES LOG MASUK DENGAN REDIRECT (MENGELAKKAN POPUP BLOCKER IPHONE)
     loginBtn.addEventListener('click', () => {
-      signInWithPopup(auth, provider)
-        .then((result) => {
+      loginBtn.disabled = true;
+      loginBtn.innerText = "⏳ Sedang Memproses...";
+      signInWithRedirect(auth, provider);
+    });
+
+    // 2. SEMAK DAPATKAN KEPUTUSAN REDIRECT DARI GOOGLE
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result && result.user) {
           const user = result.user;
-          const email = user.email;
+          const email = user.email || '';
 
           if (email.endsWith('@uitm.edu.my') || email.endsWith('@student.uitm.edu.my')) {
             statusText.innerHTML = `<span style="color: #27ae60; font-weight: bold;">Log masuk berjaya! Mengalihkan...</span>`;
-            
             setTimeout(() => {
               window.location.href = "makmal.html";
             }, 1000);
-
           } else {
             statusText.innerHTML = `<div class="error">Akses Ditolak!<br>E-mel (${email}) bukan e-mel rasmi UiTM.</div>`;
             signOut(auth);
+            loginBtn.disabled = false;
+            loginBtn.innerText = "🔑 Log Masuk dengan Google";
           }
-        })
-        .catch((error) => {
-          console.error("Firebase Auth Error:", error);
-          statusText.innerHTML = `<div class="error">Ralat: ${error.message}</div>`;
-        });
+        }
+      })
+      .catch((error) => {
+        console.error("Firebase Auth Redirect Error:", error);
+        statusText.innerHTML = `<div class="error">Ralat: ${error.message}</div>`;
+        loginBtn.disabled = false;
+        loginBtn.innerText = "🔑 Log Masuk dengan Google";
+      });
+
+    // 3. SEMAK SAMA ADA PENGGUNA MEMANG DAH SEDIA LOG MASUK
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const email = user.email || '';
+        if (email.endsWith('@uitm.edu.my') || email.endsWith('@student.uitm.edu.my')) {
+          statusText.innerHTML = `<span style="color: #27ae60; font-weight: bold;">Log masuk berjaya! Mengalihkan...</span>`;
+          window.location.href = "makmal.html";
+        }
+      }
     });
   </script>
 </body>
