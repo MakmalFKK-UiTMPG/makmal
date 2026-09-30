@@ -181,9 +181,9 @@
                         </select>
                     </div>
 
-                    <!-- DROPDOWN NOMBOR UNIT AUTOMATIK -->
+                    <!-- DROPDOWN SPESIFIKASI UNIT & LOKASI PERALATAN -->
                     <div id="bekasPilihanUnit" class="hidden animate-fadeIn">
-                        <label class="block text-xs font-bold uppercase tracking-wider text-indigo-900 mb-2">⚙️ Pilih Unit Peralatan</label>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-indigo-900 mb-2">📍 Pilih Specific Unit & Lokasi Peralatan</label>
                         <select id="unit_peralatan" onchange="kemaskiniStatusTimetable()" class="w-full px-4 py-2.5 bg-indigo-100/70 border border-indigo-300 rounded-xl text-sm font-bold text-indigo-950 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition cursor-pointer">
                         </select>
                     </div>
@@ -359,12 +359,40 @@
         let idTempahanSedangEdit = null; 
         const senaraiSlotJam = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00"];
 
-        // TETAPAN PETAPAKAN UNIT PERALATAN
+        // 🛠️ TETAPAN SPESIFIKASI SPESIFIK UNIT & LOKASI MAKMAL
         const tetapanUnitPeralatan = {
-            "Hot Plate": 8,
-            "Weighing Balance": 5,
-            "Flocculation Device (Jar Test)": 2,
-            "Laboratory Oven": 4
+            "Hot Plate": [
+                { unit: "Unit 1", label: "Unit 1 - Hot Plate 2025000003" },
+                { unit: "Unit 2", label: "Unit 2 - Hot Plate 2025000004" },
+                { unit: "Unit 3", label: "Unit 3 - Hot Plate 2025000005" },
+                { unit: "Unit 4", label: "Unit 4 - Hot Plate 2025000005" },
+                { unit: "Unit 5", label: "Unit 5 - Hot Plate 07.566815" },
+                { unit: "Unit 6", label: "Unit 6 - Hot Plate 07.566811" },
+                { unit: "Unit 7", label: "Unit 7 - Hot Plate 07.566816" },
+                { unit: "Unit 8", label: "Unit 8 - Hot Plate Environment" },
+                { unit: "Unit 9", label: "Unit 9 - Hot Plate Environment" },
+                { unit: "Unit 10", label: "Unit 10 - Hot Plate Environment" },
+                { unit: "Unit 11", label: "Unit 11 - Hot Plate Reaction" },
+            ],
+            "Weighing Balance": [
+                { unit: "Unit 1", label: "Unit 1 (Analytical Balance 2015000736) - Makmal Chemistry 1" },
+                { unit: "Unit 2", label: "Unit 2 (Top Loading Balance 2016000076)- Makmal Bio Process" },
+                 { unit: "Unit 3", label: "Unit 3 (Analytical Balance 2015000739) - Makmal Bio Process" },
+                { unit: "Unit 4", label: "Unit 4 (Analytical Balance 2015000740) - Makmal Environment" },
+                { unit: "Unit 5", label: "Unit 5 (Analytical Balance 2015000738) - Makmal Environment" },
+                { unit: "Unit 6", label: "Unit 6 (Top Loading Balance 2016000077) - Makmal Pilot Plant" },
+                { unit: "Unit 7", label: "Unit 7 (Top Loading Balance 2016000079) - Makmal Reaction" },
+                
+            ],
+            "Flocculation Device (Jar Test)": [
+                { unit: "Unit 1", label: "Unit 1 - Makmal Environment" },
+                { unit: "Unit 2", label: "Unit 2 - Makmal Environment" }
+            ],
+            "Laboratory Oven": [
+                { unit: "Unit 1", label: "Unit 1 (Makmal Chemistry 2" },
+                { unit: "Unit 2", label: "Unit 2 (Makmal Chemistry 2" },
+                { unit: "Unit 3", label: "Unit 3 Makmal Environment" },
+            ]
         };
 
         function formatTarikhStandard(d) {
@@ -374,7 +402,7 @@
             return `${yyyy}-${mm}-${dd}`;
         }
 
-        // LOGIK MENJANA KOTAK UNIT PERALATAN DINAMIK & PERINGATAN KHAS
+        // LOGIK MENJANA KOTAK UNIT PERALATAN DINAMIK
         function kemaskiniPilihanUnit() {
             const namaAlat = document.getElementById('nama_peralatan').value;
             const bekasUnit = document.getElementById('bekasPilihanUnit');
@@ -388,15 +416,15 @@
             selectUnit.innerHTML = '';
 
             if (tetapanUnitPeralatan[namaAlat]) {
-                const jumlahUnit = tetapanUnitPeralatan[namaAlat];
+                const senaraiUnit = tetapanUnitPeralatan[namaAlat];
                 bekasUnit.classList.remove('hidden');
 
-                for (let i = 1; i <= jumlahUnit; i++) {
+                senaraiUnit.forEach(item => {
                     const opt = document.createElement('option');
-                    opt.value = `Unit ${i}`;
-                    opt.innerText = `${namaAlat} - Unit ${i}`;
+                    opt.value = item.unit;
+                    opt.innerText = item.label;
                     selectUnit.appendChild(opt);
-                }
+                });
             } else {
                 bekasUnit.classList.add('hidden');
             }
