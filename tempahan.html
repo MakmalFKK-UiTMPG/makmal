@@ -347,7 +347,7 @@
         });
     </script>
 
-    <!-- SKRIP SUPABASE & LOGIK TIMETABLE MERENTASI HARI / OVERNIGHT FIX -->
+    <!-- SKRIP SUPABASE & LOGIK TIMETABLE FIX -->
     <script>
         const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
@@ -546,7 +546,7 @@
                     let slotsHTML = '';
                     senaraiSlotJam.forEach(jam => {
                         if (adakahHariSamaAtauLepas) {
-                            slotsHTML += `<td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_${jam}" class="slot-disabled" onclick="alert('⚠ Tempahan hendaklah dibuat selewat-lewatnya 1 hari sebelum tarikh penggunaan! Tempahan pada hari yang sama tidak dibenarkan.')">🚫 Tutup (H-1)</div></td>`;
+                            slotsHTML += `<td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_${jam}" class="slot-disabled" onclick="alert('⚠️ Tempahan hendaklah dibuat selewat-lewatnya 1 hari sebelum tarikh penggunaan! Tempahan pada hari yang sama adalah tidak dibenarkan.')">🔒 Tempahan Ditutup</div></td>`;
                         } else {
                             slotsHTML += `<td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_${jam}" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '${jam}')">🟢 Kosong</div></td>`;
                         }
@@ -590,9 +590,9 @@
                     const durasiJam = parseInt(rekod.masa_tamat || '1') || 1;
                     const endMs = startMs + (durasiJam * 3600000);
 
-                    // Tanda slot pada jadual jika berada dalam julat masa rekod ini
-                    document.querySelectorAll('.slot-available').forEach(elSlot => {
-                        const idParts = elSlot.id.split('_'); // slot_2026-10-05_08:00
+                    // 🛠️ IMBAS KEDUA-DUA KELAS (slot-available & slot-disabled) SUPAYA TEMPAHAN HARI INI KEKAL MERAH 🔴
+                    document.querySelectorAll('.slot-available, .slot-disabled').forEach(elSlot => {
+                        const idParts = elSlot.id.split('_'); // slot_2026-10-01_08:00
                         if (idParts.length === 3) {
                             const slotDateStr = idParts[1];
                             const slotTimeStr = idParts[2];
@@ -831,7 +831,6 @@
                             const endExistMs = startExistMs + (bilJamExist * 3600000);
 
                             // FORMULA OVERLAP MASA SEBENAR (ISO TIMESTAMP):
-                            // (Mula New < Tamat Exist) DAN (Tamat New > Mula Exist)
                             if (startNewMs < endExistMs && endNewMs > startExistMs) {
                                 adaBertindih = true;
                                 namaPenempahBertindih = rekod.nama_pemohon || 'Pengguna Lain';
