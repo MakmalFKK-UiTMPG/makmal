@@ -347,7 +347,7 @@
         });
     </script>
 
-    <!-- SKRIP SUPABASE & LOGIK TIMETABLE -->
+    <!-- SKRIP SUPABASE & LOGIK TIMETABLE FIX (BERTINDIH DIHALANG SEPENUHNYA) -->
     <script>
         const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
@@ -689,7 +689,7 @@
             kemaskiniStatusTimetable();
         };
 
-        // FUNGSI PAPARAN JADUAL PELAJAR DENGAN KAWALAN KETAT HAK AKSES EDIT (TANPA MEMERLUKAN COLUMN EMAIL_PEMOHON)
+        // FUNGSI PAPARAN JADUAL PELAJAR DENGAN KAWALAN KETAT HAK AKSES EDIT
         window.paparkanTempahanPelajar = async function() {
             const tbody = document.getElementById('isiJadualPelajar');
             
@@ -728,8 +728,6 @@
                 let butangTindakan = '-';
 
                 // 🔒 SYARAT KETAT HAK AKSES KEMASKINI:
-                // 1. Status MESTI 'Menunggu' (Jika Admin dah luluskan / 'Lulus', BUTANG TERUS HILANG).
-                // 2. Pengguna MESTI Pemohon Asal (berdasarkan nama_pemohon) ATAU Admin.
                 const namaPemohonRekod = String(rekod.nama_pemohon || rekod['Name: nama_pemohon'] || '').toLowerCase();
                 const adakahPemohonAsal = (currentUserName && namaPemohonRekod.includes(currentUserName));
                 const adakahAdmin = senaraiAdminEmail.includes(currentUserEmail);
@@ -814,7 +812,37 @@
                     return;
                 }
 
-                // SIMPAN STRING BILANGAN JAM DIRECT KEPADA 'masa_tamat' SUPABASE SCHEMA SEDIA ADA
+                // 🛠️ LOGIK MATEMATIK SEMAKAN BERTINDIH BERASASKAN JAM SEBENAR (OVERLAP VALIDATION)
+                const jamMulaIngin = parseInt(masa_mula.split(':')[0]);
+                const bilJamIngin = parseInt(tempoh_jam);
+                const jamTamatIngin = jamMulaIngin + bilJamIngin;
+
+                let adaBertindih = false;
+                if (senaraiTempahanSediaAda) {
+                    senaraiTempahanSediaAda.forEach(rekod => {
+                        const st = String(rekod.status || '').toLowerCase();
+                        const adakahDibatalkan = (st === 'ditolak' || st === 'batal' || st === 'dibatalkan');
+
+                        if (rekod.nama_peralatan === nama_peralatan && rekod.tarikh_guna === tarikh_guna && !adakahDibatalkan && rekod.id !== idTempahanSedangEdit) {
+                            const jamMulaRekod = parseInt((rekod.masa_mula || '08:00').split(':')[0]);
+                            const bilJamRekod = parseInt(rekod.masa_tamat || '1');
+                            const jamTamatRekod = jamMulaRekod + bilJamRekod;
+
+                            // FORMULA OVERLAP: (Mula A < Tamat B) DAN (Tamat A > Mula B)
+                            if (jamMulaIngin < jamTamatRekod && jamTamatIngin > jamMulaRekod) {
+                                adaBertindih = true;
+                            }
+                        }
+                    });
+                }
+
+                if (adaBertindih) {
+                    alert(`❌ TEMPAHAN BERTINDIH DITOLAK!\n\nPeralatan (${nama_peralatan}) telah pun ditempah pada tarikh ${tarikh_guna} bagi julat masa berkenaan. Sila pilih waktu lain atau unit lain.`);
+                    btnHantar.disabled = false;
+                    btnHantar.innerText = idTempahanSedangEdit ? "Kemaskini Tempahan" : "Hantar Tempahan";
+                    return;
+                }
+
                 const masa_tamat_display = `${tempoh_jam} Jam`;
 
                 const formData = { 
