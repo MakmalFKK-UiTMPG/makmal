@@ -108,7 +108,7 @@
             <div>
                 <h3 class="text-xs font-extrabold uppercase tracking-wider text-amber-900">Pemberitahuan Penting</h3>
                 <p class="text-xs sm:text-sm font-semibold text-amber-800 mt-0.5 leading-relaxed">
-                    Tempahan peralatan hendaklah dibuat <span class="underline decoration-amber-500 font-extrabold text-amber-950">selewat-lewatnya SATU (1) HARI SEBELUM</span> tarikh penggunaan. Tempahan baharu pada hari yang sama adalah tidak dibenarkan.
+                    Tempahan peralatan utama hendaklah dibuat <span class="underline decoration-amber-500 font-extrabold text-amber-950">selewat-lewatnya SATU (1) HARI SEBELUM</span> tarikh penggunaan. Peralatan tertentu (Oven, Hot Plate, Weighing Balance, Jar Test) dibenarkan untuk ditempah pada hari yang sama.
                 </p>
             </div>
         </div>
@@ -363,6 +363,14 @@
             "nurhaslina@uitm.edu.my"
         ];
 
+        // 🛠️ SENARAI PERALATAN YANG DIBENARKAN UNTUK TEMPAHAN HARI YANG SAMA
+        const peralatanBolehHariSama = [
+            "Laboratory Oven",
+            "Hot Plate",
+            "Weighing Balance",
+            "Flocculation Device (Jar Test)"
+        ];
+
         // TETAPAN SPESIFIKASI SPESIFIK UNIT & LOKASI MAKMAL
         const tetapanUnitPeralatan = {
             "Hot Plate": [
@@ -517,6 +525,9 @@
             const hariIni = new Date();
             hariIni.setHours(0, 0, 0, 0);
 
+            let namaAlatSemasa = document.getElementById('nama_peralatan')?.value || '';
+            let adakahBolehHariSama = peralatanBolehHariSama.includes(namaAlatSemasa);
+
             let rowMinggu1 = tbody.insertRow();
             rowMinggu1.className = "bg-slate-100 font-bold text-slate-700 text-xs";
             rowMinggu1.innerHTML = `<td colspan="10" class="p-2.5 border-b border-slate-200">📅 MINGGU 1 (Hari Bekerja)</td>`;
@@ -545,8 +556,8 @@
 
                     let slotsHTML = '';
                     senaraiSlotJam.forEach(jam => {
-                        if (adakahHariSamaAtauLepas) {
-                            slotsHTML += `<td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_${jam}" class="slot-disabled" onclick="alert('⚠️ Tempahan hendaklah dibuat selewat-lewatnya 1 hari sebelum tarikh penggunaan! Tempahan pada hari yang sama adalah tidak dibenarkan.')">🔒 Tempahan Ditutup</div></td>`;
+                        if (adakahHariSamaAtauLepas && !adakahBolehHariSama) {
+                            slotsHTML += `<td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_${jam}" class="slot-disabled" onclick="alert('⚠️ Tempahan peralatan ini hendaklah dibuat selewat-lewatnya 1 hari sebelum tarikh penggunaan!')">🔒 Tempahan Ditutup</div></td>`;
                         } else {
                             slotsHTML += `<td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_${jam}" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '${jam}')">🟢 Kosong</div></td>`;
                         }
@@ -590,7 +601,6 @@
                     const durasiJam = parseInt(rekod.masa_tamat || '1') || 1;
                     const endMs = startMs + (durasiJam * 3600000);
 
-                    // 🛠️ IMBAS KEDUA-DUA KELAS (slot-available & slot-disabled) SUPAYA TEMPAHAN HARI INI KEKAL MERAH 🔴
                     document.querySelectorAll('.slot-available, .slot-disabled').forEach(elSlot => {
                         const idParts = elSlot.id.split('_'); // slot_2026-10-01_08:00
                         if (idParts.length === 3) {
@@ -626,8 +636,10 @@
             const hariIni = new Date();
             hariIni.setHours(0,0,0,0);
 
-            if (tarikhDipilih.getTime() <= hariIni.getTime()) {
-                alert("⚠️ Tempahan hendaklah dibuat selewat-lewatnya SATU (1) HARI SEBELUM tarikh penggunaan!");
+            const adakahBolehHariSama = peralatanBolehHariSama.includes(peralatanDipilih);
+
+            if (tarikhDipilih.getTime() < hariIni.getTime() || (tarikhDipilih.getTime() === hariIni.getTime() && !adakahBolehHariSama)) {
+                alert("⚠️ Tempahan peralatan ini hendaklah dibuat selewat-lewatnya SATU (1) HARI SEBELUM tarikh penggunaan!");
                 return;
             }
 
@@ -805,8 +817,11 @@
                 const hariIni = new Date();
                 hariIni.setHours(0,0,0,0);
 
-                if (tarikhGunaObj.getTime() <= hariIni.getTime()) {
-                    alert("⚠️ TEMPAHAN DITOLAK: Tempahan hendaklah dibuat selewat-lewatnya SATU (1) HARI SEBELUM tarikh penggunaan!");
+                const namaAlatAsal = document.getElementById('nama_peralatan').value;
+                const adakahBolehHariSama = peralatanBolehHariSama.includes(namaAlatAsal);
+
+                if (tarikhGunaObj.getTime() < hariIni.getTime() || (tarikhGunaObj.getTime() === hariIni.getTime() && !adakahBolehHariSama)) {
+                    alert("⚠️ TEMPAHAN DITOLAK: Peralatan ini hendaklah dibuat selewat-lewatnya SATU (1) HARI SEBELUM tarikh penggunaan!");
                     btnHantar.disabled = false;
                     btnHantar.innerText = idTempahanSedangEdit ? "Kemaskini Tempahan" : "Hantar Tempahan";
                     return;
@@ -840,7 +855,7 @@
                 }
 
                 if (adaBertindih) {
-                    alert(`❌ TEMPAHAN BERTINDIH DITOLAK!\n\nPeralatan (${nama_peralatan}) telah pun ditempah oleh "${namaPenempahBertindih}" yang meliputi julat masa ini (sehingga melangkaui hari berikutnya).\n\nSila pilih unit lain atau julat masa lain.`);
+                    alert(`❌ TEMPAHAN BERTINDIH DITOLAK!\n\nPeralatan (${nama_peralatan}) telah pun ditempah oleh "${namaPenempahBertindih}" yang meliputi julat masa ini.\n\nSila pilih unit lain atau julat masa lain.`);
                     btnHantar.disabled = false;
                     btnHantar.innerText = idTempahanSedangEdit ? "Kemaskini Tempahan" : "Hantar Tempahan";
                     return;
