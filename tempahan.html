@@ -347,7 +347,7 @@
         });
     </script>
 
-    <!-- SKRIP SUPABASE & LOGIK TIMETABLE FIX (BERTINDIH DIHALANG SEPENUHNYA) -->
+    <!-- SKRIP SUPABASE & LOGIK TIMETABLE MERENTASI HARI / OVERNIGHT FIX -->
     <script>
         const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
@@ -403,6 +403,13 @@
             let mm = String(d.getMonth() + 1).padStart(2, '0');
             let dd = String(d.getDate()).padStart(2, '0');
             return `${yyyy}-${mm}-${dd}`;
+        }
+
+        // HELPER MATEMATIK: TUKAR TARIKH + MASA KE TIMESTAMP MS
+        function dapatkanTimestampObjek(strTarikh, strMasa) {
+            const [year, month, day] = strTarikh.split('-').map(Number);
+            const [hours, minutes] = (strMasa || "08:00").split(':').map(Number);
+            return new Date(year, month - 1, day, hours, minutes, 0).getTime();
         }
 
         // LOGIK PENJANAAN DROPDOWN JAM DINAMIK (OVEN SAHAJA > 9 JAM)
@@ -557,19 +564,6 @@
             }
         }
 
-        function dapatkanSlotDalamJulat(mula, masaTamatStr) {
-            let slotTerlibat = [];
-            let iMula = senaraiSlotJam.indexOf(mula);
-            let bilJam = parseInt(masaTamatStr) || 1;
-
-            if (iMula !== -1) {
-                for (let i = iMula; i < senaraiSlotJam.length && i < iMula + bilJam; i++) {
-                    slotTerlibat.push(senaraiSlotJam[i]);
-                }
-            }
-            return slotTerlibat;
-        }
-
         async function kemaskiniStatusTimetable() {
             janaTimetable2Minggu();
 
@@ -577,7 +571,7 @@
             const penerangan = document.getElementById('peneranganJadual');
 
             if (!document.getElementById('nama_peralatan').value) {
-                if(penerangan) penerangan.innerHTML = '⚠️ Sila pilih peralatan di Langkah 1 dahulu untuk melihat status ketersediaan slot.';
+                if(penerangan) penerangan.innerHTML = '⚠️ Sila pilih peralatan di Bahagian 1 dahulu untuk melihat status ketersediaan slot.';
                 return;
             }
 
@@ -592,20 +586,26 @@
                 const adakahDibatalkan = (st === 'ditolak' || st === 'batal' || st === 'dibatalkan');
 
                 if (rekod.nama_peralatan === peralatanDicari && !adakahDibatalkan && rekod.id !== idTempahanSedangEdit) {
-                    let slotTerlibat = dapatkanSlotDalamJulat(rekod.masa_mula, rekod.masa_tamat);
-                    
-                    slotTerlibat.forEach(masaClean => {
-                        const idSlot = `slot_${rekod.tarikh_guna}_${masaClean}`;
-                        const elSlot = document.getElementById(idSlot);
-                        
-                        if (elSlot) {
-                            const namaPemohon = rekod.nama_pemohon || 'Pengguna';
-                            elSlot.className = "slot-booked";
-                            elSlot.innerHTML = `🔴 Ditempah:<br><strong>${namaPemohon}</strong>`;
-                            
-                            elSlot.onclick = function() {
-                                alert(`❌ Slot ini telah ditempah oleh "${namaPemohon}" (${rekod.masa_mula}, Masa: ${rekod.masa_tamat}) bagi ${peralatanDicari} pada tarikh ${rekod.tarikh_guna}.`);
-                            };
+                    const startMs = dapatkanTimestampObjek(rekod.tarikh_guna, rekod.masa_mula);
+                    const durasiJam = parseInt(rekod.masa_tamat || '1') || 1;
+                    const endMs = startMs + (durasiJam * 3600000);
+
+                    // Tanda slot pada jadual jika berada dalam julat masa rekod ini
+                    document.querySelectorAll('.slot-available').forEach(elSlot => {
+                        const idParts = elSlot.id.split('_'); // slot_2026-10-05_08:00
+                        if (idParts.length === 3) {
+                            const slotDateStr = idParts[1];
+                            const slotTimeStr = idParts[2];
+                            const slotMs = dapatkanTimestampObjek(slotDateStr, slotTimeStr);
+
+                            if (slotMs >= startMs && slotMs < endMs) {
+                                const namaPemohon = rekod.nama_pemohon || 'Pengguna';
+                                elSlot.className = "slot-booked";
+                                elSlot.innerHTML = `🔴 Ditempah:<br><strong>${namaPemohon}</strong>`;
+                                elSlot.onclick = function() {
+                                    alert(`❌ Slot ini telah ditempah oleh "${namaPemohon}" (${rekod.masa_mula}, Tempoh: ${rekod.masa_tamat}) bagi ${peralatanDicari} pada tarikh ${rekod.tarikh_guna}.`);
+                                };
+                            }
                         }
                     });
                 }
@@ -812,32 +812,36 @@
                     return;
                 }
 
-                // 🛠️ LOGIK MATEMATIK SEMAKAN BERTINDIH BERASASKAN JAM SEBENAR (OVERLAP VALIDATION)
-                const jamMulaIngin = parseInt(masa_mula.split(':')[0]);
-                const bilJamIngin = parseInt(tempoh_jam);
-                const jamTamatIngin = jamMulaIngin + bilJamIngin;
+                // 🛠️ LOGIK MATEMATIK SEMAKAN BERTINDIH MERENTASI HARI / OVERNIGHT (PRECISE TIMESTAMP VALIDATION)
+                const startNewMs = dapatkanTimestampObjek(tarikh_guna, masa_mula);
+                const bilJamNew = parseInt(tempoh_jam) || 1;
+                const endNewMs = startNewMs + (bilJamNew * 3600000);
 
                 let adaBertindih = false;
+                let namaPenempahBertindih = "";
+
                 if (senaraiTempahanSediaAda) {
                     senaraiTempahanSediaAda.forEach(rekod => {
                         const st = String(rekod.status || '').toLowerCase();
                         const adakahDibatalkan = (st === 'ditolak' || st === 'batal' || st === 'dibatalkan');
 
-                        if (rekod.nama_peralatan === nama_peralatan && rekod.tarikh_guna === tarikh_guna && !adakahDibatalkan && rekod.id !== idTempahanSedangEdit) {
-                            const jamMulaRekod = parseInt((rekod.masa_mula || '08:00').split(':')[0]);
-                            const bilJamRekod = parseInt(rekod.masa_tamat || '1');
-                            const jamTamatRekod = jamMulaRekod + bilJamRekod;
+                        if (rekod.nama_peralatan === nama_peralatan && !adakahDibatalkan && rekod.id !== idTempahanSedangEdit) {
+                            const startExistMs = dapatkanTimestampObjek(rekod.tarikh_guna, rekod.masa_mula);
+                            const bilJamExist = parseInt(rekod.masa_tamat || '1') || 1;
+                            const endExistMs = startExistMs + (bilJamExist * 3600000);
 
-                            // FORMULA OVERLAP: (Mula A < Tamat B) DAN (Tamat A > Mula B)
-                            if (jamMulaIngin < jamTamatRekod && jamTamatIngin > jamMulaRekod) {
+                            // FORMULA OVERLAP MASA SEBENAR (ISO TIMESTAMP):
+                            // (Mula New < Tamat Exist) DAN (Tamat New > Mula Exist)
+                            if (startNewMs < endExistMs && endNewMs > startExistMs) {
                                 adaBertindih = true;
+                                namaPenempahBertindih = rekod.nama_pemohon || 'Pengguna Lain';
                             }
                         }
                     });
                 }
 
                 if (adaBertindih) {
-                    alert(`❌ TEMPAHAN BERTINDIH DITOLAK!\n\nPeralatan (${nama_peralatan}) telah pun ditempah pada tarikh ${tarikh_guna} bagi julat masa berkenaan. Sila pilih waktu lain atau unit lain.`);
+                    alert(`❌ TEMPAHAN BERTINDIH DITOLAK!\n\nPeralatan (${nama_peralatan}) telah pun ditempah oleh "${namaPenempahBertindih}" yang meliputi julat masa ini (sehingga melangkaui hari berikutnya).\n\nSila pilih unit lain atau julat masa lain.`);
                     btnHantar.disabled = false;
                     btnHantar.innerText = idTempahanSedangEdit ? "Kemaskini Tempahan" : "Hantar Tempahan";
                     return;
