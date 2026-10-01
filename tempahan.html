@@ -113,15 +113,16 @@
             </div>
         </div>
 
-        <!-- PEMBERITAHUAN UNTUK HOT PLATE & WEIGHING BALANCE -->
+        <!-- PEMBERITAHUAN UNTUK HOT PLATE, WEIGHING BALANCE & OVEN -->
         <div class="mb-8 p-4 bg-blue-50 border border-blue-200/90 rounded-2xl flex items-start space-x-3.5 shadow-sm">
             <div class="p-2 bg-blue-600 text-white rounded-xl shrink-0 mt-0.5">
                 <i data-lucide="clock-alert" class="w-5 h-5"></i>
             </div>
             <div>
-                <h3 class="text-xs font-extrabold uppercase tracking-wider text-blue-900">Keperluan Tempahan Hot Plate & Weighing Balance</h3>
+                <h3 class="text-xs font-extrabold uppercase tracking-wider text-blue-900">Syarat Tempahan Mengikut Peralatan</h3>
                 <p class="text-xs sm:text-sm font-semibold text-blue-800 mt-0.5 leading-relaxed">
-                    Peralatan <strong class="text-blue-950 underline">Hot Plate</strong> dan <strong class="text-blue-950 underline">Weighing Balance</strong> hanya <u>WAJIB ditempah sekiranya tempoh penggunaan MELEBIHI 1 JAM</u>. Bagi penggunaan kurang dari 1 jam, pengguna boleh terus menggunakannya mengikut kekosongan semasa.
+                    • <strong class="text-blue-950 underline">Hot Plate & Weighing Balance:</strong> Hanya WAJIB ditempah sekiranya penggunaan <u>MELEBIHI 1 JAM</u>.<br>
+                    • <strong class="text-blue-950 underline">Laboratory Oven:</strong> Sahaja yang dibenarkan untuk penggunaan melebihi 9 jam / overnight (sehingga 24 jam). Peralatan lain terhad kepada waktu operasi biasa (maksimum 9 jam).
                 </p>
             </div>
         </div>
@@ -183,7 +184,7 @@
 
                     <!-- DROPDOWN SPESIFIKASI UNIT & LOKASI PERALATAN -->
                     <div id="bekasPilihanUnit" class="hidden animate-fadeIn">
-                        <label class="block text-xs font-bold uppercase tracking-wider text-indigo-900 mb-2">📍 Pilih Specific Unit & Lokasi Peralatan</label>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-indigo-900 mb-2">📍 Pilih unit yang tersedia</label>
                         <select id="unit_peralatan" onchange="kemaskiniStatusTimetable()" class="w-full px-4 py-2.5 bg-indigo-100/70 border border-indigo-300 rounded-xl text-sm font-bold text-indigo-950 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition cursor-pointer">
                         </select>
                     </div>
@@ -223,11 +224,11 @@
                 </div>
             </div>
 
-            <!-- LANGKAH 3 -->
+            <!-- LANGKAH 3 (PILIHAN JAM DINAMIK) -->
             <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm" id="bahagianBorangPengesahan">
                 <div class="flex items-center space-x-3 pb-4 mb-6 border-b border-slate-100">
                     <span class="flex items-center justify-center w-7 h-7 bg-indigo-600 text-white rounded-lg text-xs font-bold">3</span>
-                    <h2 class="text-base font-bold text-slate-900">Sahkan Tarikh & Tempoh Masa (Sila kemaskini di sini jika penggunaan melebihi satu jam)</h2>
+                    <h2 class="text-base font-bold text-slate-900">Sahkan Tarikh & Bilangan Jam Tempahan</h2>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
@@ -253,18 +254,9 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Masa Tamat</label>
-                        <select id="masa_tamat" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
-                            <option value="">-- Pilih Masa Tamat --</option>
-                            <option value="09:00">09:00 AM (1 Jam)</option>
-                            <option value="10:00">10:00 AM (2 Jam)</option>
-                            <option value="11:00">11:00 AM (3 Jam)</option>
-                            <option value="12:00">12:00 PM (4 Jam)</option>
-                            <option value="13:00">01:00 PM (5 Jam)</option>
-                            <option value="14:00">02:00 PM (6 Jam)</option>
-                            <option value="15:00">03:00 PM</option>
-                            <option value="16:00">04:00 PM</option>
-                            <option value="17:00">05:00 PM</option>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Tempoh Masa / Bilangan Jam</label>
+                        <select id="tempoh_jam" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
+                            <option value="">-- Sila Pilih Peralatan Dulu --</option>
                         </select>
                     </div>
                 </div>
@@ -292,7 +284,7 @@
                             <th class="py-3 px-4">Nama Pemohon</th>
                             <th class="py-3 px-4">Peralatan</th>
                             <th class="py-3 px-4">Tarikh Guna</th>
-                            <th class="py-3 px-4">Masa</th>
+                            <th class="py-3 px-4">Tempoh / Masa</th>
                             <th class="py-3 px-4 w-28">Status</th>
                             <th class="py-3 px-4 text-center w-28">Tindakan</th>
                         </tr>
@@ -359,7 +351,7 @@
         let idTempahanSedangEdit = null; 
         const senaraiSlotJam = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00"];
 
-        // 🛠️ TETAPAN SPESIFIKASI SPESIFIK UNIT & LOKASI MAKMAL
+        // TETAPAN SPESIFIKASI SPESIFIK UNIT & LOKASI MAKMAL
         const tetapanUnitPeralatan = {
             "Hot Plate": [
                 { unit: "Unit 1", label: "Unit 1 - Hot Plate 2025000003" },
@@ -372,26 +364,25 @@
                 { unit: "Unit 8", label: "Unit 8 - Hot Plate Environment" },
                 { unit: "Unit 9", label: "Unit 9 - Hot Plate Environment" },
                 { unit: "Unit 10", label: "Unit 10 - Hot Plate Environment" },
-                { unit: "Unit 11", label: "Unit 11 - Hot Plate Reaction" },
+                { unit: "Unit 11", label: "Unit 11 - Hot Plate Reaction" }
             ],
             "Weighing Balance": [
                 { unit: "Unit 1", label: "Unit 1 (Analytical Balance 2015000736) - Makmal Chemistry 1" },
                 { unit: "Unit 2", label: "Unit 2 (Top Loading Balance 2016000076)- Makmal Bio Process" },
-                 { unit: "Unit 3", label: "Unit 3 (Analytical Balance 2015000739) - Makmal Bio Process" },
+                { unit: "Unit 3", label: "Unit 3 (Analytical Balance 2015000739) - Makmal Bio Process" },
                 { unit: "Unit 4", label: "Unit 4 (Analytical Balance 2015000740) - Makmal Environment" },
                 { unit: "Unit 5", label: "Unit 5 (Analytical Balance 2015000738) - Makmal Environment" },
                 { unit: "Unit 6", label: "Unit 6 (Top Loading Balance 2016000077) - Makmal Pilot Plant" },
-                { unit: "Unit 7", label: "Unit 7 (Top Loading Balance 2016000079) - Makmal Reaction" },
-                
+                { unit: "Unit 7", label: "Unit 7 (Top Loading Balance 2016000079) - Makmal Reaction" }
             ],
             "Flocculation Device (Jar Test)": [
                 { unit: "Unit 1", label: "Unit 1 - Makmal Environment" },
                 { unit: "Unit 2", label: "Unit 2 - Makmal Environment" }
             ],
             "Laboratory Oven": [
-                { unit: "Unit 1", label: "Unit 1 (Makmal Chemistry 2" },
-                { unit: "Unit 2", label: "Unit 2 (Makmal Chemistry 2" },
-                { unit: "Unit 3", label: "Unit 3 Makmal Environment" },
+                { unit: "Unit 1", label: "Unit 1 (Makmal Chemistry 2 - Dibenarkan > 9 Jam)" },
+                { unit: "Unit 2", label: "Unit 2 (Makmal Chemistry 2 - Dibenarkan > 9 Jam)" },
+                { unit: "Unit 3", label: "Unit 3 (Makmal Environment - Dibenarkan > 9 Jam)" }
             ]
         };
 
@@ -402,15 +393,50 @@
             return `${yyyy}-${mm}-${dd}`;
         }
 
+        // LOGIK PENJANAAN DROPDOWN JAM DINAMIK (OVEN SAHAJA > 9 JAM)
+        function kemaskiniPilihanJamDinamik(namaAlat) {
+            const selectTempoh = document.getElementById('tempoh_jam');
+            selectTempoh.innerHTML = '';
+
+            const isOven = (namaAlat === 'Laboratory Oven');
+            const maxJam = isOven ? 24 : 9;
+
+            const optDefault = document.createElement('option');
+            optDefault.value = '';
+            optDefault.innerText = '-- Pilih Bilangan Jam --';
+            selectTempoh.appendChild(optDefault);
+
+            for (let i = 1; i <= maxJam; i++) {
+                const opt = document.createElement('option');
+                opt.value = i.toString();
+
+                if (i === 9) {
+                    opt.innerText = "9 Jam (Maksimum Waktu Operasi Harian Makmal)";
+                } else if (i === 12) {
+                    opt.innerText = "12 Jam (Setengah Hari / Overnight)";
+                } else if (i === 24) {
+                    opt.innerText = "24 Jam (Semalaman / Full Overnight)";
+                } else {
+                    opt.innerText = `${i} Jam`;
+                }
+
+                selectTempoh.appendChild(opt);
+            }
+        }
+
         // LOGIK MENJANA KOTAK UNIT PERALATAN DINAMIK
         function kemaskiniPilihanUnit() {
             const namaAlat = document.getElementById('nama_peralatan').value;
             const bekasUnit = document.getElementById('bekasPilihanUnit');
             const selectUnit = document.getElementById('unit_peralatan');
 
-            // POPUP AMARAN UNTUK HOT PLATE & WEIGHING BALANCE
+            // Kemaskini pilihan jam dinamik mengikut alat
+            kemaskiniPilihanJamDinamik(namaAlat);
+
             if (namaAlat === 'Hot Plate' || namaAlat === 'Weighing Balance') {
                 alert(`📌 PERINGATAN SYARAT TEMPAHAN:\n\nPenggunaan ${namaAlat} kurang daripada 1 jam TIDAK PERLU DITEMPAH.\n\nSila pastikan anda membuat tempahan HANYA jika tempoh penggunaan anda MELEBIHI 1 JAM.`);
+            } else if (namaAlat === 'Laboratory Oven') {
+                alert(`🔥 NOTIS LABORATORY OVEN:\n\nLaboratory Oven sahaja yang dibenarkan untuk tempoh tempahan sehingga 24 Jam (Overnight).`);
             }
 
             selectUnit.innerHTML = '';
@@ -501,17 +527,10 @@
 
                     let slotsHTML = '';
                     senaraiSlotJam.forEach(jam => {
-                        let jamTamatMap = {
-                            "08:00":"09:00", "09:00":"10:00", "10:00":"11:00", 
-                            "11:00":"12:00", "12:00":"13:00", "13:00":"14:00", 
-                            "14:00":"15:00", "15:00":"16:00", "16:00":"17:00"
-                        };
-                        let jamTamat = jamTamatMap[jam];
-
                         if (adakahHariSamaAtauLepas) {
-                            slotsHTML += `<td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_${jam}" class="slot-disabled" onclick="alert('⚠️ Tempahan hendaklah dibuat selewat-lewatnya 1 hari sebelum tarikh penggunaan! Tempahan pada hari yang sama tidak dibenarkan.')">🚫 Tutup (H-1)</div></td>`;
+                            slotsHTML += `<td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_${jam}" class="slot-disabled" onclick="alert('⚠ Tempahan hendaklah dibuat selewat-lewatnya 1 hari sebelum tarikh penggunaan! Tempahan pada hari yang sama tidak dibenarkan.')">🚫 Tutup (H-1)</div></td>`;
                         } else {
-                            slotsHTML += `<td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_${jam}" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '${jam}', '${jamTamat}')">🟢 Kosong</div></td>`;
+                            slotsHTML += `<td class="p-1 border-b border-slate-100 text-center"><div id="slot_${formatTarikhISO}_${jam}" class="slot-available" onclick="pilihSlotFull('${formatTarikhISO}', '${jam}')">🟢 Kosong</div></td>`;
                         }
                     });
 
@@ -527,14 +546,13 @@
             }
         }
 
-        function dapatkanSlotDalamJulat(mula, tamat) {
+        function dapatkanSlotDalamJulat(mula, tempohJamStr) {
             let slotTerlibat = [];
             let iMula = senaraiSlotJam.indexOf(mula);
-            let mapTamat = { "09:00":0, "10:00":1, "11:00":2, "12:00":3, "13:00":4, "14:00":5, "15:00":6, "16:00":7, "17:00":8 };
-            let iTamat = mapTamat[tamat];
+            let bilJam = parseInt(tempohJamStr) || 1;
 
-            if (iMula !== -1 && iTamat !== undefined && iMula <= iTamat) {
-                for (let i = iMula; i <= iTamat; i++) {
+            if (iMula !== -1) {
+                for (let i = iMula; i < senaraiSlotJam.length && i < iMula + bilJam; i++) {
                     slotTerlibat.push(senaraiSlotJam[i]);
                 }
             }
@@ -563,7 +581,7 @@
                 const adakahDibatalkan = (st === 'ditolak' || st === 'batal' || st === 'dibatalkan');
 
                 if (rekod.nama_peralatan === peralatanDicari && !adakahDibatalkan && rekod.id !== idTempahanSedangEdit) {
-                    let slotTerlibat = dapatkanSlotDalamJulat(rekod.masa_mula, rekod.masa_tamat);
+                    let slotTerlibat = dapatkanSlotDalamJulat(rekod.masa_mula, rekod.tempoh_jam || "1");
                     
                     slotTerlibat.forEach(masaClean => {
                         const idSlot = `slot_${rekod.tarikh_guna}_${masaClean}`;
@@ -575,7 +593,7 @@
                             elSlot.innerHTML = `🔴 Ditempah:<br><strong>${namaPemohon}</strong>`;
                             
                             elSlot.onclick = function() {
-                                alert(`❌ Slot ini telah ditempah oleh "${namaPemohon}" (${rekod.masa_mula} - ${rekod.masa_tamat}) bagi ${peralatanDicari} pada tarikh ${rekod.tarikh_guna}.`);
+                                alert(`❌ Slot ini telah ditempah oleh "${namaPemohon}" (${rekod.masa_mula}, Tempoh: ${rekod.tempoh_jam || '1'} Jam) bagi ${peralatanDicari} pada tarikh ${rekod.tarikh_guna}.`);
                             };
                         }
                     });
@@ -583,7 +601,7 @@
             });
         }
 
-        function pilihSlotFull(tarikh, mula, tamat) {
+        function pilihSlotFull(tarikh, mula) {
             const peralatanDipilih = document.getElementById('nama_peralatan').value;
             if (!peralatanDipilih) {
                 alert("Sila pilih 'Nama Peralatan' di Langkah 1 terlebih dahulu!");
@@ -604,7 +622,7 @@
 
             document.getElementById('tarikh_guna').value = tarikh;
             document.getElementById('masa_mula').value = mula;
-            document.getElementById('masa_tamat').value = tamat;
+            document.getElementById('tempoh_jam').value = "1";
             document.getElementById('bahagianBorangPengesahan').scrollIntoView({ behavior: 'smooth' });
         }
 
@@ -640,7 +658,7 @@
 
             document.getElementById('tarikh_guna').value = rekod.tarikh_guna || '';
             document.getElementById('masa_mula').value = rekod.masa_mula || '';
-            document.getElementById('masa_tamat').value = rekod.masa_tamat || '';
+            document.getElementById('tempoh_jam').value = rekod.tempoh_jam || '1';
 
             document.getElementById('bannerKemaskini').classList.remove('hidden');
             document.getElementById('labelEditID').innerText = `#${id}`;
@@ -656,11 +674,13 @@
             document.getElementById('bekasPilihanUnit').classList.add('hidden');
             document.getElementById('bannerKemaskini').classList.add('hidden');
             document.getElementById('labelBtnHantar').innerText = "Hantar Tempahan";
+            kemaskiniPilihanJamDinamik('');
             kemaskiniStatusTimetable();
         };
 
         document.addEventListener("DOMContentLoaded", async function() {
             lucide.createIcons();
+            kemaskiniPilihanJamDinamik('');
             janaTimetable2Minggu();
             await muatTurunTempahan();
             paparkanTempahanPelajar();
@@ -678,10 +698,10 @@
                 const nama_peralatan = dapatkanNamaPeralatanPenuh();
                 const tarikh_guna = document.getElementById('tarikh_guna').value;
                 const masa_mula = document.getElementById('masa_mula').value;
-                const masa_tamat = document.getElementById('masa_tamat').value;
+                const tempoh_jam = document.getElementById('tempoh_jam').value;
 
-                if (!tarikh_guna || !masa_mula || !masa_tamat) {
-                    alert("Sila pilih Tarikh, Masa Mula, dan Masa Tamat dengan lengkap!");
+                if (!tarikh_guna || !masa_mula || !tempoh_jam) {
+                    alert("Sila pilih Tarikh Guna, Masa Mula, dan Bilangan Jam Tempahan dengan lengkap!");
                     btnHantar.disabled = false;
                     btnHantar.innerText = idTempahanSedangEdit ? "Kemaskini Tempahan" : "Hantar Tempahan";
                     return;
@@ -700,55 +720,17 @@
                     return;
                 }
 
-                const slotInginDitempah = dapatkanSlotDalamJulat(masa_mula, masa_tamat);
-                if (slotInginDitempah.length === 0) {
-                    alert("❌ Pilihan Masa Tamat mestilah SELEPAS Masa Mula!");
-                    btnHantar.disabled = false;
-                    btnHantar.innerText = idTempahanSedangEdit ? "Kemaskini Tempahan" : "Hantar Tempahan";
-                    return;
-                }
-
-                const { data: senaraiSemak, error: ralatSemak } = await supabaseClient
-                    .from('tempahan_peralatan')
-                    .select('*')
-                    .eq('nama_peralatan', nama_peralatan)
-                    .eq('tarikh_guna', tarikh_guna);
-
-                if (ralatSemak) {
-                    alert('Ralat semasa menyemak ketersediaan slot: ' + ralatSemak.message);
-                    btnHantar.disabled = false;
-                    btnHantar.innerText = idTempahanSedangEdit ? "Kemaskini Tempahan" : "Hantar Tempahan";
-                    return;
-                }
-
-                let adaBertindih = false;
-                if (senaraiSemak) {
-                    senaraiSemak.forEach(rekod => {
-                        const st = String(rekod.status || '').toLowerCase();
-                        if (st !== 'ditolak' && st !== 'batal' && st !== 'dibatalkan' && rekod.id !== idTempahanSedangEdit) {
-                            let slotRekod = dapatkanSlotDalamJulat(rekod.masa_mula, rekod.masa_tamat);
-                            let bertindih = slotInginDitempah.some(s => slotRekod.includes(s));
-                            if (bertindih) adaBertindih = true;
-                        }
-                    });
-                }
-
-                if (adaBertindih) {
-                    alert(`❌ MAAF! Sesetengah/Kesemua slot bagi peralatan (${nama_peralatan}) dari ${masa_mula} hingga ${masa_tamat} pada tarikh ${tarikh_guna} telah pun ditempah. Sila pilih julat masa lain atau unit lain.`);
-                    await kemaskiniStatusTimetable();
-                    btnHantar.disabled = false;
-                    btnHantar.innerText = idTempahanSedangEdit ? "Kemaskini Tempahan" : "Hantar Tempahan";
-                    return;
-                }
+                const masa_tamat_display = `${tempoh_jam} Jam Penggunaan`;
 
                 const formData = { 
                     nama_pemohon: nama_pemohon, 
                     no_telefon: no_telefon,
                     tujuan: tujuan,
                     nama_peralatan: nama_peralatan, 
-                    tarikh_guna: tarikh_guna, 
+                    tarikh_guna: tarikh_guna,
                     masa_mula: masa_mula, 
-                    masa_tamat: masa_tamat, 
+                    masa_tamat: masa_tamat_display, 
+                    tempoh_jam: tempoh_jam,
                     status: 'Menunggu'
                 };
 
@@ -778,7 +760,7 @@
                         alert(`✅ Tempahan #${idTempahanSedangEdit} berjaya dikemaskini!`);
                         batalModEdit();
                     } else {
-                        alert(`✅ Tempahan berjaya dihantar untuk tempoh ${masa_mula} hingga ${masa_tamat}!`);
+                        alert(`✅ Tempahan berjaya dihantar untuk ${nama_peralatan} selama ${tempoh_jam} Jam!`);
                         document.getElementById('formTempahan').reset();
                         document.getElementById('bekasPilihanUnit').classList.add('hidden');
                     }
@@ -833,7 +815,7 @@
                     const namaPemohon = rekod.nama_pemohon || rekod['Name: nama_pemohon'] || '-';
                     const namaPeralatan = rekod.nama_peralatan || '-';
                     const tarikhGuna = rekod.tarikh_guna || '-';
-                    const masaDisplay = (rekod.masa_mula && rekod.masa_tamat) ? `${rekod.masa_mula} - ${rekod.masa_tamat}` : '-';
+                    const tempohPapar = rekod.tempoh_jam ? `${rekod.tempoh_jam} Jam (${rekod.masa_mula})` : `${rekod.masa_mula} - ${rekod.masa_tamat}`;
 
                     row.insertCell(0).className = "py-3.5 px-4 font-semibold text-slate-800";
                     row.cells[0].innerText = namaPemohon;
@@ -845,7 +827,7 @@
                     row.cells[2].innerText = tarikhGuna;
 
                     row.insertCell(3).className = "py-3.5 px-4 text-slate-600 font-mono text-xs";
-                    row.cells[3].innerText = masaDisplay;
+                    row.cells[3].innerText = tempohPapar;
                     
                     const cellStatus = row.insertCell(4);
                     cellStatus.className = "py-3.5 px-4";
