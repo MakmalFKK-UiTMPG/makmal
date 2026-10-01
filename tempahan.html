@@ -119,7 +119,7 @@
                 <i data-lucide="clock-alert" class="w-5 h-5"></i>
             </div>
             <div>
-                <h3 class="text-xs font-extrabold uppercase tracking-wider text-blue-900">Syarat Tempahan Mengikut Peralatan</h3>
+                <h3 class="text-xs font-extrabold uppercase tracking-wider text-blue-900">Keperluan Tempahan Mengikut Peralatan</h3>
                 <p class="text-xs sm:text-sm font-semibold text-blue-800 mt-0.5 leading-relaxed">
                     • <strong class="text-blue-950 underline">Hot Plate & Weighing Balance:</strong> Hanya WAJIB ditempah sekiranya penggunaan <u>MELEBIHI 1 JAM</u>.<br>
                     • <strong class="text-blue-950 underline">Laboratory Oven:</strong> Sahaja yang dibenarkan untuk penggunaan melebihi 9 jam / overnight (sehingga 24 jam). Peralatan lain terhad kepada waktu operasi biasa (maksimum 9 jam).
@@ -184,7 +184,7 @@
 
                     <!-- DROPDOWN SPESIFIKASI UNIT & LOKASI PERALATAN -->
                     <div id="bekasPilihanUnit" class="hidden animate-fadeIn">
-                        <label class="block text-xs font-bold uppercase tracking-wider text-indigo-900 mb-2">📍 Pilih unit yang tersedia</label>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-indigo-900 mb-2">Pilih unit yang tersedia</label>
                         <select id="unit_peralatan" onchange="kemaskiniStatusTimetable()" class="w-full px-4 py-2.5 bg-indigo-100/70 border border-indigo-300 rounded-xl text-sm font-bold text-indigo-950 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition cursor-pointer">
                         </select>
                     </div>
@@ -224,7 +224,7 @@
                 </div>
             </div>
 
-            <!-- LANGKAH 3 (PILIHAN JAM DINAMIK) -->
+            <!-- LANGKAH 3 (PILIHAN JAM DINAMIK KEKAL COMPATIBLE DENGAN SUPABASE SCHEMA) -->
             <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm" id="bahagianBorangPengesahan">
                 <div class="flex items-center space-x-3 pb-4 mb-6 border-b border-slate-100">
                     <span class="flex items-center justify-center w-7 h-7 bg-indigo-600 text-white rounded-lg text-xs font-bold">3</span>
@@ -430,7 +430,6 @@
             const bekasUnit = document.getElementById('bekasPilihanUnit');
             const selectUnit = document.getElementById('unit_peralatan');
 
-            // Kemaskini pilihan jam dinamik mengikut alat
             kemaskiniPilihanJamDinamik(namaAlat);
 
             if (namaAlat === 'Hot Plate' || namaAlat === 'Weighing Balance') {
@@ -546,10 +545,10 @@
             }
         }
 
-        function dapatkanSlotDalamJulat(mula, tempohJamStr) {
+        function dapatkanSlotDalamJulat(mula, masaTamatStr) {
             let slotTerlibat = [];
             let iMula = senaraiSlotJam.indexOf(mula);
-            let bilJam = parseInt(tempohJamStr) || 1;
+            let bilJam = parseInt(masaTamatStr) || 1;
 
             if (iMula !== -1) {
                 for (let i = iMula; i < senaraiSlotJam.length && i < iMula + bilJam; i++) {
@@ -581,7 +580,7 @@
                 const adakahDibatalkan = (st === 'ditolak' || st === 'batal' || st === 'dibatalkan');
 
                 if (rekod.nama_peralatan === peralatanDicari && !adakahDibatalkan && rekod.id !== idTempahanSedangEdit) {
-                    let slotTerlibat = dapatkanSlotDalamJulat(rekod.masa_mula, rekod.tempoh_jam || "1");
+                    let slotTerlibat = dapatkanSlotDalamJulat(rekod.masa_mula, rekod.masa_tamat);
                     
                     slotTerlibat.forEach(masaClean => {
                         const idSlot = `slot_${rekod.tarikh_guna}_${masaClean}`;
@@ -593,7 +592,7 @@
                             elSlot.innerHTML = `🔴 Ditempah:<br><strong>${namaPemohon}</strong>`;
                             
                             elSlot.onclick = function() {
-                                alert(`❌ Slot ini telah ditempah oleh "${namaPemohon}" (${rekod.masa_mula}, Tempoh: ${rekod.tempoh_jam || '1'} Jam) bagi ${peralatanDicari} pada tarikh ${rekod.tarikh_guna}.`);
+                                alert(`❌ Slot ini telah ditempah oleh "${namaPemohon}" (${rekod.masa_mula}, Masa: ${rekod.masa_tamat}) bagi ${peralatanDicari} pada tarikh ${rekod.tarikh_guna}.`);
                             };
                         }
                     });
@@ -658,7 +657,7 @@
 
             document.getElementById('tarikh_guna').value = rekod.tarikh_guna || '';
             document.getElementById('masa_mula').value = rekod.masa_mula || '';
-            document.getElementById('tempoh_jam').value = rekod.tempoh_jam || '1';
+            document.getElementById('tempoh_jam').value = rekod.masa_tamat ? rekod.masa_tamat.replace(' Jam', '') : '1';
 
             document.getElementById('bannerKemaskini').classList.remove('hidden');
             document.getElementById('labelEditID').innerText = `#${id}`;
@@ -714,13 +713,14 @@
                 hariIni.setHours(0,0,0,0);
 
                 if (tarikhGunaObj.getTime() <= hariIni.getTime()) {
-                    alert("⚠️ TEMPAHAN DITOLAK: Tempahan hendaklah dibuat selewat-lewatnya SATU (1) HARI SEBELUM tarikh penggunaan!");
+                    alert("⚠️️ TEMPAHAN DITOLAK: Tempahan hendaklah dibuat selewat-lewatnya SATU (1) HARI SEBELUM tarikh penggunaan!");
                     btnHantar.disabled = false;
                     btnHantar.innerText = idTempahanSedangEdit ? "Kemaskini Tempahan" : "Hantar Tempahan";
                     return;
                 }
 
-                const masa_tamat_display = `${tempoh_jam} Jam Penggunaan`;
+                // SIMPAN STRING BILANGAN JAM DIRECT KEPADA 'masa_tamat' SUPABASE SCHEMA SEDIA ADA
+                const masa_tamat_display = `${tempoh_jam} Jam`;
 
                 const formData = { 
                     nama_pemohon: nama_pemohon, 
@@ -730,7 +730,6 @@
                     tarikh_guna: tarikh_guna,
                     masa_mula: masa_mula, 
                     masa_tamat: masa_tamat_display, 
-                    tempoh_jam: tempoh_jam,
                     status: 'Menunggu'
                 };
 
@@ -815,7 +814,7 @@
                     const namaPemohon = rekod.nama_pemohon || rekod['Name: nama_pemohon'] || '-';
                     const namaPeralatan = rekod.nama_peralatan || '-';
                     const tarikhGuna = rekod.tarikh_guna || '-';
-                    const tempohPapar = rekod.tempoh_jam ? `${rekod.tempoh_jam} Jam (${rekod.masa_mula})` : `${rekod.masa_mula} - ${rekod.masa_tamat}`;
+                    const tempohPapar = rekod.masa_tamat ? `${rekod.masa_tamat} (${rekod.masa_mula})` : `${rekod.masa_mula}`;
 
                     row.insertCell(0).className = "py-3.5 px-4 font-semibold text-slate-800";
                     row.cells[0].innerText = namaPemohon;
