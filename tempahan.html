@@ -224,7 +224,7 @@
                 </div>
             </div>
 
-            <!-- LANGKAH 3 (PILIHAN JAM DINAMIK) -->
+            <!-- LANGKAH 3 -->
             <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm" id="bahagianBorangPengesahan">
                 <div class="flex items-center space-x-3 pb-4 mb-6 border-b border-slate-100">
                     <span class="flex items-center justify-center w-7 h-7 bg-indigo-600 text-white rounded-lg text-xs font-bold">3</span>
@@ -328,6 +328,7 @@
                     window.location.href = "index.html";
                 } else {
                     window.emailPenggunaSemasa = email.toLowerCase();
+                    window.namaPenggunaSemasa = (user.displayName || email.split('@')[0]).toLowerCase();
                     if (window.paparkanTempahanPelajar) {
                         window.paparkanTempahanPelajar();
                     }
@@ -576,7 +577,7 @@
             const penerangan = document.getElementById('peneranganJadual');
 
             if (!document.getElementById('nama_peralatan').value) {
-                if(penerangan) penerangan.innerHTML = '⚠️ Sila pilih peralatan di Bahagian 1 dahulu untuk melihat status ketersediaan slot.';
+                if(penerangan) penerangan.innerHTML = '⚠️ Sila pilih peralatan di Langkah 1 dahulu untuk melihat status ketersediaan slot.';
                 return;
             }
 
@@ -688,7 +689,7 @@
             kemaskiniStatusTimetable();
         };
 
-        // FUNGSI PAPARAN JADUAL PELAJAR DENGAN KAWALAN KETAT HAK AKSES EDIT
+        // FUNGSI PAPARAN JADUAL PELAJAR DENGAN KAWALAN KETAT HAK AKSES EDIT (TANPA MEMERLUKAN COLUMN EMAIL_PEMOHON)
         window.paparkanTempahanPelajar = async function() {
             const tbody = document.getElementById('isiJadualPelajar');
             
@@ -715,6 +716,7 @@
             tbody.innerHTML = '';
 
             const currentUserEmail = (window.emailPenggunaSemasa || '').toLowerCase();
+            const currentUserName = (window.namaPenggunaSemasa || '').toLowerCase();
 
             rekodAktif.forEach(rekod => {
                 const row = tbody.insertRow();
@@ -727,9 +729,9 @@
 
                 // 🔒 SYARAT KETAT HAK AKSES KEMASKINI:
                 // 1. Status MESTI 'Menunggu' (Jika Admin dah luluskan / 'Lulus', BUTANG TERUS HILANG).
-                // 2. Pengguna MESTI Pemohon Asal (email match) ATAU Admin.
-                const emailPemohonRekod = String(rekod.email_pemohon || rekod.email || '').toLowerCase();
-                const adakahPemohonAsal = (currentUserEmail && emailPemohonRekod === currentUserEmail);
+                // 2. Pengguna MESTI Pemohon Asal (berdasarkan nama_pemohon) ATAU Admin.
+                const namaPemohonRekod = String(rekod.nama_pemohon || rekod['Name: nama_pemohon'] || '').toLowerCase();
+                const adakahPemohonAsal = (currentUserName && namaPemohonRekod.includes(currentUserName));
                 const adakahAdmin = senaraiAdminEmail.includes(currentUserEmail);
 
                 if (statusSemasa === 'Menunggu') {
@@ -814,10 +816,8 @@
 
                 // SIMPAN STRING BILANGAN JAM DIRECT KEPADA 'masa_tamat' SUPABASE SCHEMA SEDIA ADA
                 const masa_tamat_display = `${tempoh_jam} Jam`;
-                const emailPemohon = window.emailPenggunaSemasa || '';
 
                 const formData = { 
-                    email_pemohon: emailPemohon,
                     nama_pemohon: nama_pemohon, 
                     no_telefon: no_telefon,
                     tujuan: tujuan,
