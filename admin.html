@@ -230,9 +230,9 @@
 
             let mesej = "";
             if (jenis === 'tempahan') {
-                mesej = `Salam sejahtera ${namaPemohon}, permohonan tempahan peralatan makmal anda (${itemInfo}) telah DILULUSKAN. Sila pastikan anda hadir mengikut slot yang ditempah. Penggunaan yang tidak menepati slot yang sepatutnya boleh menjejaskan permohonan anda yang berikutnya. Terima kasih.`;
+                mesej = `Salam sejahtera ${namaPemohon}, permohonan tempahan peralatan makmal anda (${itemInfo}) telah DILULUSKAN.\n\nID Sila pastikan anda hadir mengikut slot yang ditempah. Penggunaan yang tidak menepati slot yang sepatutnya boleh menjejaskan permohonan anda yang berikutnya. Terima kasih.`;
             } else {
-                mesej = `Salam sejahtera ${namaPemohon}, permohonan anda bagi ${itemInfo} telah DILULUSKAN.\n\nID Rujukan Permohonan: ${idRujukan}\nSila download borang permohonan anda dan serah kepada staf makmal yang bertugas untuk proses seterusnya. Pengambilan radas adalah mengikut jadual yang telah ditetapkan oleh pihak makmal. Terima kasih.`;
+                mesej = `Salam sejahtera ${namaPemohon}, permohonan anda bagi ${itemInfo} telah DILULUSKAN.\n\nID Rujukan Permohonan: ${idRujukan}\n\nID Sila cetak borang permohonan anda dari sistem dan hantar kepada staf makmal yang bertugas untuk proses seterusnya. Pengambilan radas adalah mengikut jadual yang telah ditetapkan oleh pihak makmal. Terima kasih.`;
             }
 
             const urlWA = `https://api.whatsapp.com/send?phone=${noFormatted}&text=${encodeURIComponent(mesej)}`;
