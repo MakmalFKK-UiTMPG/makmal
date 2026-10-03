@@ -293,17 +293,20 @@
 
             data.forEach(r => {
                 const tarikh = new Date(r.created_at || Date.now()).toLocaleDateString('ms-MY');
-                const statusTxt = r.status || 'Menunggu Kelulusan';
-                const idRujukan = janaIDRujukan(r.id, r.created_at, r.tujuan);
                 
-                let isLulus = statusTxt.toLowerCase().includes('lulus');
-                let isMenunggu = statusTxt.toLowerCase().includes('menunggu');
+                // 🛠️ SEMAKAN STATUS KETAT:
+                const statusSemasa = String(r.status || '').trim();
+                const isLulus = (statusSemasa.toLowerCase() === 'lulus');
+                const isDitolak = (statusSemasa.toLowerCase() === 'ditolak' || statusSemasa.toLowerCase() === 'batal');
+                const isMenunggu = !isLulus && !isDitolak;
 
-                let statusBadge = '<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">Menunggu</span>';
+                const idRujukan = janaIDRujukan(r.id, r.created_at, r.tujuan);
+
+                let statusBadge = '<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">⏳ Menunggu</span>';
                 if (isLulus) {
-                    statusBadge = '<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Lulus</span>';
-                } else if (statusTxt.toLowerCase().includes('tolak')) {
-                    statusBadge = '<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">Ditolak</span>';
+                    statusBadge = '<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">✅ Lulus</span>';
+                } else if (isDitolak) {
+                    statusBadge = '<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">❌ Ditolak</span>';
                 }
 
                 // Senarai Bahan Kimia
@@ -662,9 +665,9 @@
                     <div class="border-2 border-emerald-800 p-4 rounded bg-emerald-50/20 mb-8">
                         <div class="flex items-center justify-between border-b border-emerald-800 pb-2 mb-2">
                             <span class="font-bold text-xs uppercase text-emerald-900">Keputusan Kelulusan Pegawai Makmal:</span>
-                            <span class="font-extrabold text-sm uppercase text-emerald-700">${r.status || 'Lulus'}</span>
+                            <span class="font-extrabold text-sm uppercase text-emerald-700">${r.status || 'Menunggu Kelulusan'}</span>
                         </div>
-                        <p class="text-xs"><strong>Catatan Pegawai:</strong> ${r.catatan_admin || 'Permohonan diluluskan mengikut ketersediaan radas dan bahan.'}</p>
+                        <p class="text-xs"><strong>Catatan Pegawai:</strong> ${r.catatan_admin || 'Tiada catatan.'}</p>
                     </div>
 
                     <!-- TANDATANGAN PENGESAHAN -->
