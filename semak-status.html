@@ -65,9 +65,9 @@
         <div class="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm mb-8">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
                 <div>
-                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-600">Portals Semakan Digital</span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-600">Portal Semakan Digital</span>
                     <h1 class="text-xl sm:text-2xl font-bold text-slate-900 mt-0.5">Semakan Status Permohonan Bahan & Radas</h1>
-                    <p class="text-xs sm:text-sm text-slate-500 mt-1">Masukkan No. ID (Pelajar / Staf) anda untuk melihat keseluruhan perincian permohonan dan catatan Pegawai Makmal.</p>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1">Masukkan No. ID (Pelajar / Staf) anda untuk melihat keseluruhan perincian permohonan, ID Rujukan Baku, dan catatan Pegawai Makmal.</p>
                 </div>
                 <div class="p-3 bg-emerald-50 text-emerald-600 rounded-2xl hidden sm:block">
                     <i data-lucide="file-search" class="w-8 h-8"></i>
@@ -121,15 +121,26 @@
                     </div>
                 </div>
 
+                <!-- DROPDOWN TUJUAN PENGGUNAAN -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-bold text-slate-600 mb-1">Tajuk Projek</label>
-                        <input type="text" id="editTajuk" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Tujuan Penggunaan</label>
+                        <select id="editTujuan" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer">
+                            <option value="FYP">FYP (Projek Tahun Akhir)</option>
+                            <option value="LI">Latihan Industri (LI)</option>
+                            <option value="Research">Research / Penyelidikan</option>
+                            <option value="Lain-lain">Lain-lain</option>
+                        </select>
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-600 mb-1">Nama Penyelia</label>
                         <input type="text" id="editPenyelia" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500">
                     </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Tajuk Projek</label>
+                    <input type="text" id="editTajuk" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500">
                 </div>
 
                 <hr class="border-slate-100 my-2">
@@ -183,6 +194,34 @@
         window.onload = function() {
             lucide.createIcons();
         };
+
+        // 🛠️ LOGIK SISTEMATIK PENJANAAN ID RUJUKAN PEMBANTU MAKMAL (PM) & PELAJAR
+        function janaIDRujukan(idDb, createdDateStr, tujuanStr) {
+            const tujuanUpper = String(tujuanStr || '').toUpperCase();
+            const d = createdDateStr ? new Date(createdDateStr) : new Date();
+            const tahun = d.getFullYear();
+            const bulan = d.getMonth() + 1; // 1 - 12
+            const numPadded = String(idDb).padStart(3, '0');
+
+            // 1. KATEGORI FYP (Contoh: FYP-20264/001)
+            if (tujuanUpper.includes('FYP') || tujuanUpper.includes('PROJEK TAHUN AKHIR')) {
+                // Sesi Mac - Julai = 2, Sesi Okt - Feb = 4
+                const kodSem = (bulan >= 3 && bulan <= 7) ? `${tahun}2` : `${tahun}4`;
+                return `FYP-${kodSem}/${numPadded}`;
+            } 
+            // 2. KATEGORI LATIHAN INDUSTRI (Contoh: LI-2026/001)
+            else if (tujuanUpper.includes('LI') || tujuanUpper.includes('LATIHAN INDUSTRI') || tujuanUpper.includes('INTERNSHIP')) {
+                return `LI-${tahun}/${numPadded}`;
+            } 
+            // 3. KATEGORI RESEARCH / PENYELIDIKAN (Contoh: R-2026/001)
+            else if (tujuanUpper.includes('RESEARCH') || tujuanUpper.includes('PENYELIDIKAN')) {
+                return `R-${tahun}/${numPadded}`;
+            }
+            // 4. KATEGORI LAIN-LAIN (Contoh: LAIN-2026/001)
+            else {
+                return `LAIN-${tahun}/${numPadded}`;
+            }
+        }
 
         async function semakStatus() {
             const noId = document.getElementById('noIdCarian').value.trim();
@@ -240,11 +279,12 @@
                         <table class="w-full text-left border-collapse min-w-[950px]">
                             <thead>
                                 <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500">
-                                    <th class="py-3 px-4 w-28">Tarikh</th>
+                                    <th class="py-3 px-4 w-36">ID Rujukan PM</th>
+                                    <th class="py-3 px-4 w-28">Tarikh Mohon</th>
                                     <th class="py-3 px-4 w-52">Pemohon & Projek</th>
                                     <th class="py-3 px-4">Senarai Item Dipohon</th>
                                     <th class="py-3 px-4 w-32">Status</th>
-                                    <th class="py-3 px-4 w-52">Catatan Pegawai</th>
+                                    <th class="py-3 px-4 w-48">Catatan Pegawai</th>
                                     <th class="py-3 px-4 w-36 text-center">Tindakan</th>
                                 </tr>
                             </thead>
@@ -254,6 +294,7 @@
             data.forEach(r => {
                 const tarikh = new Date(r.created_at || Date.now()).toLocaleDateString('ms-MY');
                 const statusTxt = r.status || 'Menunggu Kelulusan';
+                const idRujukan = janaIDRujukan(r.id, r.created_at, r.tujuan);
                 
                 let isLulus = statusTxt.toLowerCase().includes('lulus');
                 let isMenunggu = statusTxt.toLowerCase().includes('menunggu');
@@ -330,11 +371,14 @@
 
                 html += `
                     <tr class="hover:bg-slate-50/80 transition align-top">
+                        <td class="py-3.5 px-4 font-mono font-bold text-xs text-emerald-700">
+                            ${isLulus ? `<span class="bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-200 inline-block">${idRujukan}</span>` : '<span class="text-slate-400 font-normal italic">Belum Dijana</span>'}
+                        </td>
                         <td class="py-3.5 px-4 font-mono text-xs text-slate-600">${tarikh}</td>
                         <td class="py-3.5 px-4">
                             <div class="font-bold text-slate-900">${r.nama_pemohon}</div>
                             <div class="text-xs text-slate-500 mt-0.5">ID: ${r.no_id}</div>
-                            <div class="text-xs text-slate-500 mt-0.5">Tujuan: ${r.tujuan}</div>
+                            <div class="text-xs text-emerald-800 font-semibold mt-0.5">Tujuan: ${r.tujuan || '-'}</div>
                             <div class="text-xs text-slate-500 mt-0.5">Penyelia: ${r.nama_penyelia || '-'}</div>
                             ${ahliHTML}
                         </td>
@@ -408,6 +452,20 @@
             document.getElementById('editId').value = rekod.id;
             document.getElementById('editNama').value = rekod.nama_pemohon || '';
             document.getElementById('editTel').value = rekod.no_telefon || '';
+            
+            // Padankan nilai dropdown tujuan penggunaan
+            const editTujuanSelect = document.getElementById('editTujuan');
+            const tujuanVal = String(rekod.tujuan || '');
+            if (tujuanVal.toUpperCase().includes('FYP')) {
+                editTujuanSelect.value = "FYP";
+            } else if (tujuanVal.toUpperCase().includes('LI') || tujuanVal.toUpperCase().includes('INDUSTRI')) {
+                editTujuanSelect.value = "LI";
+            } else if (tujuanVal.toUpperCase().includes('RESEARCH') || tujuanVal.toUpperCase().includes('PENYELIDIKAN')) {
+                editTujuanSelect.value = "Research";
+            } else {
+                editTujuanSelect.value = "Lain-lain";
+            }
+
             document.getElementById('editTajuk').value = rekod.tajuk_projek || '';
             document.getElementById('editPenyelia').value = rekod.nama_penyelia || '';
 
@@ -461,6 +519,7 @@
             const updatePayload = {
                 nama_pemohon: document.getElementById('editNama').value,
                 no_telefon: document.getElementById('editTel').value,
+                tujuan: document.getElementById('editTujuan').value,
                 tajuk_projek: document.getElementById('editTajuk').value,
                 nama_penyelia: document.getElementById('editPenyelia').value,
                 senarai_radas: radasList,
@@ -482,10 +541,12 @@
             }
         });
 
-        // FUNGSI CETAK PERMOHONAN LENGKAP (SEKSYEN A SEHINGGA E)
+        // FUNGSI CETAK PERMOHONAN LENGKAP DENGAN KOD ID RUJUKAN KHAS (SEKSYEN A SEHINGGA E)
         function cetakSlip(id) {
             const r = dataRekodSemasa.find(item => item.id == id);
             if (!r) return;
+
+            const idRujukan = janaIDRujukan(r.id, r.created_at, r.tujuan);
 
             // Format Ahli Kumpulan
             let ahliListHTML = '-';
@@ -540,8 +601,9 @@
                             <h3 class="text-xs font-bold text-slate-700">BORANG PERMOHONAN & KELULUSAN ALAT RADAS / BAHAN KIMIA / PERALATAN MAKMAL</h3>
                         </div>
                         <div class="text-right">
-                            <span class="block font-mono text-[10px] text-slate-500">Tarikh Mohon:</span>
-                            <span class="font-bold text-xs">${new Date(r.created_at || Date.now()).toLocaleDateString('ms-MY')}</span>
+                            <span class="block font-mono text-[10px] text-slate-500">ID Rujukan PM:</span>
+                            <span class="font-bold text-sm text-emerald-800 font-mono block">${idRujukan}</span>
+                            <span class="block font-mono text-[9px] text-slate-400 mt-1">Tarikh: ${new Date(r.created_at || Date.now()).toLocaleDateString('ms-MY')}</span>
                         </div>
                     </div>
 
