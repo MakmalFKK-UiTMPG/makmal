@@ -230,7 +230,7 @@
 
             let mesej = "";
             if (jenis === 'tempahan') {
-                mesej = `Salam sejahtera ${namaPemohon}, permohonan tempahan peralatan makmal anda (${itemInfo}) telah DILULUSKAN.\n\nID Sila pastikan anda hadir mengikut slot yang ditempah. Penggunaan yang tidak menepati slot yang sepatutnya boleh menjejaskan permohonan anda yang berikutnya. Terima kasih.`;
+                mesej = `Salam sejahtera ${namaPemohon}, permohonan tempahan peralatan makmal anda (${itemInfo}) telah DILULUSKAN.\n Sila pastikan anda hadir mengikut slot yang ditempah. Penggunaan yang tidak menepati slot yang sepatutnya boleh menjejaskan permohonan anda yang berikutnya. Terima kasih.`;
             } else {
                 mesej = `Salam sejahtera ${namaPemohon}, permohonan anda bagi ${itemInfo} telah DILULUSKAN.\n\nID Rujukan Permohonan: ${idRujukan}\n\nID Sila cetak borang permohonan anda dari sistem dan hantar kepada staf makmal yang bertugas untuk proses seterusnya. Pengambilan radas adalah mengikut jadual yang telah ditetapkan oleh pihak makmal. Terima kasih.`;
             }
@@ -471,20 +471,20 @@
                 <h4 style="margin:10px 0 5px 0; color:#2c3e50;">👥 Ahli Kumpulan:</h4>
                 <ul style="margin-top:0; font-size:13px;">${(rekod.ahli_kumpulan || []).map(a => `<li>${a.nama} (${a.id})</li>`).join('') || 'Tiada'}</ul>
 
-                <h4 style="margin:10px 0 5px 0; color:#16a085;">🧪 Bahan Kimia Dipohon:</h4>
+                <h4 style="margin:10px 0 5px 0; color:#16a085;">🧪 Bahan Kimia Dimohon:</h4>
                 <ul style="margin-top:0; font-size:13px;">${(rekod.senarai_bahan_kimia || []).map(b => `<li><strong>${b.nama}</strong> -${b.kuantiti}</li>`).join('') || 'Tiada'}</ul>
 
-                <h4 style="margin:10px 0 5px 0; color:#16a085;">🔬 Alat Radas Dipohon:</h4>
+                <h4 style="margin:10px 0 5px 0; color:#16a085;">🔬 Alat Radas Dimohon:</h4>
                 <ul style="margin-top:0; font-size:13px;">${(rekod.senarai_radas || []).map(r => `<li><strong>${r.nama}</strong> -${r.kuantiti} unit</li>`).join('') || 'Tiada'}</ul>
 
-                <h4 style="margin:10px 0 5px 0; color:#16a085;">⚙️ Peralatan Makmal Dipohon:</h4>
+                <h4 style="margin:10px 0 5px 0; color:#16a085;">⚙️ Peralatan Makmal Dimohon:</h4>
                 <ul style="margin-top:0; font-size:13px;">${(rekod.senarai_peralatan || []).map(p => `<li><strong>${p.nama}</strong> -${p.kuantiti} unit</li>`).join('') || 'Tiada'}</ul>
 
                 <hr style="border:none; border-top:1px solid #ddd; margin:15px 0;">
                 
                 <div class="no-print">
                     <label style="display:block; font-weight:bold; margin-bottom:5px; color:#2c3e50; font-size:13px;">
-                        ✏️ Catatan Admin / Pelulusan Separa:
+                        ✏️ Catatan Admin:
                     </label>
                     <textarea id="catatanAdminInput" style="width:97%; height:70px; padding:8px; border:1px solid #ccc; border-radius:4px; font-family:Arial;" placeholder="Contoh: Diluluskan untuk Beaker sahaja. Ethanol tidak diluluskan kerana stok terhad.">${rekod.catatan_admin || ''}</textarea>
 
