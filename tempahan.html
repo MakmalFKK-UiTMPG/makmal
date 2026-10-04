@@ -119,10 +119,11 @@
                 <i data-lucide="clock-alert" class="w-5 h-5"></i>
             </div>
             <div>
-                <h3 class="text-xs font-extrabold uppercase tracking-wider text-blue-900">Syarat Tempahan Mengikut Peralatan</h3>
+                <h3 class="text-xs font-extrabold uppercase tracking-wider text-blue-900">Syarat Tempahan & Pembatalan</h3>
                 <p class="text-xs sm:text-sm font-semibold text-blue-800 mt-0.5 leading-relaxed">
                     • <strong class="text-blue-950 underline">Hot Plate & Weighing Balance:</strong> Hanya WAJIB ditempah sekiranya penggunaan <u>MELEBIHI 1 JAM</u>.<br>
-                    • <strong class="text-blue-950 underline">Laboratory Oven:</strong> dibenarkan untuk penggunaan melebihi 9 jam / overnight (sehingga 24 jam). Peralatan lain terhad kepada waktu operasi biasa (maksimum 9 jam).
+                    • <strong class="text-blue-950 underline">Laboratory Oven:</strong> dibenarkan untuk penggunaan melebihi 9 jam / overnight (sehingga 24 jam).<br>
+                    • <strong class="text-blue-950 underline">Syarat Pembatalan:</strong> Pembatalan tempahan dibenarkan <span class="underline font-bold">sehingga 1 jam pertama slot yang ditempah</span>. Selepas waktu tersebut, pembatalan tidak lagi dibenarkan.
                 </p>
             </div>
         </div>
@@ -418,6 +419,22 @@
             const [year, month, day] = strTarikh.split('-').map(Number);
             const [hours, minutes] = (strMasa || "08:00").split(':').map(Number);
             return new Date(year, month - 1, day, hours, minutes, 0).getTime();
+        }
+
+        // 🛠️ LOGIK MATEMATIK SEMAK HAD MASA BATAL (SEHINGGA 1 JAM PERTAMA SLOT)
+        function semakBolehBatal(tarikhGunaStr, masaMulaStr) {
+            if (!tarikhGunaStr || !masaMulaStr) return true;
+            
+            // Masa Mula Slot Tempahan (ms)
+            const startMs = dapatkanTimestampObjek(tarikhGunaStr, masaMulaStr);
+            
+            // Had Akhir Batal = Masa Mula Slot + 1 Jam (3600000 ms)
+            const cutoffBatalMs = startMs + (1 * 3600000); 
+            
+            const masaSekarangMs = new Date().getTime();
+            
+            // Boleh batal jika waktu semasa belum melepasi 1 jam pertama slot
+            return (masaSekarangMs <= cutoffBatalMs);
         }
 
         // LOGIK PENJANAAN DROPDOWN JAM DINAMIK (OVEN SAHAJA > 9 JAM)
@@ -720,18 +737,24 @@
             kemaskiniStatusTimetable();
         };
 
-        // 🛠️ FUNGSI BATAL TEMPAHAN DENGAN KAWALAN HAK AKSES KETAT
+        // 🛠️ FUNGSI BATAL TEMPAHAN DENGAN HAD MASA (1 JAM PERTAMA SLOT)
         window.batalTempahanPelajar = async function(id) {
             const rekod = senaraiTempahanSediaAda.find(item => item.id === id);
             if (!rekod) return;
 
-            // KAWALAN KESELAMATAN HAK AKSES
+            // 1. KAWALAN KESELAMATAN HAK AKSES
             if (!semakHakAksesPemohon(rekod)) {
                 alert("🔒 AKSES DITOLAK: Anda hanya dibenarkan membatalkan tempahan anda sendiri!");
                 return;
             }
 
-            if (confirm(`⚠️ Adakah anda pasti mahu membatalkan Tempahan #${id} ini?\n\nSlot masa yang ditempah akan dibuka semula untuk pengguna lain.`)) {
+            // 2. KAWALAN HAD MASA BATAL (SEHINGGA 1 JAM PERTAMA SLOT)
+            if (!semakBolehBatal(rekod.tarikh_guna, rekod.masa_mula)) {
+                alert(`⚠️ BATAL DITOLAK: Tempahan #${id} ini tidak boleh dibatalkan lagi kerana slot masa penggunaan (${rekod.tarikh_guna} ${rekod.masa_mula}) telah melepasi 1 jam pertama.`);
+                return;
+            }
+
+            if (confirm(`⚠️️ Adakah anda pasti mahu membatalkan Tempahan #${id} ini?\n\nSlot masa yang ditempah akan dibuka semula untuk pengguna lain.`)) {
                 const { error } = await supabaseClient
                     .from('tempahan_peralatan')
                     .update({ status: 'Batal' })
@@ -751,7 +774,7 @@
             }
         };
 
-        // FUNGSI PAPARAN JADUAL PELAJAR DENGAN KAWALAN KETAT HAK AKSES EDIT & BATAL
+        // FUNGSI PAPARAN JADUAL PELAJAR DENGAN KAWALAN HAK AKSES & HAD MASA BATAL
         window.paparkanTempahanPelajar = async function() {
             const tbody = document.getElementById('isiJadualPelajar');
             
@@ -786,8 +809,9 @@
                 
                 let butangTindakan = '-';
 
-                // 🔒 SEMAKAN HAK AKSES KETAT
+                // 🔒 SEMAKAN HAK AKSES & HAD MASA BATAL
                 const adakahBolehAkses = semakHakAksesPemohon(rekod);
+                const adakahBolehBatalMasa = semakBolehBatal(rekod.tarikh_guna, rekod.masa_mula);
 
                 if (statusSemasa === 'Lulus') {
                     statusBadge = '<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Lulus</span>';
@@ -797,7 +821,10 @@
                     let btnEdit = (statusSemasa === 'Menunggu') 
                         ? `<button onclick="sediaEditTempahan(${rekod.id})" class="px-2.5 py-1 text-xs font-semibold text-indigo-600 bg-indigo-50 border border-indigo-200 hover:bg-indigo-600 hover:text-white rounded-lg transition cursor-pointer">✏️ Kemaskini</button>` 
                         : '';
-                    let btnBatal = `<button onclick="batalTempahanPelajar(${rekod.id})" class="px-2.5 py-1 text-xs font-semibold text-rose-600 bg-rose-50 border border-rose-200 hover:bg-rose-600 hover:text-white rounded-lg transition cursor-pointer">🚫 Batal</button>`;
+                    
+                    let btnBatal = adakahBolehBatalMasa
+                        ? `<button onclick="batalTempahanPelajar(${rekod.id})" class="px-2.5 py-1 text-xs font-semibold text-rose-600 bg-rose-50 border border-rose-200 hover:bg-rose-600 hover:text-white rounded-lg transition cursor-pointer">🚫 Batal</button>`
+                        : `<span class="text-[10px] text-slate-400 font-semibold italic">Tamat Tempoh Batal</span>`;
 
                     butangTindakan = `<div class="flex items-center justify-center space-x-1.5">${btnEdit} ${btnBatal}</div>`;
                 } else {
