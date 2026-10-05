@@ -592,6 +592,7 @@
             }
         }
 
+        // 🛠️ FUNGSI KEMASKINI TIMETABLE DENGAN EKSTRAK JAM TEPAT
         async function kemaskiniStatusTimetable() {
             janaTimetable2Minggu();
 
@@ -615,7 +616,17 @@
 
                 if (rekod.nama_peralatan === peralatanDicari && !adakahDibatalkan && rekod.id !== idTempahanSedangEdit) {
                     const startMs = dapatkanTimestampObjek(rekod.tarikh_guna, rekod.masa_mula);
-                    const durasiJam = parseInt(rekod.masa_tamat || '1') || 1;
+                    
+                    // 🛠️ EKSTRAK BILANGAN JAM SAHAJA DENGAN TEPAT (E.g. "12:00" / "2 Jam")
+                    let durasiJam = 1;
+                    if (rekod.masa_tamat) {
+                        const padanan = String(rekod.masa_tamat).match(/\d+/);
+                        if (padanan) {
+                            durasiJam = parseInt(padanan[0], 10);
+                            if (durasiJam > 24) durasiJam = 1; 
+                        }
+                    }
+
                     const endMs = startMs + (durasiJam * 3600000);
 
                     document.querySelectorAll('.slot-available, .slot-disabled').forEach(elSlot => {
@@ -754,7 +765,7 @@
                 return;
             }
 
-            if (confirm(`⚠️️ Adakah anda pasti mahu membatalkan Tempahan #${id} ini?\n\nSlot masa yang ditempah akan dibuka semula untuk pengguna lain.`)) {
+            if (confirm(`⚠️ Adakah anda pasti mahu membatalkan Tempahan #${id} ini?\n\nSlot masa yang ditempah akan dibuka semula untuk pengguna lain.`)) {
                 const { error } = await supabaseClient
                     .from('tempahan_peralatan')
                     .update({ status: 'Batal' })
