@@ -394,8 +394,7 @@
                 { unit: "Unit 3", label: "Unit 3 (Analytical Balance 2015000739) - Makmal Bio Process" },
                 { unit: "Unit 4", label: "Unit 4 (Analytical Balance 2015000740) - Makmal Environment" },
                 { unit: "Unit 5", label: "Unit 5 (Analytical Balance 2015000738) - Makmal Environment" },
-                { unit: "Unit 6", label: "Unit 6 (Top Loading Balance 2016000079) - Makmal Reaction" },
-        
+                { unit: "Unit 6", label: "Unit 6 (Top Loading Balance 2016000079) - Makmal Reaction" }
             ],
             "Flocculation Device (Jar Test)": [
                 { unit: "Unit 1", label: "Unit 1 - Makmal Environment" },
@@ -405,7 +404,7 @@
                 { unit: "Unit 1", label: "Unit 1 (Makmal Chemistry 2 - Dibenarkan > 9 Jam)" },
                 { unit: "Unit 2", label: "Unit 2 (Makmal Chemistry 2 - Dibenarkan > 9 Jam)" },
                 { unit: "Unit 3", label: "Unit 3 (Makmal Environment - Dibenarkan > 9 Jam)" },
-                { unit: "Unit 4", label: "Unit 4 (Makmal Bio Process - Dibenarkan > 9 Jam)" },
+                { unit: "Unit 4", label: "Unit 4 (Makmal Bio Process - Dibenarkan > 9 Jam)" }
             ]
         };
 
@@ -689,16 +688,31 @@
             }
         }
 
-        // 🔒 HELPER SEMAK HAK AKSES PENGGUNA (HANYA PEMOHON ASAL ATAU ADMIN)
+        // 🔒 HELPER SEMAK HAK AKSES PENGGUNA (PEMOHON ASAL ATAU ADMIN DENGAN FLEKSIBEL)
         function semakHakAksesPemohon(rekod) {
             const currentUserEmail = (window.emailPenggunaSemasa || '').toLowerCase().trim();
             const currentUserName = (window.namaPenggunaSemasa || '').toLowerCase().trim();
             const namaPemohonRekod = String(rekod.nama_pemohon || rekod['Name: nama_pemohon'] || '').toLowerCase().trim();
 
+            // 1. Admin sentiasa ada hak akses penuh
             const adakahAdmin = senaraiAdminEmail.includes(currentUserEmail);
-            const adakahPemohonAsal = (currentUserName && namaPemohonRekod.includes(currentUserName));
+            if (adakahAdmin) return true;
 
-            return (adakahAdmin || adakahPemohonAsal);
+            if (!currentUserName && !currentUserEmail) return false;
+
+            // 2. Padanan nama pemohon asal (Fleksibel mengikut kata kunci nama)
+            if (namaPemohonRekod && currentUserName) {
+                if (namaPemohonRekod.includes(currentUserName) || currentUserName.includes(namaPemohonRekod)) {
+                    return true;
+                }
+
+                // Pecahkan nama untuk padanan kata kunci utama (Cth: "Amirul" / "Irsyad")
+                const perkataanLogMasuk = currentUserName.split(' ').filter(w => w.length > 3);
+                const adakahKataKunciPadan = perkataanLogMasuk.some(perkataan => namaPemohonRekod.includes(perkataan));
+                if (adakahKataKunciPadan) return true;
+            }
+
+            return false;
         }
 
         // 🛠️ PERMOHON HANYA BOLEH KEMASKINI REKOD SENDIRI
