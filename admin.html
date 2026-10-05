@@ -30,6 +30,12 @@
         .btn-print-main { background-color: #8e44ad; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; }
         .btn-print-main:hover { background-color: #712b8d; }
 
+        /* BAR ACTION PUKAL / SERENTAK */
+        .bulk-action-bar { display: none; background: #e8f8f5; border: 2px solid #27ae60; padding: 12px 18px; border-radius: 8px; margin-bottom: 15px; justify-content: space-between; align-items: center; }
+        .bulk-action-bar span { font-weight: bold; color: #1e8449; font-size: 14px; }
+        .btn-lulus-pukal { background-color: #27ae60; color: white; border: none; padding: 8px 18px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 13px; }
+        .btn-lulus-pukal:hover { background-color: #219150; }
+
         /* KAD RINGKASAN */
         .summary-container { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
         .summary-card { flex: 1; min-width: 180px; background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); border-left: 4px solid #2980b9; text-align: center; }
@@ -113,9 +119,18 @@
                 <div class="summary-card" style="border-left-color: #d35400;"><h4>MENUNGGU</h4><p id="totalMenunggu">0</p></div>
             </div>
 
+            <!-- BAR TINDAKAN SERENTAK (PUKAL) -->
+            <div id="barLulusPukal" class="bulk-action-bar">
+                <span>☑️ <span id="bilPilihanPukal">0</span> permohonan dipilih.</span>
+                <button onclick="luluskanPukalTempahan()" class="btn-lulus-pukal">✅ Luluskan Semua Permohonan Dipilih</button>
+            </div>
+
             <table>
                 <thead>
                     <tr>
+                        <th width="3%" style="text-align:center;">
+                            <input type="checkbox" id="checkPilihSemua" onclick="pilihSemuaCheckbox(this)">
+                        </th>
                         <th width="12%">Tarikh Tempahan</th>
                         <th>Pemohon</th>
                         <th>No. Tel</th>
@@ -126,7 +141,7 @@
                         <th>Tindakan & WhatsApp</th>
                     </tr>
                 </thead>
-                <tbody id="isiJadualTempahan"><tr><td colspan="8" style="text-align:center;">Memuatkan...</td></tr></tbody>
+                <tbody id="isiJadualTempahan"><tr><td colspan="9" style="text-align:center;">Memuatkan...</td></tr></tbody>
             </table>
         </div>
 
@@ -230,7 +245,7 @@
 
             let mesej = "";
             if (jenis === 'tempahan') {
-                mesej = `Salam sejahtera ${namaPemohon}, permohonan tempahan peralatan makmal anda (${itemInfo}) telah DILULUSKAN.\n\nID Sila pastikan anda hadir mengikut slot yang ditempah.\n\nID Penggunaan yang tidak menepati slot yang sepatutnya boleh menjejaskan permohonan anda yang berikutnya. Terima kasih.`;
+                mesej = `Salam sejahtera ${namaPemohon}, permohonan tempahan peralatan makmal anda (${itemInfo}) telah DILULUSKAN.\n\nSila pastikan anda hadir mengikut slot yang ditempah.\n\nPenggunaan yang tidak menepati slot yang sepatutnya boleh menjejaskan permohonan anda yang berikutnya. Terima kasih.`;
             } else {
                 mesej = `Salam sejahtera ${namaPemohon}, permohonan anda bagi ${itemInfo} telah DILULUSKAN.\n\nID Rujukan Permohonan: ${idRujukan}\nSila cetak borang permohonan anda dari sistem dan hantar kepada staf makmal yang bertugas untuk proses seterusnya. Pengambilan radas adalah mengikut jadual yang telah ditetapkan oleh pihak makmal. Terima kasih.`;
             }
@@ -294,7 +309,7 @@
             document.body.removeChild(link);
         }
 
-        // 1. DATA TEMPAHAN SLOT
+        // 1. DATA TEMPAHAN SLOT & LOGIK PILIH SERENTAK
         async function dapatkanTempahan() {
             const { data } = await supabaseClient
                 .from('tempahan_peralatan')
@@ -305,6 +320,10 @@
             tbody.innerHTML = '';
             dataTempahanGlobal = data || [];
 
+            // Sembunyikan bar pukal apabila data dimuat semula
+            document.getElementById('barLulusPukal').style.display = 'none';
+            document.getElementById('checkPilihSemua').checked = false;
+
             if(data) {
                 document.getElementById('totalTempahan').innerText = data.length;
                 document.getElementById('totalLulus').innerText = data.filter(r => r.status === 'Lulus').length;
@@ -314,9 +333,13 @@
                     const tarikhDibuat = formatTarikhMasa(r.created_at);
                     const tarikhLulus = formatTarikhMasa(r.tarikh_kelulusan);
                     const st = r.status || 'Menunggu';
+                    const isMenunggu = (st === 'Menunggu' || !r.status);
 
                     const row = tbody.insertRow();
                     row.innerHTML = `
+                        <td style="text-align:center;">
+                            ${isMenunggu ? `<input type="checkbox" class="check-tempahan-item" value="${r.id}" onclick="kemaskiniStatusBarPukal()">` : '-'}
+                        </td>
                         <td style="font-size: 11px; font-weight: bold; color: #2c3e50;">${tarikhDibuat}</td>
                         <td>${r.nama_pemohon || '-'}</td>
                         <td>${r.no_telefon || '-'}</td>
@@ -336,6 +359,69 @@
                         </td>
                     `;
                 });
+            }
+        }
+
+        // 🛠️ FUNGSI PILIH SEMUA CHECKBOX UNTUK TEMPAHAN MENUNGGU
+        function pilihSemuaCheckbox(master) {
+            const checkboxes = document.querySelectorAll('.check-tempahan-item');
+            checkboxes.forEach(cb => cb.checked = master.checked);
+            kemaskiniStatusBarPukal();
+        }
+
+        // 🛠️ KEMASKINI PAPARAN BAR TINDAKAN PUKAL
+        function kemaskiniStatusBarPukal() {
+            const terpilih = document.querySelectorAll('.check-tempahan-item:checked');
+            const bar = document.getElementById('barLulusPukal');
+            const labelBil = document.getElementById('bilPilihanPukal');
+
+            if (terpilih.length > 0) {
+                bar.style.display = 'flex';
+                labelBil.innerText = terpilih.length;
+            } else {
+                bar.style.display = 'none';
+            }
+        }
+
+        // 🛠️ FUNGSI LULUSKAN SEMUA TEMPAHAN DIPILIH SERENTAK
+        async function luluskanPukalTempahan() {
+            const terpilih = document.querySelectorAll('.check-tempahan-item:checked');
+            if (terpilih.length === 0) {
+                alert("⚠️ Sila pilih sekurang-kurangnya satu permohonan!");
+                return;
+            }
+
+            const idList = Array.from(terpilih).map(cb => parseInt(cb.value));
+
+            if (confirm(`Adakah anda pasti mahu meluluskan ${idList.length} permohonan tempahan ini secara serentak?`)) {
+                const masaKini = new Date().toISOString();
+
+                // Kemaskini dalam Supabase secara pukal menggunakan operator in
+                const { error } = await supabaseClient
+                    .from('tempahan_peralatan')
+                    .update({ 
+                        status: 'Lulus',
+                        tarikh_kelulusan: masaKini 
+                    })
+                    .in('id', idList);
+
+                if (error) {
+                    alert("❌ Ralat semasa meluluskan tempahan pukal: " + error.message);
+                } else {
+                    alert(`✅ Berjaya! ${idList.length} tempahan telah DILULUSKAN secara serentak.`);
+                    
+                    // Tanya jika Admin mahu membuka pautan WhatsApp untuk notifikasi pemohon
+                    if (confirm("Adakah anda mahu membuka pautan WhatsApp bagi memaklumkan kelulusan ini kepada pemohon?")) {
+                        idList.forEach(id => {
+                            const rekod = dataTempahanGlobal.find(r => r.id === id);
+                            if (rekod && rekod.no_telefon) {
+                                hantarWhatsApp(rekod.no_telefon, rekod.nama_pemohon, rekod.nama_peralatan, '', 'tempahan');
+                            }
+                        });
+                    }
+
+                    dapatkanTempahan();
+                }
             }
         }
 
@@ -370,7 +456,7 @@
                         <td>${r.nama_penyelia || '-'}</td>
                         <td>
                             <span class="status-${st.toLowerCase()}">${st}</span>
-                            ${tarikhLulus ? `<span class="tarikh-badge">🗓️️ ${tarikhLulus}</span>` : ''}
+                            ${tarikhLulus ? `<span class="tarikh-badge">🗓️ ${tarikhLulus}</span>` : ''}
                         </td>
                         <td>
                             <button class="btn-detail" onclick="paparkanDetail(${r.id})">🔍 Semak</button>
@@ -489,7 +575,7 @@
                     <textarea id="catatanAdminInput" style="width:97%; height:70px; padding:8px; border:1px solid #ccc; border-radius:4px; font-family:Arial;" placeholder="Contoh: Diluluskan untuk Beaker sahaja. Ethanol tidak diluluskan kerana stok terhad.">${rekod.catatan_admin || ''}</textarea>
 
                     <div style="margin-top:15px; display:flex; gap:10px; justify-content:flex-end;">
-                        <button onclick="window.print()" class="btn-print-main">🖨️️ Cetak / Simpan Borang Rasmi PDF</button>
+                        <button onclick="window.print()" class="btn-print-main">🖨️ Cetak / Simpan Borang Rasmi PDF</button>
                         <button class="btn-lulus" onclick="simpanKeputusan(${rekod.id}, 'Lulus', '${rekod.no_telefon}', '${rekod.nama_pemohon}', '${idRujukan}')">✅ Luluskan & Hantar WA</button>
                         <button class="btn-tolak" onclick="simpanKeputusan(${rekod.id}, 'Ditolak', '', '', '')">❌ Tolak Permohonan</button>
                     </div>
@@ -536,7 +622,7 @@
                 <h4 style="margin:10px 0 5px 0; color:#16a085;">🧪 Komposisi Bahan Kimia Terlibat:</h4>
                 ${htmlKomposisi}
 
-                <h4 style="margin:10px 0 5px 0; color:#16a085;">⚖️️ Berat Kasar / Isipadu Sisa:</h4>
+                <h4 style="margin:10px 0 5px 0; color:#16a085;">⚖️ Berat Kasar / Isipadu Sisa:</h4>
                 <p style="margin:0 0 10px 0; font-size:13px; font-weight:bold;">${rekod.berat_kasar || '-'}</p>
 
                 <hr style="border:none; border-top:1px solid #ddd; margin:15px 0;">
