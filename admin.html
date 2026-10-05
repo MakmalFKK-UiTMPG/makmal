@@ -208,7 +208,7 @@
                    d.toLocaleTimeString('ms-MY', { hour: '2-digit', minute: '2-digit', hour12: true });
         }
 
-        // 🛠️ LOGIK SISTEMATIK PENJANAAN ID RUJUKAN PEMBANTU MAKMAL (PM)
+        // 🛠️ LOGIK PENJANAAN ID RUJUKAN PEMBANTU MAKMAL (PM) - FIXED MATCHING
         function janaIDRujukan(idDb, createdDateStr, tujuanStr) {
             const tujuanUpper = String(tujuanStr || '').toUpperCase();
             const d = createdDateStr ? new Date(createdDateStr) : new Date();
@@ -216,16 +216,20 @@
             const bulan = d.getMonth() + 1; // 1 - 12
             const numPadded = String(idDb).padStart(3, '0');
 
+            // 1. KATEGORI FYP
             if (tujuanUpper.includes('FYP') || tujuanUpper.includes('PROJEK TAHUN AKHIR')) {
                 const kodSem = (bulan >= 3 && bulan <= 7) ? `${tahun}2` : `${tahun}4`;
                 return `FYP-${kodSem}/${numPadded}`;
             } 
-            else if (tujuanUpper.includes('LI') || tujuanUpper.includes('LATIHAN INDUSTRI') || tujuanUpper.includes('INTERNSHIP')) {
-                return `LI-${tahun}/${numPadded}`;
-            } 
-            else if (tujuanUpper.includes('PROJEK PENYELIDIKAN') || tujuanUpper.includes('PROJEK PENYELIDIKAN')) {
+            // 2. KATEGORI RESEARCH / PENYELIDIKAN (Semak dahulu sebelum LI)
+            else if (tujuanUpper.includes('RESEARCH') || tujuanUpper.includes('PENYELIDIKAN')) {
                 return `R-${tahun}/${numPadded}`;
             }
+            // 3. KATEGORI LATIHAN INDUSTRI (Padanan tepat untuk elak cam 'LI' dalam 'PENYELIDIKAN')
+            else if (tujuanUpper.includes('LATIHAN INDUSTRI') || tujuanUpper.includes('INTERNSHIP') || tujuanUpper === 'LI' || tujuanUpper.includes(' LI') || tujuanUpper.includes('LI ')) {
+                return `LI-${tahun}/${numPadded}`;
+            } 
+            // 4. KATEGORI LAIN-LAIN
             else {
                 return `LAIN-${tahun}/${numPadded}`;
             }
