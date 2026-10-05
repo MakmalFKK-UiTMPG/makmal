@@ -195,7 +195,7 @@
             lucide.createIcons();
         };
 
-        // 🛠️ LOGIK SISTEMATIK PENJANAAN ID RUJUKAN PEMBANTU MAKMAL (PM) & PELAJAR
+        // 🛠️ LOGIK SISTEMATIK PENJANAAN ID RUJUKAN PEMBANTU MAKMAL (PM) & PELAJAR (DIBAIKI)
         function janaIDRujukan(idDb, createdDateStr, tujuanStr) {
             const tujuanUpper = String(tujuanStr || '').toUpperCase();
             const d = createdDateStr ? new Date(createdDateStr) : new Date();
@@ -205,18 +205,17 @@
 
             // 1. KATEGORI FYP (Contoh: FYP-20264/001)
             if (tujuanUpper.includes('FYP') || tujuanUpper.includes('PROJEK TAHUN AKHIR')) {
-                // Sesi Mac - Julai = 2, Sesi Okt - Feb = 4
                 const kodSem = (bulan >= 3 && bulan <= 7) ? `${tahun}2` : `${tahun}4`;
                 return `FYP-${kodSem}/${numPadded}`;
             } 
-            // 2. KATEGORI LATIHAN INDUSTRI (Contoh: LI-2026/001)
-            else if (tujuanUpper.includes('LI') || tujuanUpper.includes('LATIHAN INDUSTRI') || tujuanUpper.includes('INTERNSHIP')) {
-                return `LI-${tahun}/${numPadded}`;
-            } 
-            // 3. KATEGORI RESEARCH / PENYELIDIKAN (Contoh: R-2026/001)
-            else if (tujuanUpper.includes('PROJEK PENYELIDIKAN') || tujuanUpper.includes('PROJEK PENYELIDIKAN')) {
+            // 2. KATEGORI RESEARCH / PENYELIDIKAN (Contoh: R-2026/001) - Semak DULU sebelum LI
+            else if (tujuanUpper.includes('RESEARCH') || tujuanUpper.includes('PENYELIDIKAN')) {
                 return `R-${tahun}/${numPadded}`;
             }
+            // 3. KATEGORI LATIHAN INDUSTRI (Contoh: LI-2026/001) - Tepat elak 'LI' dalam 'PENYELIDIKAN'
+            else if (tujuanUpper.includes('LATIHAN INDUSTRI') || tujuanUpper.includes('INTERNSHIP') || tujuanUpper === 'LI' || tujuanUpper.includes(' LI') || tujuanUpper.includes('LI ')) {
+                return `LI-${tahun}/${numPadded}`;
+            } 
             // 4. KATEGORI LAIN-LAIN (Contoh: LAIN-2026/001)
             else {
                 return `LAIN-${tahun}/${numPadded}`;
@@ -456,15 +455,15 @@
             document.getElementById('editNama').value = rekod.nama_pemohon || '';
             document.getElementById('editTel').value = rekod.no_telefon || '';
             
-            // Padankan nilai dropdown tujuan penggunaan
+            // Padankan nilai dropdown tujuan penggunaan (Dibaiki untuk Research / Penyelidikan)
             const editTujuanSelect = document.getElementById('editTujuan');
-            const tujuanVal = String(rekod.tujuan || '');
-            if (tujuanVal.toUpperCase().includes('FYP')) {
+            const tujuanVal = String(rekod.tujuan || '').toUpperCase();
+            if (tujuanVal.includes('FYP') || tujuanVal.includes('PROJEK TAHUN AKHIR')) {
                 editTujuanSelect.value = "FYP";
-            } else if (tujuanVal.toUpperCase().includes('LI') || tujuanVal.toUpperCase().includes('INDUSTRI')) {
-                editTujuanSelect.value = "LI";
-            } else if (tujuanVal.toUpperCase().includes('RESEARCH') || tujuanVal.toUpperCase().includes('PENYELIDIKAN')) {
+            } else if (tujuanVal.includes('RESEARCH') || tujuanVal.includes('PENYELIDIKAN')) {
                 editTujuanSelect.value = "Research";
+            } else if (tujuanVal.includes('LATIHAN INDUSTRI') || tujuanVal.includes('INTERNSHIP') || tujuanVal === 'LI' || tujuanVal.includes(' LI') || tujuanVal.includes('LI ')) {
+                editTujuanSelect.value = "LI";
             } else {
                 editTujuanSelect.value = "Lain-lain";
             }
