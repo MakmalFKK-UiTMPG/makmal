@@ -2,7 +2,7 @@
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Borang Permohonan Bahan Kimia, Alat Radas & Peralatan</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -20,9 +20,43 @@
             background: #cbd5e1;
             border-radius: 4px;
         }
+
+        /* KHAS UNTUK IPHONE / IOS SAFARI SCROLLING & FIXES */
+        .ios-fix-overlay {
+            min-height: 100vh;
+            min-height: 100dvh; /* Dynamic Viewport Height khas untuk iOS Safari */
+            -webkit-overflow-scrolling: touch;
+        }
     </style>
 </head>
 <body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen">
+
+    <!-- POP-UP NOTIS PERINGATAN (MODAL OPTIMIZED FOR IPHONE/IOS) -->
+    <div id="modalPeringatan" class="fixed inset-0 z-[9999] bg-slate-900/70 backdrop-blur-md flex items-center justify-center p-4 ios-fix-overlay transition-opacity duration-300">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-100 transform transition-all scale-100 text-center relative my-auto max-h-[90dvh] overflow-y-auto custom-scrollbar">
+            
+            <!-- BUTTON X UNTUK DESKTOP & IPHONE -->
+            <button type="button" onclick="tutupModalPeringatan()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-100 transition cursor-pointer active:scale-95 touch-manipulation">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            
+            <div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-amber-200 shadow-sm shrink-0">
+                <i data-lucide="clock-alert" class="w-9 h-9"></i>
+            </div>
+            
+            <span class="text-[11px] font-extrabold uppercase tracking-widest text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-200 inline-block mb-2">Notis Syarat Permohonan</span>
+            <h3 class="text-lg sm:text-xl font-bold text-slate-900 mb-3">Peringatan Tarikh Permohonan</h3>
+            
+            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-6 bg-slate-50 p-4 rounded-2xl border border-slate-100 text-left sm:text-center">
+                Permohonan alat radas dan bahan kimia hendaklah dibuat <strong class="text-amber-700 underline font-extrabold">selewat-lewatnya DUA (2) HARI SEBELUM</strong> tarikh penggunaan atau pengambilan yang dirancang.
+            </p>
+            
+            <button type="button" onclick="tutupModalPeringatan()" class="w-full bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold py-3.5 px-6 rounded-2xl shadow-md transition duration-200 flex items-center justify-center space-x-2 cursor-pointer text-sm touch-manipulation">
+                <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                <span>Saya Faham & Teruskan</span>
+            </button>
+        </div>
+    </div>
 
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
@@ -264,6 +298,14 @@
         const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
         const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        // FUNGSI PENUTUP MODAL PERINGATAN (MESRA IPHONE / IOS)
+        function tutupModalPeringatan() {
+            const modal = document.getElementById('modalPeringatan');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        }
 
         function tambahBarisAhli() {
             const tbody = document.getElementById('jadualAhli').querySelector('tbody');
