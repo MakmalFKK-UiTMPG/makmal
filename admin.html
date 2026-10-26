@@ -97,7 +97,7 @@
 </head>
 <body>
 
-    <div id="main-admin-content">
+    <div id="main-admin-content" style="display: block;">
         <div class="header-top">
             <a href="makmal.html" class="back-btn">⬅️ Kembali ke Menu Utama</a>
             <button id="logout-btn" class="btn-logout">🚪 Log Keluar</button>
@@ -173,7 +173,7 @@
                             <th>Tindakan & WhatsApp</th>
                         </tr>
                     </thead>
-                    <tbody id="isiJadualTempahan"><tr><td colspan="9" style="text-align:center;">Memuatkan data...</td></tr></tbody>
+                    <tbody id="isiJadualTempahan"><tr><td colspan="9" style="text-align:center;">Memuatkan data tempahan...</td></tr></tbody>
                 </table>
             </div>
 
@@ -357,5 +357,4 @@
             if (type === 'today') {
                 const yyyy = now.getFullYear();
                 const mm = String(now.getMonth() + 1).padStart(2, '0');
-                const dd = String(now.getDate()).padStart(2, '0');
-                input
+                const dd
