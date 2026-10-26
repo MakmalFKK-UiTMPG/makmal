@@ -18,7 +18,7 @@
         .back-btn { display: inline-block; color: #2980b9; text-decoration: none; font-weight: bold; font-size: 15px; }
         .btn-logout { background: #e74c3c; color: white; border: none; padding: 8px 14px; border-radius: 5px; cursor: pointer; font-size: 13px; font-weight: bold; }
 
-        /* TAB NAVIGATION & ACTION CONTAINER */
+        /* TAB NAVIGATION & BUTTON ACTION CONTAINER */
         .tab-action-wrapper { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #ccc; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
         .tab-container { display: flex; gap: 10px; }
         .tab-btn { padding: 10px 20px; font-weight: bold; border: none; background: #e0e0e0; cursor: pointer; border-radius: 5px 5px 0 0; }
@@ -30,26 +30,7 @@
         .btn-print-main { background-color: #8e44ad; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; }
         .btn-print-main:hover { background-color: #712b8d; }
 
-        /* SUB-TAB */
-        .subtab-container { display: flex; gap: 8px; margin-bottom: 15px; }
-        .subtab-btn { padding: 8px 16px; border-radius: 20px; border: 1px solid #cbd5e1; background: white; font-size: 12px; font-weight: bold; cursor: pointer; color: #475569; }
-        .subtab-btn.active { background: #2980b9; color: white; border-color: #1c5980; }
-
-        /* KOTAK PENAPIS TARIKH */
-        .box-filter-tarikh { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px 16px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .group-filter { display: flex; align-items: center; gap: 8px; font-size: 13px; }
-        .input-tarikh-pilih { padding: 6px 10px; border-radius: 6px; border: 1px solid #94a3b8; font-size: 13px; font-weight: bold; outline: none; }
-        .btn-pantas-tarikh { padding: 6px 12px; border-radius: 6px; border: 1px solid #cbd5e1; background: #f8fafc; font-size: 12px; font-weight: bold; cursor: pointer; }
-        .btn-pantas-tarikh:hover { background: #e2e8f0; }
-
-        .jadual-hari-box { background: white; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 15px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .jadual-hari-header { background: #2c3e50; color: white; padding: 10px 15px; font-weight: bold; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
-        .slot-sesi-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
-        .slot-sesi-item:last-child { border-bottom: none; }
-        .masa-badge { background: #e0f2fe; color: #0369a1; font-weight: bold; padding: 4px 10px; border-radius: 6px; font-family: monospace; font-size: 12px; }
-        .alat-tag { background: #fef3c7; color: #92400e; font-weight: bold; padding: 3px 8px; border-radius: 4px; font-size: 11px; margin-left: 6px; }
-
-        /* BAR PUKAL */
+        /* BAR ACTION PUKAL / SERENTAK */
         .bulk-action-bar { display: none; background: #e8f8f5; border: 2px solid #27ae60; padding: 12px 18px; border-radius: 8px; margin-bottom: 15px; justify-content: space-between; align-items: center; }
         .bulk-action-bar span { font-weight: bold; color: #1e8449; font-size: 14px; }
         .btn-lulus-pukal { background-color: #27ae60; color: white; border: none; padding: 8px 18px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 13px; }
@@ -61,10 +42,18 @@
         .summary-card h4 { margin: 0 0 5px 0; color: #7f8c8d; font-size: 13px; }
         .summary-card p { margin: 0; font-size: 22px; font-weight: bold; color: #2c3e50; }
 
+        /* BAR CARIAN TARIKH */
+        .filter-tarikh-bar { background: #ffffff; border: 1px solid #cbd5e1; padding: 10px 14px; border-radius: 8px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+        .filter-tarikh-bar label { font-size: 13px; font-weight: bold; color: #334155; }
+        .filter-tarikh-bar input[type="date"] { padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; outline: none; }
+        .btn-filter-tarikh { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; color: #334155; }
+        .btn-filter-tarikh:hover { background: #e2e8f0; }
+
         table { border-collapse: collapse; width: 100%; margin-top: 10px; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         th, td { border: 1px solid #ddd; padding: 10px; text-align: left; font-size: 13px; }
         th { background-color: #2c3e50; color: white; }
 
+        /* WARNA STATUS */
         .status-menunggu { color: #d35400; font-weight: bold; }
         .status-belum-disemak { color: #d35400; font-weight: bold; }
         .status-disemak { color: #27ae60; font-weight: bold; }
@@ -87,13 +76,13 @@
         .komposisi-list { margin: 0; padding-left: 15px; font-size: 12px; }
         .tarikh-badge { font-size: 11px; color: #7f8c8d; display: block; margin-top: 2px; }
 
+        /* GAYA KHAS UNTUK MENCETAK DOKUMEN / BORANG RASMI PDF */
         @media print {
             body * { visibility: hidden; }
-            #modalDetail, #modalDetail *, #paparanJadualTugasan, #paparanJadualTugasan * { visibility: visible; }
-            #paparanJadualTugasan { position: absolute; left: 0; top: 0; width: 100%; }
+            #modalDetail, #modalDetail * { visibility: visible; }
             #modalDetail { position: absolute; left: 0; top: 0; width: 100%; height: auto; background: none; }
             .modal-content { width: 100%; max-width: 100%; margin: 0; padding: 10px; border: none; box-shadow: none; }
-            .close-modal, .no-print, .subtab-container, .tab-action-wrapper, .header-top, .bulk-action-bar, .box-filter-tarikh { display: none !important; }
+            .close-modal, .no-print, .filter-tarikh-bar { display: none !important; }
         }
     </style>
 </head>
@@ -113,7 +102,7 @@
         <h2>⚙️ Panel Admin & Pegawai Makmal</h2>
         <p>Uruskan kelulusan tempahan peralatan, permohonan bahan/radas, dan semakan sisa kimia di sini.</p>
 
-        <!-- TAB NAVIGATION -->
+        <!-- TAB NAVIGATION & ACTION BUTTONS -->
         <div class="tab-action-wrapper">
             <div class="tab-container">
                 <button class="tab-btn active" onclick="tukarTab('tempahan')">📅 Tempahan Slot Peralatan</button>
@@ -121,12 +110,15 @@
                 <button class="tab-btn" onclick="tukarTab('sisa')">🧪 Pemberitahuan Sisa Kimia</button>
             </div>
             <div class="action-buttons-group">
-                <button onclick="window.print()" class="btn-print-main">🖨️ Cetak / Simpan PDF</button>
-                <button onclick="eksportDataSemasa()" class="btn-export">📥 Muat Turun Data (Excel / CSV)</button>
+                <button onclick="window.print()" class="btn-print-main">
+                    🖨️ Cetak / Simpan PDF
+                </button>
+                <button onclick="eksportDataSemasa()" class="btn-export">
+                    📥 Muat Turun Data (Excel / CSV)
+                </button>
             </div>
         </div>
 
-        <!-- SEKSYEN 1: TEMPAHAN PERALATAN -->
         <div id="sekSyenTempahan">
             <div class="summary-container">
                 <div class="summary-card"><h4>JUMLAH TEMPAHAN</h4><p id="totalTempahan">0</p></div>
@@ -134,62 +126,45 @@
                 <div class="summary-card" style="border-left-color: #d35400;"><h4>MENUNGGU</h4><p id="totalMenunggu">0</p></div>
             </div>
 
-            <!-- SUB-TAB PENUKAR PAPARAN -->
-            <div class="subtab-container no-print">
-                <button class="subtab-btn active" id="btnSubJadualPenuh" onclick="tukarSubPaparan('jadualPenuh')">📋 Senarai Tempahan Penuh</button>
-                <button class="subtab-btn" id="btnSubJadualStaf" onclick="tukarSubPaparan('jadualStaf')">🗓️ Jadual Waktu Bimbingan Staf (Peralatan Analisis)</button>
-            </div>
-
-            <!-- KOTAK CARIAN & TAPIS TARIKH GUNA -->
-            <div class="box-filter-tarikh no-print">
-                <div class="group-filter">
-                    <label for="inputTapisTarikh"><strong>🔍 Cari / Tapis Tarikh Guna:</strong></label>
-                    <input type="date" id="inputTapisTarikh" class="input-tarikh-pilih" onchange="jalanTapisTarikh()">
+            <!-- BAR CARIAN TARIKH -->
+            <div class="filter-tarikh-bar no-print">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <label for="filterDateInput">🔍 Tapis Tarikh Guna:</label>
+                    <input type="date" id="filterDateInput" onchange="tapisIkutTarikh()">
                 </div>
-                <div class="group-filter">
-                    <button class="btn-pantas-tarikh" onclick="pilihTarikhPantas('today')">Hari Ini</button>
-                    <button class="btn-pantas-tarikh" onclick="pilihTarikhPantas('tomorrow')">Esok</button>
-                    <button class="btn-pantas-tarikh" onclick="pilihTarikhPantas('all')">Papar Semua</button>
+                <div style="display:flex; gap:6px;">
+                    <button type="button" class="btn-filter-tarikh" onclick="setTarikhCepat('today')">Hari Ini</button>
+                    <button type="button" class="btn-filter-tarikh" onclick="setTarikhCepat('tomorrow')">Esok</button>
+                    <button type="button" class="btn-filter-tarikh" onclick="setTarikhCepat('all')">Semua Tarikh</button>
                 </div>
             </div>
 
-            <!-- 1A: PAPARAN SENARAI JADUAL PENUH -->
-            <div id="paparanJadualPenuh">
-                <div id="barLulusPukal" class="bulk-action-bar">
-                    <span>☑️ <span id="bilPilihanPukal">0</span> permohonan dipilih.</span>
-                    <button onclick="luluskanPukalTempahan()" class="btn-lulus-pukal">✅ Luluskan Semua Permohonan Dipilih</button>
-                </div>
-
-                <table>
-                    <thead>
-                        <tr>
-                            <th width="3%" style="text-align:center;">
-                                <input type="checkbox" id="checkPilihSemua" onclick="pilihSemuaCheckbox(this)">
-                            </th>
-                            <th width="12%">Tarikh Tempahan</th>
-                            <th>Pemohon</th>
-                            <th>No. Tel</th>
-                            <th>Peralatan</th>
-                            <th>Tarikh Guna</th>
-                            <th>Masa Guna</th>
-                            <th width="12%">Status & Tarikh</th>
-                            <th>Tindakan & WhatsApp</th>
-                        </tr>
-                    </thead>
-                    <tbody id="isiJadualTempahan"><tr><td colspan="9" style="text-align:center;">Memuatkan rekod...</td></tr></tbody>
-                </table>
+            <!-- BAR TINDAKAN SERENTAK (PUKAL) -->
+            <div id="barLulusPukal" class="bulk-action-bar">
+                <span>☑️ <span id="bilPilihanPukal">0</span> permohonan dipilih.</span>
+                <button onclick="luluskanPukalTempahan()" class="btn-lulus-pukal">✅ Luluskan Semua Permohonan Dipilih</button>
             </div>
 
-            <!-- 1B: PAPARAN JADUAL WAKTU TUGASAN & BIMBINGAN STAF -->
-            <div id="paparanJadualTugasan" style="display:none;">
-                <div style="background:#eff6ff; border:1px solid #bfdbfe; padding:12px; border-radius:8px; margin-bottom:15px; font-size:13px; color:#1e40af;">
-                    💡 <strong>Jadual Waktu Bimbingan Makmal:</strong> Menyenaraikan sesi bagi peralatan yang memerlukan bantuan tunjuk ajar staf (SEM, FTIR, UV-VIS, TGA, DSC, ICP-OES, dll) yang berstatus <strong>Lulus</strong> dan <strong>Menunggu</strong>.
-                </div>
-                <div id="senaraiAgendaStaf">Memuatkan jadual waktu bimbingan...</div>
-            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th width="3%" style="text-align:center;">
+                            <input type="checkbox" id="checkPilihSemua" onclick="pilihSemuaCheckbox(this)">
+                        </th>
+                        <th width="12%">Tarikh Tempahan</th>
+                        <th>Pemohon</th>
+                        <th>No. Tel</th>
+                        <th>Peralatan</th>
+                        <th>Tarikh Guna</th>
+                        <th>Masa Guna</th>
+                        <th width="12%">Status & Tarikh</th>
+                        <th>Tindakan & WhatsApp</th>
+                    </tr>
+                </thead>
+                <tbody id="isiJadualTempahan"><tr><td colspan="9" style="text-align:center;">Memuatkan...</td></tr></tbody>
+            </table>
         </div>
 
-        <!-- SEKSYEN 2: PERMOHONAN BAHAN & RADAS -->
         <div id="sekSyenBahan" style="display:none;">
             <table>
                 <thead>
@@ -207,3 +182,52 @@
                 <tbody id="isiJadualBahan"><tr><td colspan="8" style="text-align:center;">Memuatkan...</td></tr></tbody>
             </table>
         </div>
+
+        <div id="sekSyenSisa" style="display:none;">
+            <table>
+                <thead>
+                    <tr>
+                        <th width="4%">ID</th>
+                        <th width="15%">Tarikh Permohonan Dihantar</th>
+                        <th width="18%">Pemohon / Makmal</th>
+                        <th width="12%">Fizikal Sisa</th>
+                        <th>Komposisi Bahan Kimia</th>
+                        <th width="10%">Berat / Isipadu</th>
+                        <th width="13%">Status & Tarikh Semakan</th>
+                        <th width="20%">Tindakan</th>
+                    </tr>
+                </thead>
+                <tbody id="isiJadualSisa"><tr><td colspan="8" style="text-align:center;">Memuatkan...</td></tr></tbody>
+            </table>
+        </div>
+
+        <div id="modalDetail" class="modal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="tutupModal()">&times;</span>
+                <h3 style="color:#2c3e50; border-bottom:2px solid #16a085; padding-bottom:5px; margin-top:0;">📋 Perincian Permohonan</h3>
+                <div id="isiModal"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 1. PAUTAN & FUNGSI UTAMA SUPABASE -->
+    <script>
+        const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        let dataTempahanGlobal = [];
+        let dataBahanGlobal = [];
+        let dataSisaGlobal = [];
+
+        function formatTarikhMasa(timestamp) {
+            if (!timestamp) return '';
+            const d = new Date(timestamp);
+            if (isNaN(d.getTime())) return timestamp; 
+            return d.toLocaleDateString('ms-MY', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' +
+                   d.toLocaleTimeString('ms-MY', { hour: '2-digit', minute: '2-digit', hour12: true });
+        }
+
+        // LOGIK PENJANAAN ID RUJUKAN PEMBANTU MAKMAL (PM)
+        function janaIDRujukan(idDb, createdDateStr, tujuanStr) {
+            const tujuanUpper = String(tujuanStr || '').
