@@ -35,13 +35,6 @@
         .subtab-btn { padding: 8px 16px; border-radius: 20px; border: 1px solid #cbd5e1; background: white; font-size: 12px; font-weight: bold; cursor: pointer; color: #475569; }
         .subtab-btn.active { background: #2980b9; color: white; border-color: #1c5980; }
 
-        /* PENAPIS TARIKH KOTAK CARIAN */
-        .filter-date-container { background: white; border: 1px solid #cbd5e1; padding: 12px 18px; border-radius: 8px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-        .filter-date-container label { font-size: 13px; font-weight: bold; color: #1e293b; }
-        .filter-date-container input[type="date"] { padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; font-weight: bold; outline: none; }
-        .btn-filter-shortcut { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; color: #334155; }
-        .btn-filter-shortcut:hover { background: #e2e8f0; }
-
         .jadual-hari-box { background: white; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 15px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .jadual-hari-header { background: #2c3e50; color: white; padding: 10px 15px; font-weight: bold; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
         .slot-sesi-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
@@ -71,4 +64,268 @@
         .status-disemak { color: #27ae60; font-weight: bold; }
         .status-lulus { color: #27ae60; font-weight: bold; }
         .status-tolak, .status-ditolak { color: #c0392b; font-weight: bold; }
-        .status
+        .status-batal { color: #7f8c8d; font-weight: bold; font-style: italic; }
+
+        .btn-lulus { background-color: #27ae60; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        .btn-tolak { background-color: #c0392b; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; margin-left: 3px; }
+        .btn-detail { background-color: #2980b9; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-weight: bold; margin-left: 3px; }
+        .btn-cetak-row { background-color: #8e44ad; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-weight: bold; margin-left: 3px; }
+        .btn-batal { background-color: #f39c12; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-weight: bold; margin-left: 3px; }
+        .btn-padam { background-color: #c0392b; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-weight: bold; margin-left: 3px; }
+        .btn-wa { background-color: #25D366; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-weight: bold; margin-left: 3px; }
+
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
+        .modal-content { background-color: white; margin: 3% auto; padding: 20px; border-radius: 8px; width: 85%; max-width: 750px; max-height: 85vh; overflow-y: auto; }
+        .close-modal { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+        
+        .komposisi-list { margin: 0; padding-left: 15px; font-size: 12px; }
+        .tarikh-badge { font-size: 11px; color: #7f8c8d; display: block; margin-top: 2px; }
+
+        @media print {
+            body * { visibility: hidden; }
+            #modalDetail, #modalDetail *, #paparanJadualTugasan, #paparanJadualTugasan * { visibility: visible; }
+            #paparanJadualTugasan { position: absolute; left: 0; top: 0; width: 100%; }
+            #modalDetail { position: absolute; left: 0; top: 0; width: 100%; height: auto; background: none; }
+            .modal-content { width: 100%; max-width: 100%; margin: 0; padding: 10px; border: none; box-shadow: none; }
+            .close-modal, .no-print, .subtab-container, .tab-action-wrapper, .header-top, .bulk-action-bar { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loading-admin">
+        <h2>🔒 Menyemak Kawalan Keselamatan Admin...</h2>
+        <p>Sila tunggu sebentar.</p>
+    </div>
+
+    <div id="main-admin-content">
+        <div class="header-top">
+            <a href="makmal.html" class="back-btn">⬅️ Kembali ke Menu Utama</a>
+            <button id="logout-btn" class="btn-logout">🚪 Log Keluar</button>
+        </div>
+
+        <h2>⚙️ Panel Admin & Pegawai Makmal</h2>
+        <p>Uruskan kelulusan tempahan peralatan, permohonan bahan/radas, dan semakan sisa kimia di sini.</p>
+
+        <!-- TAB NAVIGATION & ACTION BUTTONS -->
+        <div class="tab-action-wrapper">
+            <div class="tab-container">
+                <button class="tab-btn active" onclick="tukarTab('tempahan')">📅 Tempahan Slot Peralatan</button>
+                <button class="tab-btn" onclick="tukarTab('bahan')">🧪 Permohonan Bahan Kimia & Radas</button>
+                <button class="tab-btn" onclick="tukarTab('sisa')">🧪 Pemberitahuan Sisa Kimia</button>
+            </div>
+            <div class="action-buttons-group">
+                <button onclick="window.print()" class="btn-print-main">
+                    🖨️ Cetak / Simpan PDF
+                </button>
+                <button onclick="eksportDataSemasa()" class="btn-export">
+                    📥 Muat Turun Data (Excel / CSV)
+                </button>
+            </div>
+        </div>
+
+        <!-- SEKSYEN 1: TEMPAHAN PERALATAN -->
+        <div id="sekSyenTempahan">
+            <div class="summary-container">
+                <div class="summary-card"><h4>JUMLAH TEMPAHAN</h4><p id="totalTempahan">0</p></div>
+                <div class="summary-card" style="border-left-color: #27ae60;"><h4>LULUS</h4><p id="totalLulus">0</p></div>
+                <div class="summary-card" style="border-left-color: #d35400;"><h4>MENUNGGU</h4><p id="totalMenunggu">0</p></div>
+            </div>
+
+            <!-- SUB-TAB PENUKAR PAPARAN -->
+            <div class="subtab-container no-print">
+                <button class="subtab-btn active" id="btnSubJadualPenuh" onclick="tukarSubPaparan('jadualPenuh')">📋 Senarai Tempahan Penuh</button>
+                <button class="subtab-btn" id="btnSubJadualStaf" onclick="tukarSubPaparan('jadualStaf')">🗓️ Jadual Waktu Bimbingan Staf (Peralatan Analisis)</button>
+            </div>
+
+            <!-- 1A: PAPARAN SENARAI JADUAL PENUH -->
+            <div id="paparanJadualPenuh">
+                <div id="barLulusPukal" class="bulk-action-bar">
+                    <span>☑️ <span id="bilPilihanPukal">0</span> permohonan dipilih.</span>
+                    <button onclick="luluskanPukalTempahan()" class="btn-lulus-pukal">✅ Luluskan Semua Permohonan Dipilih</button>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="3%" style="text-align:center;">
+                                <input type="checkbox" id="checkPilihSemua" onclick="pilihSemuaCheckbox(this)">
+                            </th>
+                            <th width="12%">Tarikh Tempahan</th>
+                            <th>Pemohon</th>
+                            <th>No. Tel</th>
+                            <th>Peralatan</th>
+                            <th>Tarikh Guna</th>
+                            <th>Masa Guna</th>
+                            <th width="12%">Status & Tarikh</th>
+                            <th>Tindakan & WhatsApp</th>
+                        </tr>
+                    </thead>
+                    <tbody id="isiJadualTempahan"><tr><td colspan="9" style="text-align:center;">Memuatkan...</td></tr></tbody>
+                </table>
+            </div>
+
+            <!-- 1B: PAPARAN JADUAL WAKTU TUGASAN & BIMBINGAN STAF -->
+            <div id="paparanJadualTugasan" style="display:none;">
+                <div style="background:#eff6ff; border:1px solid #bfdbfe; padding:12px; border-radius:8px; margin-bottom:15px; font-size:13px; color:#1e40af;">
+                    💡 <strong>Jadual Waktu Bimbingan Makmal:</strong> Menyenaraikan sesi bagi peralatan yang memerlukan bantuan tunjuk ajar staf (SEM, FTIR, UV-VIS, TGA, DSC, ICP-OES, dll) yang berstatus <strong>Lulus</strong> dan <strong>Menunggu</strong> mengikut tarikh.
+                </div>
+                <div id="senaraiAgendaStaf">Tiada rekod bimbingan ditemui.</div>
+            </div>
+        </div>
+
+        <!-- SEKSYEN 2: PERMOHONAN BAHAN & RADAS -->
+        <div id="sekSyenBahan" style="display:none;">
+            <table>
+                <thead>
+                    <tr>
+                        <th width="12%">ID Rujukan PM</th>
+                        <th width="12%">Tarikh Mohon</th>
+                        <th>Nama Pemohon</th>
+                        <th>No. ID</th>
+                        <th>Tujuan</th>
+                        <th>Penyelia</th>
+                        <th width="12%">Status & Tarikh</th>
+                        <th>Tindakan & WhatsApp</th>
+                    </tr>
+                </thead>
+                <tbody id="isiJadualBahan"><tr><td colspan="8" style="text-align:center;">Memuatkan...</td></tr></tbody>
+            </table>
+        </div>
+
+        <!-- SEKSYEN 3: PEMBERITAHUAN SISA KIMIA -->
+        <div id="sekSyenSisa" style="display:none;">
+            <table>
+                <thead>
+                    <tr>
+                        <th width="4%">ID</th>
+                        <th width="15%">Tarikh Permohonan Dihantar</th>
+                        <th width="18%">Pemohon / Makmal</th>
+                        <th width="12%">Fizikal Sisa</th>
+                        <th>Komposisi Bahan Kimia</th>
+                        <th width="10%">Berat / Isipadu</th>
+                        <th width="13%">Status & Tarikh Semakan</th>
+                        <th width="20%">Tindakan</th>
+                    </tr>
+                </thead>
+                <tbody id="isiJadualSisa"><tr><td colspan="8" style="text-align:center;">Memuatkan...</td></tr></tbody>
+            </table>
+        </div>
+
+        <div id="modalDetail" class="modal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="tutupModal()">&times;</span>
+                <h3 style="color:#2c3e50; border-bottom:2px solid #16a085; padding-bottom:5px; margin-top:0;">📋 Perincian Permohonan</h3>
+                <div id="isiModal"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 1. PAUTAN & FUNGSI UTAMA SUPABASE -->
+    <script>
+        const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        let dataTempahanGlobal = [];
+        let dataBahanGlobal = [];
+        let dataSisaGlobal = [];
+
+        const senaraiAlatBimbingan = [
+            "UV-VIS", "FTIR", "SEM", "TGA", "DSC", "ICP_OES", "ICP-OES", 
+            "Vacuum Furnace", "Muffle Furnace", "Soxhlet Extractor"
+        ];
+
+        function formatTarikhMasa(timestamp) {
+            if (!timestamp) return '';
+            const d = new Date(timestamp);
+            if (isNaN(d.getTime())) return timestamp; 
+            return d.toLocaleDateString('ms-MY', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' +
+                   d.toLocaleTimeString('ms-MY', { hour: '2-digit', minute: '2-digit', hour12: true });
+        }
+
+        function janaIDRujukan(idDb, createdDateStr, tujuanStr) {
+            const tujuanUpper = String(tujuanStr || '').toUpperCase();
+            const d = createdDateStr ? new Date(createdDateStr) : new Date();
+            const tahun = d.getFullYear();
+            const bulan = d.getMonth() + 1;
+            const numPadded = String(idDb).padStart(3, '0');
+
+            if (tujuanUpper.includes('FYP') || tujuanUpper.includes('PROJEK TAHUN AKHIR')) {
+                const kodSem = (bulan >= 3 && bulan <= 7) ? `${tahun}2` : `${tahun}4`;
+                return `FYP-${kodSem}/${numPadded}`;
+            } 
+            else if (tujuanUpper.includes('RESEARCH') || tujuanUpper.includes('PENYELIDIKAN')) {
+                return `R-${tahun}/${numPadded}`;
+            }
+            else if (tujuanUpper.includes('LATIHAN INDUSTRI') || tujuanUpper.includes('INTERNSHIP') || tujuanUpper === 'LI' || tujuanUpper.includes(' LI') || tujuanUpper.includes('LI ')) {
+                return `LI-${tahun}/${numPadded}`;
+            } 
+            else {
+                return `LAIN-${tahun}/${numPadded}`;
+            }
+        }
+
+        function hantarWhatsApp(noTel, namaPemohon, itemInfo, idRujukan, jenis = 'tempahan') {
+            if (!noTel) {
+                alert("⚠️ Nombor telefon pemohon tidak dijumpai!");
+                return;
+            }
+
+            let noFormatted = String(noTel).replace(/[^0-9]/g, '');
+            if (noFormatted.startsWith('0')) {
+                noFormatted = '6' + noFormatted;
+            }
+
+            let mesej = "";
+            if (jenis === 'tempahan') {
+                mesej = `Salam sejahtera ${namaPemohon}, permohonan tempahan peralatan makmal anda (${itemInfo}) telah DILULUSKAN.\n\nSila pastikan anda hadir mengikut slot yang ditempah.\n\nPenggunaan yang tidak menepati slot yang sepatutnya boleh menjejaskan permohonan anda yang berikutnya. Terima kasih.`;
+            } else {
+                mesej = `Salam sejahtera ${namaPemohon}, permohonan anda bagi ${itemInfo} telah DILULUSKAN.\n\nID Rujukan Permohonan: ${idRujukan}\nSila cetak borang permohonan anda dari sistem dan hantar kepada staf makmal yang bertugas untuk proses seterusnya. Pengambilan radas adalah mengikut jadual yang telah ditetapkan oleh pihak makmal. Terima kasih.`;
+            }
+
+            const urlWA = `https://api.whatsapp.com/send?phone=${noFormatted}&text=${encodeURIComponent(mesej)}`;
+            window.open(urlWA, '_blank');
+        }
+
+        window.muatTurunSemuaData = function() {
+            dapatkanTempahan();
+            dapatkanBahanRadas();
+            dapatkanJanaanSisa();
+        };
+
+        function tukarTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('sekSyenTempahan').style.display = 'none';
+            document.getElementById('sekSyenBahan').style.display = 'none';
+            document.getElementById('sekSyenSisa').style.display = 'none';
+
+            if (tab === 'tempahan') {
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                document.getElementById('sekSyenTempahan').style.display = 'block';
+            } else if (tab === 'bahan') {
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.getElementById('sekSyenBahan').style.display = 'block';
+            } else if (tab === 'sisa') {
+                document.querySelectorAll('.tab-btn')[2].classList.add('active');
+                document.getElementById('sekSyenSisa').style.display = 'block';
+            }
+        }
+
+        function tukarSubPaparan(sub) {
+            const btnPenuh = document.getElementById('btnSubJadualPenuh');
+            const btnStaf = document.getElementById('btnSubJadualStaf');
+            const divPenuh = document.getElementById('paparanJadualPenuh');
+            const divStaf = document.getElementById('paparanJadualTugasan');
+
+            if (sub === 'jadualPenuh') {
+                btnPenuh.classList.add('active');
+                btnStaf.classList.remove('active');
+                divPenuh.style.display = 'block';
+                divStaf.style.display = 'none';
+            } else {
+                btnStaf.classList.add('active');
+                btnPenuh.classList.remove('active');
+                divPenuh.style.display = 'none';
+                divStaf.style.display = 'block';
+                binaJadualWaktuBimbinganStaf
