@@ -80,11 +80,12 @@
         .komposisi-list { margin: 0; padding-left: 15px; font-size: 12px; }
         .tarikh-badge { font-size: 11px; color: #7f8c8d; display: block; margin-top: 2px; }
 
-        /* KOTAK CARIAN ID BAHAN & RADAS */
-        .search-container-bahan { background: white; padding: 12px 15px; border-radius: 6px; border: 1px solid #cbd5e1; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
-        .search-input-bahan { flex: 1; max-width: 380px; padding: 8px 12px; border: 1px solid #94a3b8; border-radius: 4px; font-size: 13px; outline: none; }
+        /* KOTAK CARIAN NO. ID, NAMA & PENYELIA BAHAN & RADAS */
+        .search-container-bahan { background: white; padding: 12px 15px; border-radius: 6px; border: 1px solid #cbd5e1; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .search-input-bahan { flex: 1; min-width: 250px; max-width: 460px; padding: 8px 12px; border: 1px solid #94a3b8; border-radius: 4px; font-size: 13px; outline: none; }
         .search-input-bahan:focus { border-color: #2980b9; }
         .btn-reset-bahan { background: #94a3b8; color: white; border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; }
+        .btn-reset-bahan:hover { background: #64748b; }
 
         @media print {
             body * { visibility: hidden; }
@@ -176,10 +177,10 @@
 
         <!-- SEKSYEN 2: PERMOHONAN BAHAN & RADAS -->
         <div id="sekSyenBahan" style="display:none;">
-            <!-- KOTAK CARIAN NO. ID PEMOHON -->
+            <!-- KOTAK CARIAN NO. ID, NAMA PEMOHON & NAMA PENYELIA -->
             <div class="search-container-bahan no-print">
-                <label for="inputCarianIdBahan" style="font-weight:bold; font-size:13px; color:#2c3e50;">🔍 Carian No. ID / Pemohon:</label>
-                <input type="text" id="inputCarianIdBahan" class="search-input-bahan" placeholder="Taip No. ID pemohon (cth: 2023123456)..." oninput="tapisSenaraiBahan()">
+                <label for="inputCarianIdBahan" style="font-weight:bold; font-size:13px; color:#2c3e50;">🔍 Carian (ID / Pemohon / Penyelia):</label>
+                <input type="text" id="inputCarianIdBahan" class="search-input-bahan" placeholder="Taip No. ID, Nama Pemohon, atau Nama Penyelia..." oninput="tapisSenaraiBahan()">
                 <button type="button" class="btn-reset-bahan" onclick="resetCarianBahan()">Set Semula</button>
             </div>
 
@@ -570,7 +571,7 @@
             }
         }
 
-        // 2. DATA PERMOHONAN BAHAN & RADAS (DENGAN PAPARAN DINAMIK & CARIAN ID)
+        // 2. DATA PERMOHONAN BAHAN & RADAS (DENGAN PAPARAN DINAMIK & CARIAN ID / NAMA / PENYELIA)
         async function dapatkanBahanRadas() {
             try {
                 const { data, error } = await supabaseClient
@@ -635,7 +636,7 @@
             });
         }
 
-        // FUNGSI PENAPIS CARIAN ID / PEMOHON
+        // FUNGSI PENAPIS CARIAN (MENYOKONG NO ID, NAMA PEMOHON & NAMA PENYELIA)
         function tapisSenaraiBahan() {
             const inputEl = document.getElementById('inputCarianIdBahan');
             const kataKunci = (inputEl ? inputEl.value : '').toLowerCase().trim();
@@ -648,7 +649,8 @@
             const hasil = dataBahanGlobal.filter(r => {
                 const noId = String(r.no_id || '').toLowerCase();
                 const nama = String(r.nama_pemohon || '').toLowerCase();
-                return noId.includes(kataKunci) || nama.includes(kataKunci);
+                const penyelia = String(r.nama_penyelia || '').toLowerCase();
+                return noId.includes(kataKunci) || nama.includes(kataKunci) || penyelia.includes(kataKunci);
             });
 
             paparkanSenaraiBahan(hasil);
