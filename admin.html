@@ -30,6 +30,13 @@
         .btn-print-main { background-color: #8e44ad; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; }
         .btn-print-main:hover { background-color: #712b8d; }
 
+        /* KOTAK CARIAN BAHAN & RADAS */
+        .search-box-wrapper { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; background: white; padding: 12px 16px; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+        .search-input { flex: 1; max-width: 400px; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; outline: none; }
+        .search-input:focus { border-color: #16a085; ring: 2px solid #16a085; }
+        .btn-reset-search { background: #94a3b8; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; }
+        .btn-reset-search:hover { background: #64748b; }
+
         /* SUB-TAB JADUAL WAKTU BIMBINGAN */
         .subtab-container { display: flex; gap: 8px; margin-bottom: 15px; }
         .subtab-btn { padding: 8px 16px; border-radius: 20px; border: 1px solid #cbd5e1; background: white; font-size: 12px; font-weight: bold; cursor: pointer; color: #475569; }
@@ -80,6 +87,8 @@
         
         .komposisi-list { margin: 0; padding-left: 15px; font-size: 12px; }
         .tarikh-badge { font-size: 11px; color: #7f8c8d; display: block; margin-top: 2px; }
+        .badge-addon { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-left: 4px; }
+        .badge-item-date { background: #f1f5f9; color: #475569; padding: 1px 6px; border-radius: 4px; font-size: 11px; margin-left: 6px; }
 
         @media print {
             body * { visibility: hidden; }
@@ -87,7 +96,7 @@
             #paparanJadualTugasan { position: absolute; left: 0; top: 0; width: 100%; }
             #modalDetail { position: absolute; left: 0; top: 0; width: 100%; height: auto; background: none; }
             .modal-content { width: 100%; max-width: 100%; margin: 0; padding: 10px; border: none; box-shadow: none; }
-            .close-modal, .no-print, .subtab-container, .tab-action-wrapper, .header-top, .bulk-action-bar { display: none !important; }
+            .close-modal, .no-print, .subtab-container, .tab-action-wrapper, .header-top, .bulk-action-bar, .search-box-wrapper { display: none !important; }
         }
     </style>
 </head>
@@ -176,6 +185,14 @@
 
         <!-- SEKSYEN 2: PERMOHONAN BAHAN & RADAS -->
         <div id="sekSyenBahan" style="display:none;">
+            <!-- KOTAK CARIAN NO. ID / NAMA PEMOHON -->
+            <div class="search-box-wrapper no-print">
+                <span style="font-weight:bold; font-size:13px; color:#2c3e50;">🔍 Carian:</span>
+                <input type="text" id="inputCarianBahan" class="search-input" placeholder="Masukkan No. ID (cth: 2023123456) atau Nama Pemohon..." oninput="tapisSenaraiBahan()">
+                <button type="button" class="btn-reset-search" onclick="resetCarianBahan()">Reset</button>
+                <span id="labelHasilCarian" style="font-size:12px; color:#64748b; font-weight:bold;"></span>
+            </div>
+
             <table>
                 <thead>
                     <tr>
@@ -281,7 +298,7 @@
             if (jenis === 'tempahan') {
                 mesej = `Salam sejahtera ${namaPemohon}, permohonan tempahan peralatan makmal anda (${itemInfo}) telah DILULUSKAN.\n\nSila pastikan anda hadir mengikut slot yang ditempah.\n\nPenggunaan yang tidak menepati slot yang sepatutnya boleh menjejaskan permohonan anda yang berikutnya. Terima kasih.`;
             } else {
-                mesej = `Salam sejahtera ${namaPemohon}, permohonan anda bagi ${itemInfo} telah DILULUSKAN.\n\nID Rujukan Permohonan: ${idRujukan}\nSila cetak borang permohonan anda dari sistem dan hantar kepada staf makmal yang bertugas untuk proses seterusnya. Pengambilan radas adalah mengikut jadual yang telah ditetapkan oleh pihak makmal. Terima kasih.`;
+                mesej = `Salam sejahtera ${namaPemohon}, permohonan anda bagi ${itemInfo} telah DILULUSKAN.\n\nID Rujukan Permohonan:${idRujukan}\nSila cetak borang permohonan anda dari sistem dan hantar kepada staf makmal yang bertugas untuk proses seterusnya. Pengambilan radas adalah mengikut jadual yang telah ditetapkan oleh pihak makmal. Terima kasih.`;
             }
 
             const urlWA = `https://api.whatsapp.com/send?phone=${noFormatted}&text=${encodeURIComponent(mesej)}`;
@@ -376,7 +393,7 @@
                     itemsHTML += `
                         <div class="slot-sesi-item">
                             <div>
-                                <span class="masa-badge">⏰ ${sesi.masa_mula || '00:00'} (${sesi.masa_tamat || '1 Jam'})</span>
+                                <span class="masa-badge">⏰ ${sesi.masa_mula \vert{}\vert{} '00:00'} (${sesi.masa_tamat || '1 Jam'})</span>
                                 <span class="alat-tag">🔬 ${sesi.nama_peralatan}</span>
                                 <div style="margin-top:5px; font-weight:bold; color:#1e293b;">
                                     👤 ${sesi.nama_pemohon} 
@@ -385,7 +402,7 @@
                                 <div style="font-size:11px; color:#64748b; margin-top:2px;">Tujuan: ${sesi.tujuan || '-'}</div>
                             </div>
                             <div style="text-align:right;">
-                                <span style="font-weight:bold; font-size:12px; color:${stColor}; background:${stColor}15; padding:4px 10px; border-radius:20px; border:1px solid ${stColor}30;">
+                                <span style="font-weight:bold; font-size:12px; color:${stColor}; background:${stColor}15; padding:4px 10px; border-radius:20px; border:1px solid${stColor}30;">
                                     ${st}
                                 </span>
                                 <div style="margin-top:6px;" class="no-print">
@@ -483,472 +500,13 @@
                             <td>${r.no_telefon || '-'}</td>
                             <td>${r.nama_peralatan || '-'}</td>
                             <td>${r.tarikh_guna || '-'}</td>
-                            <td>${r.masa_mula || ''} - ${r.masa_tamat || ''}</td>
+                            <td>${r.masa_mula \vert{}\vert{} ''} -${r.masa_tamat || ''}</td>
                             <td>
-                                <span class="status-${st.toLowerCase()}">${st}</span>
-                                ${tarikhLulus ? `<span class="tarikh-badge">🗓️ ${tarikhLulus}</span>` : ''}
+                                <span class="status-${st.toLowerCase()}">${st}</span>${tarikhLulus ? `<span class="tarikh-badge">🗓️ ${tarikhLulus}</span>` : ''}
                             </td>
                             <td>
                                 <button class="btn-lulus" onclick="tukarStatusDenganWA('tempahan_peralatan', ${r.id}, 'Lulus', '${r.no_telefon}', '${r.nama_pemohon}', '${r.nama_peralatan}', '', 'tempahan')">Lulus</button>
                                 <button class="btn-tolak" onclick="tukarStatus('tempahan_peralatan', ${r.id}, 'Ditolak')">Tolak</button>
                                 <button class="btn-wa" onclick="hantarWhatsApp('${r.no_telefon}', '${r.nama_pemohon}', '${r.nama_peralatan}', '', 'tempahan')">💬 WA</button>
                                 <button class="btn-batal" onclick="batalRekod('tempahan_peralatan', ${r.id})">Batal</button>
-                                <button class="btn-padam" onclick="padamRekodKekal('tempahan_peralatan', ${r.id})">🗑️</button>
-                            </td>
-                        `;
-                    });
-                }
-            } catch (err) {
-                console.error("Ralat dalam dapatkanTempahan:", err);
-            }
-        }
-
-        function pilihSemuaCheckbox(master) {
-            const checkboxes = document.querySelectorAll('.check-tempahan-item');
-            checkboxes.forEach(cb => cb.checked = master.checked);
-            kemaskiniStatusBarPukal();
-        }
-
-        function kemaskiniStatusBarPukal() {
-            const terpilih = document.querySelectorAll('.check-tempahan-item:checked');
-            const bar = document.getElementById('barLulusPukal');
-            const labelBil = document.getElementById('bilPilihanPukal');
-
-            if (bar && labelBil) {
-                if (terpilih.length > 0) {
-                    bar.style.display = 'flex';
-                    labelBil.innerText = terpilih.length;
-                } else {
-                    bar.style.display = 'none';
-                }
-            }
-        }
-
-        async function luluskanPukalTempahan() {
-            const terpilih = document.querySelectorAll('.check-tempahan-item:checked');
-            if (terpilih.length === 0) {
-                alert("⚠️ Sila pilih sekurang-kurangnya satu permohonan!");
-                return;
-            }
-
-            const idList = Array.from(terpilih).map(cb => parseInt(cb.value));
-
-            if (confirm(`Adakah anda pasti mahu meluluskan ${idList.length} permohonan tempahan ini secara serentak?`)) {
-                const masaKini = new Date().toISOString();
-
-                const { error } = await supabaseClient
-                    .from('tempahan_peralatan')
-                    .update({ 
-                        status: 'Lulus',
-                        tarikh_kelulusan: masaKini 
-                    })
-                    .in('id', idList);
-
-                if (error) {
-                    alert("❌ Ralat semasa meluluskan tempahan pukal: " + error.message);
-                } else {
-                    alert(`✅ Berjaya! ${idList.length} tempahan telah DILULUSKAN secara serentak.`);
-                    
-                    if (confirm("Adakah anda mahu membuka pautan WhatsApp bagi memaklumkan kelulusan ini kepada pemohon?")) {
-                        idList.forEach(id => {
-                            const rekod = dataTempahanGlobal.find(r => r.id === id);
-                            if (rekod && rekod.no_telefon) {
-                                hantarWhatsApp(rekod.no_telefon, rekod.nama_pemohon, rekod.nama_peralatan, '', 'tempahan');
-                            }
-                        });
-                    }
-
-                    dapatkanTempahan();
-                }
-            }
-        }
-
-        // 2. DATA PERMOHONAN BAHAN & RADAS
-        async function dapatkanBahanRadas() {
-            try {
-                const { data, error } = await supabaseClient
-                    .from('permohonan_bahan_radas')
-                    .select('*')
-                    .order('id', { ascending: false });
-                    
-                const tbody = document.getElementById('isiJadualBahan');
-                if (!tbody) return;
-                tbody.innerHTML = '';
-
-                if (error) {
-                    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:red;">Ralat memuatkan: ${error.message}</td></tr>`;
-                    return;
-                }
-
-                dataBahanGlobal = data || [];
-
-                if (data) {
-                    data.forEach(r => {
-                        const tarikhMasaPohon = formatTarikhMasa(r.created_at);
-                        const tarikhLulus = formatTarikhMasa(r.tarikh_kelulusan);
-                        const idRujukan = janaIDRujukan(r.id, r.created_at, r.tujuan);
-                        const st = r.status || 'Menunggu';
-                        const isLulus = (st.toLowerCase() === 'lulus');
-
-                        const row = tbody.insertRow();
-                        row.innerHTML = `
-                            <td style="font-family:monospace; font-weight:bold; color:#16a085;">
-                                ${isLulus ? idRujukan : '<span style="color:#aaa; font-weight:normal; font-style:italic;">Belum Dijana</span>'}
-                            </td>
-                            <td style="font-size: 11px; font-weight: bold; color: #2c3e50;">${tarikhMasaPohon}</td>
-                            <td>${r.nama_pemohon}</td>
-                            <td>${r.no_id}</td>
-                            <td>${r.tujuan}</td>
-                            <td>${r.nama_penyelia || '-'}</td>
-                            <td>
-                                <span class="status-${st.toLowerCase()}">${st}</span>
-                                ${tarikhLulus ? `<span class="tarikh-badge">🗓️ ${tarikhLulus}</span>` : ''}
-                            </td>
-                            <td>
-                                <button class="btn-detail" onclick="paparkanDetail(${r.id})">🔍 Semak</button>
-                                <button class="btn-wa" onclick="hantarWhatsApp('${r.no_telefon}', '${r.nama_pemohon}', 'Bahan & Radas', '${idRujukan}', 'bahan')">💬 WA</button>
-                                <button class="btn-cetak-row" onclick="paparkanDetail(${r.id}); setTimeout(()=>window.print(), 300);">🖨️ PDF</button>
-                                <button class="btn-batal" onclick="batalRekod('permohonan_bahan_radas', ${r.id})">Batal</button>
-                                <button class="btn-padam" onclick="padamRekodKekal('permohonan_bahan_radas', ${r.id})">🗑️</button>
-                            </td>
-                        `;
-                    });
-                }
-            } catch (err) {
-                console.error("Ralat dalam dapatkanBahanRadas:", err);
-            }
-        }
-
-        // 3. DATA JANAAN SISA KIMIA
-        async function dapatkanJanaanSisa() {
-            try {
-                const { data, error } = await supabaseClient
-                    .from('janaan_sisa')
-                    .select('*')
-                    .order('id', { ascending: false });
-                    
-                const tbody = document.getElementById('isiJadualSisa');
-                if (!tbody) return;
-                tbody.innerHTML = '';
-
-                if (error) {
-                    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:red;">Gagal memuatkan data sisa: ${error.message}</td></tr>`;
-                    return;
-                }
-
-                if (!data || data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;">Tiada rekod pemberitahuan sisa kimia.</td></tr>`;
-                    return;
-                }
-
-                dataSisaGlobal = data || [];
-
-                data.forEach(r => {
-                    let htmlKomposisi = '<ul class="komposisi-list">';
-                    if (Array.isArray(r.komposisi_sisa)) {
-                        r.komposisi_sisa.forEach(k => {
-                            htmlKomposisi += `<li><b>${k.nama}:</b> ${k.peratus}</li>`;
-                        });
-                    }
-                    htmlKomposisi += '</ul>';
-
-                    const timestampPohon = r.created_at || r.tarikh_dijana || r.tarikh_penstoran;
-                    const tarikhMasaDijana = formatTarikhMasa(timestampPohon) || '-';
-
-                    const statusPapar = r.status || 'Belum Disemak';
-                    const statusClass = (statusPapar === 'Disemak') ? 'status-disemak' : 'status-belum-disemak';
-                    const beratPaparan = r.berat_kasar ? `${r.berat_kasar}` : '-';
-                    const tarikhSemak = formatTarikhMasa(r.tarikh_semakan);
-
-                    const row = tbody.insertRow();
-                    row.innerHTML = `
-                        <td><b>#${r.id}</b></td>
-                        <td style="font-size: 11px; font-weight: bold; color: #2c3e50;">${tarikhMasaDijana}</td>
-                        <td><b>${r.nama_pemohon || '-'}</b><br><small style="color:#7f8c8d;">${r.nama_makmal || '-'}</small></td>
-                        <td>${r.fizikal_sisa || '-'}</td>
-                        <td>${htmlKomposisi}</td>
-                        <td><b>${beratPaparan}</b></td>
-                        <td>
-                            <span class="${statusClass}">${statusPapar}</span>
-                            ${tarikhSemak ? `<span class="tarikh-badge">🗓️ ${tarikhSemak}</span>` : ''}
-                        </td>
-                        <td>
-                            <button class="btn-detail" onclick="paparkanDetailSisa(${r.id})">🔍 Lihat / Cetak</button>
-                            <button class="btn-lulus" onclick="tukarStatusSisa(${r.id}, 'Disemak')">Disemak</button>
-                            <button class="btn-batal" onclick="tukarStatusSisa(${r.id}, 'Batal')">Batal</button>
-                            <button class="btn-padam" onclick="padamRekodKekal('janaan_sisa', ${r.id})">🗑️ Padam</button>
-                        </td>
-                    `;
-                });
-            } catch (err) {
-                console.error("Ralat dalam dapatkanJanaanSisa:", err);
-            }
-        }
-
-        function paparkanDetail(id) {
-            const rekod = dataBahanGlobal.find(r => r.id === id);
-            if (!rekod) return;
-
-            const tarikhMasaLulus = formatTarikhMasa(rekod.tarikh_kelulusan);
-            const tarikhMasaDihantar = formatTarikhMasa(rekod.created_at);
-            const idRujukan = janaIDRujukan(rekod.id, rekod.created_at, rekod.tujuan);
-
-            let html = `
-                <div style="border-bottom:2px solid #2c3e50; padding-bottom:10px; margin-bottom:15px; text-align:center;">
-                    <h3 style="margin:0; color:#2c3e50;">FAKULTI KEJURUTERAAN KIMIA UiTM PASIR GUDANG</h3>
-                    <p style="margin:2px 0; font-size:12px; font-weight:bold; color:#16a085;">BORANG PERMOHONAN BAHAN KIMIA, ALAT RADAS & PERALATAN MAKMAL</p>
-                    <small style="color:#7f8c8d;">Kod Borang: PPM-FKK 01/ARBKPM (Ver.02) | ID PM: <strong style="color:#2c3e50;">${idRujukan}</strong></small>
-                </div>
-
-                <div style="background:#f8f9fa; padding:12px; border-radius:6px; margin-bottom:15px; font-size:13px; border:1px solid #e0e0e0;">
-                    <p style="margin:3px 0;"><strong>Nama Pemohon:</strong> ${rekod.nama_pemohon} (${rekod.no_id})</p>
-                    <p style="margin:3px 0;"><strong>No. Telefon:</strong> ${rekod.no_telefon || '-'} | <strong>Semester/Sesi:</strong> ${rekod.semester_sesi || '-'}</p>
-                    <p style="margin:3px 0;"><strong>Tujuan:</strong> ${rekod.tujuan} | <strong>Penyelia:</strong> ${rekod.nama_penyelia || '-'}</p>
-                    <p style="margin:3px 0;"><strong>Tajuk Projek:</strong> ${rekod.tajuk_projek || '-'}</p>
-                    ${tarikhMasaLulus ? `<p style="margin:3px 0; color:#27ae60;"><strong>Tarikh Keputusan Terakhir:</strong> ${tarikhMasaLulus}</p>` : ''}
-                </div>
-
-                <h4 style="margin:10px 0 5px 0; color:#2c3e50;">👥 Ahli Kumpulan:</h4>
-                <ul style="margin-top:0; font-size:13px;">${(rekod.ahli_kumpulan || []).map(a => `<li>${a.nama} (${a.id})</li>`).join('') || 'Tiada'}</ul>
-
-                <h4 style="margin:10px 0 5px 0; color:#16a085;">🧪 Bahan Kimia Dimohon:</h4>
-                <ul style="margin-top:0; font-size:13px;">${(rekod.senarai_bahan_kimia || []).map(b => `<li><strong>${b.nama}</strong> -${b.kuantiti}</li>`).join('') || 'Tiada'}</ul>
-
-                <h4 style="margin:10px 0 5px 0; color:#16a085;">🔬 Alat Radas Dimohon:</h4>
-                <ul style="margin-top:0; font-size:13px;">${(rekod.senarai_radas || []).map(r => `<li><strong>${r.nama}</strong> -${r.kuantiti} unit</li>`).join('') || 'Tiada'}</ul>
-
-                <h4 style="margin:10px 0 5px 0; color:#16a085;">⚙️ Peralatan Makmal Dimohon:</h4>
-                <ul style="margin-top:0; font-size:13px;">${(rekod.senarai_peralatan || []).map(p => `<li><strong>${p.nama}</strong> -${p.kuantiti} unit</li>`).join('') || 'Tiada'}</ul>
-
-                <hr style="border:none; border-top:1px solid #ddd; margin:15px 0;">
-                
-                <div class="no-print">
-                    <label style="display:block; font-weight:bold; margin-bottom:5px; color:#2c3e50; font-size:13px;">
-                        ✏️ Catatan Admin:
-                    </label>
-                    <textarea id="catatanAdminInput" style="width:97%; height:70px; padding:8px; border:1px solid #ccc; border-radius:4px; font-family:Arial;" placeholder="Contoh: Diluluskan untuk Beaker sahaja.">${rekod.catatan_admin || ''}</textarea>
-
-                    <div style="margin-top:15px; display:flex; gap:10px; justify-content:flex-end;">
-                        <button onclick="window.print()" class="btn-print-main">🖨️ Cetak / Simpan Borang Rasmi PDF</button>
-                        <button class="btn-lulus" onclick="simpanKeputusan(${rekod.id}, 'Lulus', '${rekod.no_telefon}', '${rekod.nama_pemohon}', '${idRujukan}')">✅ Luluskan & Hantar WA</button>
-                        <button class="btn-tolak" onclick="simpanKeputusan(${rekod.id}, 'Ditolak', '', '', '')">❌ Tolak Permohonan</button>
-                    </div>
-                </div>
-            `;
-
-            document.getElementById('isiModal').innerHTML = html;
-            document.getElementById('modalDetail').style.display = 'block';
-        }
-
-        function paparkanDetailSisa(id) {
-            const rekod = dataSisaGlobal.find(r => r.id === id);
-            if (!rekod) return;
-
-            const tarikhMasaDihantar = formatTarikhMasa(rekod.created_at || rekod.tarikh_dijana || rekod.tarikh_penstoran);
-            const tarikhSemak = formatTarikhMasa(rekod.tarikh_semakan);
-
-            let htmlKomposisi = '<ul style="margin-top:0; font-size:13px;">';
-            if (Array.isArray(rekod.komposisi_sisa)) {
-                rekod.komposisi_sisa.forEach(k => {
-                    htmlKomposisi += `<li><strong>${k.nama}:</strong> ${k.peratus}</li>`;
-                });
-            }
-            htmlKomposisi += '</ul>';
-
-            let html = `
-                <div style="border-bottom:2px solid #2c3e50; padding-bottom:10px; margin-bottom:15px; text-align:center;">
-                    <h3 style="margin:0; color:#2c3e50;">FAKULTI KEJURUTERAAN KIMIA UiTM PASIR GUDANG</h3>
-                    <p style="margin:2px 0; font-size:12px; font-weight:bold; color:#d35400;">BORANG NOTIFIKASI & PEMBERITAHUAN JANAAN SISA KIMIA</p>
-                    <small style="color:#7f8c8d;">ID Rekod: #${rekod.id} | Tarikh Dihantar: ${tarikhMasaDihantar}</small>
-                </div>
-
-                <div style="background:#f8f9fa; padding:12px; border-radius:6px; margin-bottom:15px; font-size:13px; border:1px solid #e0e0e0;">
-                    <p style="margin:3px 0;"><strong>Nama Pemohon:</strong> ${rekod.nama_pemohon || '-'} (${rekod.no_id || '-'})</p>
-                    <p style="margin:3px 0;"><strong>No. Telefon:</strong> ${rekod.no_tel || '-'} | <strong>Makmal Sumber Sisa:</strong> ${rekod.nama_makmal || '-'}</p>
-                    <p style="margin:3px 0;"><strong>Tarikh Penstoran Sisa:</strong> ${rekod.tarikh_penstoran || '-'}</p>
-                    ${tarikhSemak ? `<p style="margin:3px 0; color:#27ae60;"><strong>Tarikh Disemak Pegawai:</strong> ${tarikhSemak}</p>` : ''}
-                </div>
-
-                <h4 style="margin:10px 0 5px 0; color:#2c3e50;">📦 Physical State / Fizikal Sisa:</h4>
-                <p style="margin:0 0 10px 0; font-size:13px; font-weight:bold; color:#2980b9;">${rekod.fizikal_sisa || '-'}</p>
-
-                <h4 style="margin:10px 0 5px 0; color:#16a085;">🧪 Komposisi Bahan Kimia Terlibat:</h4>
-                ${htmlKomposisi}
-
-                <h4 style="margin:10px 0 5px 0; color:#16a085;">⚖️ Berat Kasar / Isipadu Sisa:</h4>
-                <p style="margin:0 0 10px 0; font-size:13px; font-weight:bold;">${rekod.berat_kasar || '-'}</p>
-
-                <hr style="border:none; border-top:1px solid #ddd; margin:15px 0;">
-                
-                <div class="no-print" style="margin-top:15px; display:flex; gap:10px; justify-content:flex-end;">
-                    <button onclick="window.print()" class="btn-print-main">🖨️ Cetak / Simpan Borang Sisa PDF</button>
-                    <button class="btn-lulus" onclick="tukarStatusSisa(${rekod.id}, 'Disemak'); tutupModal();">Disemak</button>
-                    <button class="btn-batal" onclick="tukarStatusSisa(${rekod.id}, 'Batal'); tutupModal();">Batal</button>
-                </div>
-            `;
-
-            document.getElementById('isiModal').innerHTML = html;
-            document.getElementById('modalDetail').style.display = 'block';
-        }
-
-        function tutupModal() { document.getElementById('modalDetail').style.display = 'none'; }
-
-        async function simpanKeputusan(id, status, noTel, namaPemohon, idRujukan) {
-            const catatan = document.getElementById('catatanAdminInput').value;
-            const masaKini = new Date().toISOString();
-            
-            const { error } = await supabaseClient
-                .from('permohonan_bahan_radas')
-                .update({ 
-                    status: status, 
-                    catatan_admin: catatan,
-                    tarikh_kelulusan: masaKini
-                })
-                .eq('id', id);
-
-            if (error) {
-                alert("❌ Ralat semasa menyimpan: " + error.message);
-            } else {
-                alert(`✅ Berjaya! Permohonan telah dikemas kini kepada status '${status}'.`);
-                tutupModal();
-                dapatkanBahanRadas();
-
-                if (status === 'Lulus' && noTel) {
-                    hantarWhatsApp(noTel, namaPemohon, 'Bahan & Radas', idRujukan, 'bahan');
-                }
-            }
-        }
-
-        async function tukarStatus(jadual, id, status) {
-            const masaKini = new Date().toISOString();
-            await supabaseClient
-                .from(jadual)
-                .update({ 
-                    status: status,
-                    tarikh_kelulusan: masaKini 
-                })
-                .eq('id', id);
-                
-            alert(`Status berjaya ditukar kepada: ${status}`);
-            dapatkanTempahan();
-            dapatkanBahanRadas();
-        }
-
-        async function tukarStatusDenganWA(jadual, id, status, noTel, namaPemohon, itemInfo, idRujukan, jenis) {
-            await tukarStatus(jadual, id, status);
-            if (status === 'Lulus' && noTel) {
-                hantarWhatsApp(noTel, namaPemohon, itemInfo, idRujukan, jenis);
-            }
-        }
-
-        async function tukarStatusSisa(id, status) {
-            const masaKini = new Date().toISOString();
-            const { error } = await supabaseClient
-                .from('janaan_sisa')
-                .update({ 
-                    status: status,
-                    tarikh_semakan: masaKini
-                })
-                .eq('id', id);
-
-            if (error) {
-                alert("❌ Ralat semasa mengemaskini status sisa: " + error.message);
-            } else {
-                alert(`✅ Status rekod sisa #${id} berjaya ditukar kepada '${status}'.`);
-                dapatkanJanaanSisa();
-            }
-        }
-
-        async function batalRekod(jadual, id) {
-            if(confirm("Pasti mahu menukar status rekod ini kepada 'Batal'?")) {
-                const masaKini = new Date().toISOString();
-                const { error } = await supabaseClient
-                    .from(jadual)
-                    .update({ status: 'Batal', tarikh_kelulusan: masaKini })
-                    .eq('id', id);
-
-                if (error) {
-                    alert("❌ Ralat: " + error.message);
-                } else {
-                    alert("✅ Status rekod telah dikemaskini kepada 'Batal'.");
-                    dapatkanTempahan();
-                    dapatkanBahanRadas();
-                }
-            }
-        }
-
-        async function padamRekodKekal(jadual, id) {
-            if(confirm("⚠️ AMARAN: Rekod ini akan DIPADAM KEKAL dari pangkalan data!\nAdakah anda pasti mahu memadam rekod ini?")) {
-                const { error } = await supabaseClient
-                    .from(jadual)
-                    .delete()
-                    .eq('id', id);
-
-                if (error) {
-                    alert("❌ Ralat semasa memadam: " + error.message);
-                } else {
-                    alert("🗑️ Rekod telah berjaya dipadam secara kekal!");
-                    dapatkanTempahan();
-                    dapatkanBahanRadas();
-                    dapatkanJanaanSisa();
-                }
-            }
-        }
-    </script>
-
-    <!-- 2. KAWALAN KESELAMATAN FIREBASE AUTH (MODULE) -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyDDC9PLSCOzna4caIsrfPSvfR3A_FczKDc",
-            authDomain: "sistem-makmal-fkkuitmpg.firebaseapp.com",
-            projectId: "sistem-makmal-fkkuitmpg",
-            storageBucket: "sistem-makmal-fkkuitmpg.firebasestorage.app",
-            messagingSenderId: "291806336887",
-            appId: "1:291806336887:web:a0d4fca1866459ead03372"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-
-        const ADMIN_EMAILS = [
-            "nurha1559@uitm.edu.my",
-            "pegawai1@uitm.edu.my",
-            "pensyarah1@uitm.edu.my"
-        ];
-
-        function tunjukHalamanAdmin() {
-            const loadingEl = document.getElementById('loading-admin');
-            const mainContentEl = document.getElementById('main-admin-content');
-            if (loadingEl) loadingEl.style.display = 'none';
-            if (mainContentEl) mainContentEl.style.display = 'block';
-            if (window.muatTurunSemuaData) window.muatTurunSemuaData();
-        }
-
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                const userEmail = (user.email || '').toLowerCase().trim();
-                const isAdmin = ADMIN_EMAILS.some(email => email.toLowerCase().trim() === userEmail);
-
-                if (isAdmin) {
-                    tunjukHalamanAdmin();
-                } else {
-                    alert(`❌ AKSES DITOLAK!\nAkaun (${userEmail}) tiada kebenaran Admin.`);
-                    window.location.href = "makmal.html";
-                }
-            } else {
-                window.location.href = "index.html";
-            }
-        });
-
-        const logoutBtn = document.getElementById('logout-btn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', () => {
-                signOut(auth).then(() => window.location.href = "index.html");
-            });
-        }
-    </script>
-</body>
-</html>
+                                <button class="btn-padam" onclick="padamRek
