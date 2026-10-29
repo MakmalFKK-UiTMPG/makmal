@@ -27,15 +27,6 @@
             -webkit-overflow-scrolling: touch;
         }
     </style>
-
-    <script>
-        function tutupModalPeringatan() {
-            const modal = document.getElementById('modalPeringatan');
-            if (modal) {
-                modal.style.display = 'none';
-            }
-        }
-    </script>
 </head>
 <body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen">
 
@@ -43,7 +34,7 @@
     <div id="modalPeringatan" class="fixed inset-0 z-[9999] bg-slate-900/70 backdrop-blur-md flex items-center justify-center p-4 ios-fix-overlay transition-opacity duration-300">
         <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-100 transform transition-all scale-100 text-center relative my-auto max-h-[90dvh] overflow-y-auto custom-scrollbar">
             
-            <button type="button" onclick="tutupModalPeringatan()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-100 transition cursor-pointer active:scale-95 touch-manipulation">
+            <button type="button" onclick="document.getElementById('modalPeringatan').style.display='none';" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-100 transition cursor-pointer active:scale-95 touch-manipulation">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
             
@@ -58,7 +49,7 @@
                 Permohonan alat radas dan bahan kimia hendaklah dibuat <strong class="text-amber-700 underline font-extrabold">selewat-lewatnya DUA (2) HARI SEBELUM</strong> tarikh penggunaan atau pengambilan yang dirancang.
             </p>
             
-            <button type="button" onclick="tutupModalPeringatan()" class="w-full bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold py-3.5 px-6 rounded-2xl shadow-md transition duration-200 flex items-center justify-center space-x-2 cursor-pointer text-sm touch-manipulation">
+            <button type="button" onclick="document.getElementById('modalPeringatan').style.display='none';" class="w-full bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold py-3.5 px-6 rounded-2xl shadow-md transition duration-200 flex items-center justify-center space-x-2 cursor-pointer text-sm touch-manipulation">
                 <i data-lucide="check-circle-2" class="w-4 h-4"></i>
                 <span>Saya Faham & Teruskan</span>
             </button>
@@ -250,4 +241,393 @@
                         <tbody class="divide-y divide-slate-100 text-sm"></tbody>
                     </table>
                 </div>
-                <button type="button" class="mt-3 inline-flex items-center space-x-1.5 text-xs font-bold text
+                <button type="button" class="mt-3 inline-flex items-center space-x-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-2 rounded-lg border border-emerald-200 transition cursor-pointer" onclick="tambahBarisPeralatan()">
+                    <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                    <span>Tambah Peralatan</span>
+                </button>
+            </div>
+
+            <!-- BAHAGIAN E: PENGAKUAN -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                <div class="flex items-center space-x-3 pb-4 mb-4 border-b border-slate-100">
+                    <span class="flex items-center justify-center w-7 h-7 bg-emerald-600 text-white rounded-lg text-xs font-bold">E</span>
+                    <h2 class="text-base font-bold text-slate-900">Pengakuan Pemohon</h2>
+                </div>
+
+                <div class="p-4 bg-emerald-50/60 border border-emerald-200 rounded-xl mb-6">
+                    <label class="flex items-start space-x-3 cursor-pointer text-xs sm:text-sm text-slate-700">
+                        <input type="checkbox" id="akujanji" required class="mt-0.5 w-4 h-4 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500 cursor-pointer">
+                        <span class="leading-relaxed">Saya bersetuju bertanggungjawab menjaga keselamatan/kebersihan peralatan, menyimpan semula di tempat asal, dan membuang sisa bahan kimia mengikut prosedur yang betul.</span>
+                    </label>
+                </div>
+
+                <button type="submit" id="btnHantar" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-6 rounded-xl shadow-md transition duration-200 flex items-center justify-center space-x-2 cursor-pointer">
+                    <i data-lucide="send" class="w-4 h-4"></i>
+                    <span>Hantar Permohonan</span>
+                </button>
+            </div>
+
+        </form>
+
+        <footer class="mt-12 text-center text-xs text-slate-400">
+            &copy; Hak Cipta Terpelihara Fakulti Kejuruteraan Kimia UiTM Pasir Gudang.
+        </footer>
+
+    </div>
+
+    <!-- FUNGSI UTAMA BORANG & SUPABASE -->
+    <script>
+        const supabaseUrl = 'https://mxrtxeczzebkrzayacwy.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14cnR4ZWN6emVia3J6YXlhY3d5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTU5MDIsImV4cCI6MjEwMjgzMTkwMn0.nsZRuzUpelmfaMiw5fozucrc2XsaaZFxm8Mu28G3wzw';
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const editId = urlParams.get('edit_id');
+
+        function dapatkanTarikhHariIni() {
+            const d = new Date();
+            const yyyy = d.getFullYear();
+            const mm = String(d.getMonth() + 1).padStart(2, '0');
+            const dd = String(d.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
+        }
+
+        const senaraiSekatanPPE = [
+            'glove', 'gloves', 'sarung tangan', 'nitrile', 'latex',
+            'mask', 'pelitup muka', 'face mask', 'respirator',
+            'goggle', 'goggles', 'safety glass', 'cermin mata keselamatan',
+            'lab coat', 'labcoat', 'baju makmal',
+            'apron', 'boot', 'boots', 'kasut getah', 'ppe'
+        ];
+
+        function periksaInputPPE(inputEl) {
+            const teks = inputEl.value.toLowerCase().trim();
+            for (let kataKunci of senaraiSekatanPPE) {
+                if (teks.includes(kataKunci)) {
+                    const itemDitaip = inputEl.value;
+                    inputEl.value = '';
+                    alert(`⚠️ PERINGATAN PPE!\n\nItem dikesan: "${itemDitaip}"\n\nKelengkapan PPE asas tidak perlu dimohon di sini. Sila minta terus dengan staf makmal bertugas.`);
+                    inputEl.focus();
+                    return;
+                }
+            }
+        }
+
+        function tambahBarisAhli(nama = '', id = '') {
+            const tbody = document.querySelector('#jadualAhli tbody');
+            if (!tbody) return;
+            const row = tbody.insertRow();
+            row.className = "hover:bg-slate-50/80 transition";
+            row.innerHTML = `
+                <td class="py-2 px-3"><input type="text" class="ahli-nama w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:bg-white" placeholder="Nama Ahli" value="${nama}"></td>
+                <td class="py-2 px-3"><input type="text" class="ahli-id w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:bg-white" placeholder="No. ID" value="${id}"></td>
+                <td class="py-2 px-3 text-center"><button type="button" class="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg border border-rose-200 text-xs font-semibold transition cursor-pointer" onclick="this.closest('tr').remove()"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></td>
+            `;
+            if (window.lucide) { lucide.createIcons(); }
+        }
+
+        function tambahBarisRadas(nama = '', kuantiti = '', tarikh = '') {
+            const tarikhItem = tarikh || dapatkanTarikhHariIni();
+            const isAddonBaru = editId && (!tarikh || tarikh === dapatkanTarikhHariIni());
+
+            const tbody = document.querySelector('#jadualRadas tbody');
+            if (!tbody) return;
+            const row = tbody.insertRow();
+            row.className = "hover:bg-slate-50/80 transition";
+            row.innerHTML = `
+                <td class="py-2 px-3"><input type="text" oninput="periksaInputPPE(this)" class="radas-nama w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:bg-white" placeholder="Contoh: Beaker 250ml" value="${nama}"></td>
+                <td class="py-2 px-3"><input type="text" class="radas-kuantiti w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:bg-white" placeholder="1" value="${kuantiti}"></td>
+                <td class="py-2 px-3 text-center">
+                    <span class="inline-block px-2.5 py-1 text-[11px] font-bold rounded-md ${isAddonBaru ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-slate-100 text-slate-600'}">
+                        ${tarikhItem} ${isAddonBaru ? '✨ (Add-on)' : ''}
+                    </span>
+                    <input type="hidden" class="radas-tarikh" value="${tarikhItem}">
+                </td>
+                <td class="py-2 px-3 text-center"><button type="button" class="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg border border-rose-200 text-xs font-semibold transition cursor-pointer" onclick="this.closest('tr').remove()"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></td>
+            `;
+            if (window.lucide) { lucide.createIcons(); }
+        }
+
+        function tambahBarisPeralatan(nama = '', kuantiti = '', tarikh = '') {
+            const tarikhItem = tarikh || dapatkanTarikhHariIni();
+            const isAddonBaru = editId && (!tarikh || tarikh === dapatkanTarikhHariIni());
+
+            const tbody = document.querySelector('#jadualPeralatan tbody');
+            if (!tbody) return;
+            const row = tbody.insertRow();
+            row.className = "hover:bg-slate-50/80 transition";
+            row.innerHTML = `
+                <td class="py-2 px-3"><input type="text" oninput="periksaInputPPE(this)" class="alat-nama w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:bg-white" placeholder="Contoh: Hotplate Magnetic Stirrer" value="${nama}"></td>
+                <td class="py-2 px-3"><input type="text" class="alat-kuantiti w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:bg-white" placeholder="1" value="${kuantiti}"></td>
+                <td class="py-2 px-3 text-center">
+                    <span class="inline-block px-2.5 py-1 text-[11px] font-bold rounded-md ${isAddonBaru ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-slate-100 text-slate-600'}">
+                        ${tarikhItem} ${isAddonBaru ? '✨ (Add-on)' : ''}
+                    </span>
+                    <input type="hidden" class="alat-tarikh" value="${tarikhItem}">
+                </td>
+                <td class="py-2 px-3 text-center"><button type="button" class="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg border border-rose-200 text-xs font-semibold transition cursor-pointer" onclick="this.closest('tr').remove()"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></td>
+            `;
+            if (window.lucide) { lucide.createIcons(); }
+        }
+
+        function tambahBarisBahan(nama = '', kuantiti = '', tarikh = '') {
+            const tarikhItem = tarikh || dapatkanTarikhHariIni();
+            const isAddonBaru = editId && (!tarikh || tarikh === dapatkanTarikhHariIni());
+
+            const tbody = document.querySelector('#jadualBahan tbody');
+            if (!tbody) return;
+            const row = tbody.insertRow();
+            row.className = "hover:bg-slate-50/80 transition";
+            row.innerHTML = `
+                <td class="py-2 px-3"><input type="text" oninput="periksaInputPPE(this)" class="bahan-nama w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:bg-white" placeholder="Contoh: Ethanol 95%" value="${nama}"></td>
+                <td class="py-2 px-3"><input type="text" class="bahan-kuantiti w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:bg-white" placeholder="500 ml" value="${kuantiti}"></td>
+                <td class="py-2 px-3 text-center">
+                    <span class="inline-block px-2.5 py-1 text-[11px] font-bold rounded-md ${isAddonBaru ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-slate-100 text-slate-600'}">
+                        ${tarikhItem} ${isAddonBaru ? '✨ (Add-on)' : ''}
+                    </span>
+                    <input type="hidden" class="bahan-tarikh" value="${tarikhItem}">
+                </td>
+                <td class="py-2 px-3 text-center"><button type="button" class="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg border border-rose-200 text-xs font-semibold transition cursor-pointer" onclick="this.closest('tr').remove()"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></td>
+            `;
+            if (window.lucide) { lucide.createIcons(); }
+        }
+
+        // BINA BARIS SECARA LANGSUNG SELEPAS SKRIP DIBACA
+        tambahBarisRadas();
+        tambahBarisBahan();
+        tambahBarisPeralatan();
+
+        // PEMUATAN MOD KEMASKINI (ADD-ON) JIKA ADA ID
+        if (editId) {
+            (async () => {
+                try {
+                    const btnHantar = document.getElementById('btnHantar');
+                    if (btnHantar) {
+                        btnHantar.innerHTML = `<i data-lucide="save" class="w-4 h-4"></i> <span>Kemaskini Permohonan (Simpan Add-on)</span>`;
+                    }
+                    
+                    const { data } = await supabaseClient
+                        .from('permohonan_bahan_radas')
+                        .select('*')
+                        .eq('id', editId)
+                        .single();
+
+                    if (data) {
+                        document.getElementById('namaPemohon').value = data.nama_pemohon || '';
+                        document.getElementById('noId').value = data.no_id || '';
+                        document.getElementById('noId').readOnly = true;
+                        document.getElementById('noTelefon').value = data.no_telefon || '';
+                        document.getElementById('semesterSesi').value = data.semester_sesi || '';
+                        document.getElementById('tujuan').value = data.tujuan || 'Projek Tahun Akhir';
+                        document.getElementById('namaPenyelia').value = data.nama_penyelia || '';
+                        document.getElementById('tajukProjek').value = data.tajuk_projek || '';
+
+                        // Kosongkan baris awal dan gantikan dengan data sedia ada
+                        document.querySelector('#jadualAhli tbody').innerHTML = '';
+                        document.querySelector('#jadualRadas tbody').innerHTML = '';
+                        document.querySelector('#jadualBahan tbody').innerHTML = '';
+                        document.querySelector('#jadualPeralatan tbody').innerHTML = '';
+
+                        (data.ahli_kumpulan || []).forEach(a => tambahBarisAhli(a.nama, a.id));
+                        (data.senarai_radas || []).forEach(r => tambahBarisRadas(r.nama, r.kuantiti, r.tarikh_mohon || data.created_at?.slice(0, 10)));
+                        (data.senarai_bahan_kimia || []).forEach(b => tambahBarisBahan(b.nama, b.kuantiti, b.tarikh_mohon || data.created_at?.slice(0, 10)));
+                        (data.senarai_peralatan || []).forEach(p => tambahBarisPeralatan(p.nama, p.kuantiti, p.tarikh_mohon || data.created_at?.slice(0, 10)));
+                        if (window.lucide) { lucide.createIcons(); }
+                    }
+                } catch(e) {
+                    console.error("Ralat memuatkan data edit:", e);
+                }
+            })();
+        }
+
+        const kataKunciRadas = [
+            'beaker', 'flask', 'erlenmeyer', 'volumetric', 'buret', 'burette',
+            'pipet', 'pipette', 'silinder', 'cylinder', 'test tube', 'tabung uji',
+            'corong', 'funnel', 'petri', 'mortar', 'pestle', 'crucible', 'spatula',
+            'dropper', 'tongs', 'kondenser', 'condenser', 'rod kaca', 'glass rod', 'cuvette'
+        ];
+
+        const kataKunciPeralatan = [
+            'hotplate', 'hot plate', 'stirrer', 'balance', 'timbang', 'penimbang',
+            'oven', 'furnace', 'centrifuge', 'water bath', 'spectrophotometer',
+            'uv-vis', 'uv vis', 'ftir', 'sem', 'tga', 'dsc', 'icp', 'ph meter',
+            'autoclave', 'incubator', 'rotary evaporator', 'sonicator', 'vortex',
+            'extractor', 'soxhlet'
+        ];
+
+        const kataKunciBahan = [
+            'acid', 'asid', 'ethanol', 'methanol', 'acetone', 'ether', 'water',
+            'air suling', 'distilled', 'nacl', 'naoh', 'hcl', 'h2so4', 'powder',
+            'serbuk', 'larutan', 'solution', 'reagent', 'indicator', 'penunjuk',
+            'agar', 'buffer', 'media', 'peptone', 'hexane', 'toluene',
+            'thimble', 'extraction thimble', 'filter paper', 'kertas turas'
+        ];
+
+        function semakItemAdakahPPE(senaraiItem) {
+            for (let item of senaraiItem) {
+                const namaBersih = (item.nama || '').toLowerCase().trim();
+                for (let kataKunci of senaraiSekatanPPE) {
+                    if (namaBersih.includes(kataKunci)) {
+                        return item.nama;
+                    }
+                }
+            }
+            return null;
+        }
+
+        function sahkanKategoriItem(radasList, bahanList, peralatanList) {
+            for (let item of bahanList) {
+                const n = (item.nama || '').toLowerCase().trim();
+                for (let k of kataKunciRadas) {
+                    if (n.includes(k)) {
+                        return `❌ KATEGORI SALAH!\n\nItem "${item.nama}" ialah ALAT RADAS, bukan Bahan Kimia.\n\nSila padam dari Bahagian C dan masukkan ke Bahagian B (Alat Radas).`;
+                    }
+                }
+                for (let k of kataKunciPeralatan) {
+                    if (n.includes(k)) {
+                        return `❌ KATEGORI SALAH!\n\nItem "${item.nama}" ialah PERALATAN MAKMAL / MESIN, bukan Bahan Kimia.\n\nSila padam dari Bahagian C dan masukkan ke Bahagian D (Peralatan Makmal).`;
+                    }
+                }
+            }
+
+            for (let item of radasList) {
+                const n = (item.nama || '').toLowerCase().trim();
+                for (let k of kataKunciBahan) {
+                    if (n.includes(k)) {
+                        return `❌ KATEGORI SALAH!\n\nItem "${item.nama}" ialah BAHAN KIMIA / PAKAI BUANG, bukan Alat Radas Kaca.\n\nSila padam dari Bahagian B dan masukkan ke Bahagian C (Bahan Kimia / Pakai Buang).`;
+                    }
+                }
+                for (let k of kataKunciPeralatan) {
+                    if (n.includes(k)) {
+                        return `❌ KATEGORI SALAH!\n\nItem "${item.nama}" ialah PERALATAN MAKMAL / MESIN, bukan Radas Kaca.\n\nSila padam dari Bahagian B dan masukkan ke Bahagian D (Peralatan Makmal).`;
+                    }
+                }
+            }
+
+            for (let item of peralatanList) {
+                const n = (item.nama || '').toLowerCase().trim();
+                for (let k of kataKunciRadas) {
+                    if (n.includes(k)) {
+                        return `❌ KATEGORI SALAH!\n\nItem "${item.nama}" ialah ALAT RADAS, bukan Peralatan Mesin.\n\nSila padam dari Bahagian D dan masukkan ke Bahagian B (Alat Radas).`;
+                    }
+                }
+                for (let k of kataKunciBahan) {
+                    if (n.includes(k)) {
+                        return `❌ KATEGORI SALAH!\n\nItem "${item.nama}" ialah BAHAN KIMIA / PAKAI BUANG, bukan Peralatan Mesin.\n\nSila padam dari Bahagian D dan masukkan ke Bahagian C (Bahan Kimia / Pakai Buang).`;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        async function hantarNotifikasiEmelAdmin(payload, isEdit = false) {
+            try {
+                await fetch("https://api.web3forms.com/submit", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Accept: "application/json",
+                    },
+                    body: JSON.stringify({
+                        access_key: "7bd850af-e5d0-4392-bc51-9f3af1a317d9",
+                        subject: isEdit ? `[Kemaskini Add-on Permohonan] - ${payload.nama_pemohon} (${payload.no_id})` : `[Notifikasi Permohonan Baru] - ${payload.nama_pemohon} (${payload.no_id})`,
+                        from_name: "Portal Makmal FKK",
+                        message: `
+Salam Pegawai Makmal / Admin FKK,
+
+Terdapat permohonan alat radas/bahan kimia/peralatan makmal yang telah ${isEdit ? 'DIKEMASKINI (ADD-ON ITEM BAHARU)' : 'DIHANTAR'}:
+
+- Nama Pemohon : ${payload.nama_pemohon}
+- No. ID       : ${payload.no_id}
+- No. Telefon  : ${payload.no_telefon}
+- Tujuan       : ${payload.tujuan}
+- Tajuk Projek : ${payload.tajuk_projek}
+- Penyelia     : ${payload.nama_penyelia}
+- Status       : ${payload.status}
+- Tarikh Tindakan : ${new Date().toLocaleString('ms-MY')}
+
+Sila semak panel admin makmal untuk semakan dan kelulusan.
+                        `
+                    })
+                });
+            } catch (err) {
+                console.warn("⚠️ Notifikasi emel tidak dapat dihantar:", err);
+            }
+        }
+
+        document.getElementById('formPermohonan')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btnHantar = document.getElementById('btnHantar');
+
+            const ahliList = [];
+            document.querySelectorAll('#jadualAhli tbody tr').forEach(r => {
+                const nama = r.querySelector('.ahli-nama')?.value?.trim();
+                const id = r.querySelector('.ahli-id')?.value?.trim();
+                if(nama) ahliList.push({ nama, id });
+            });
+
+            const radasList = [];
+            document.querySelectorAll('#jadualRadas tbody tr').forEach(r => {
+                const nama = r.querySelector('.radas-nama')?.value?.trim();
+                const kuantiti = r.querySelector('.radas-kuantiti')?.value?.trim();
+                const tarikh_mohon = r.querySelector('.radas-tarikh')?.value || dapatkanTarikhHariIni();
+                if(nama) radasList.push({ nama, kuantiti, tarikh_mohon });
+            });
+
+            const peralatanList = [];
+            document.querySelectorAll('#jadualPeralatan tbody tr').forEach(r => {
+                const nama = r.querySelector('.alat-nama')?.value?.trim();
+                const kuantiti = r.querySelector('.alat-kuantiti')?.value?.trim();
+                const tarikh_mohon = r.querySelector('.alat-tarikh')?.value || dapatkanTarikhHariIni();
+                if(nama) peralatanList.push({ nama, kuantiti, tarikh_mohon });
+            });
+
+            const bahanList = [];
+            document.querySelectorAll('#jadualBahan tbody tr').forEach(r => {
+                const nama = r.querySelector('.bahan-nama')?.value?.trim();
+                const kuantiti = r.querySelector('.bahan-kuantiti')?.value?.trim();
+                const tarikh_mohon = r.querySelector('.bahan-tarikh')?.value || dapatkanTarikhHariIni();
+                if(nama) bahanList.push({ nama, kuantiti, tarikh_mohon });
+            });
+
+            const semuaItem = [...radasList, ...peralatanList, ...bahanList];
+            const itemPPE = semakItemAdakahPPE(semuaItem);
+
+            if (itemPPE) {
+                alert(`⚠️ PERINGATAN PPE!\n\nItem dikesan: "${itemPPE}"\n\nKelengkapan PPE asas tidak perlu dimohon di sini. Sila minta terus dengan staf makmal bertugas.`);
+                return;
+            }
+
+            const ralatKategori = sahkanKategoriItem(radasList, bahanList, peralatanList);
+            if (ralatKategori) {
+                alert(ralatKategori);
+                return;
+            }
+
+            btnHantar.disabled = true;
+            btnHantar.innerText = "Sila tunggu... Memproses permohonan";
+
+            const payload = {
+                nama_pemohon: document.getElementById('namaPemohon').value,
+                no_id: document.getElementById('noId').value,
+                no_telefon: document.getElementById('noTelefon').value,
+                semester_sesi: document.getElementById('semesterSesi').value,
+                tujuan: document.getElementById('tujuan').value,
+                tajuk_projek: document.getElementById('tajukProjek').value,
+                nama_penyelia: document.getElementById('namaPenyelia').value,
+                ahli_kumpulan: ahliList,
+                senarai_radas: radasList,
+                senarai_peralatan: peralatanList,
+                senarai_bahan_kimia: bahanList,
+                status: editId ? 'Menunggu Kelulusan (Kemaskini)' : 'Menunggu Kelulusan'
+            };
+
+            let opResult;
+            if (editId) {
+                opResult = await supabaseClient
+                    .from('permohonan_bahan_radas')
+                    .update(payload)
+                    .eq('id', editId);
+            } else {
+                opResult = await supabaseClient
