@@ -195,8 +195,9 @@
             'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIFyPf8ioGVgatCoYnTZLhk2wAs-S-9zqwPoUC8jWZcPfsrsJbUK4XpuawzociV6Vi-EaiH75ZzvUO/pub?gid=827845288&single=true&output=csv',  
         ];
 
+        // Memasukkan gid sebenar bagi tab 'hak milik pensyarah FKK'
         const SENARAI_URL_PENSYARAH = [
-            'https://docs.google.com/spreadsheets/d/e/2PACX-1vRm2CVMPo0E54UrTVn0D1FgfAHmHuxbnF0bfDfURR-9V_hgTeQTjKXRX4KiR6BspFNsvuBhWxu_2y0x/pub?output=csv'
+            'https://docs.google.com/spreadsheets/d/e/2PACX-1vRm2CVMPo0E54UrTVn0D1FgfAHmHuxbnF0bfDfURR-9V_hgTeQTjKXRX4KiR6BspFNsvuBhWxu_2y0x/pub?gid=756947756&single=true&output=csv'
         ];
 
         const SENARAI_URL_AMALI = [];
@@ -286,25 +287,28 @@
                                     let namaBahan = '', casNo = '', form = '', kuantiti = '-', lokasi = '', brand = '';
 
                                     if (jenisKategori === 'pensyarah') {
+                                        // Lajur B: CHEMICAL NAME
                                         const rawNama = (row[1] || '').trim();
                                         namaBahan = formatTeksBersamaKoma(rawNama);
 
                                         const uppercaseNama = namaBahan.toUpperCase();
+                                        
+                                        // Abaikan teks tajuk 'LECTURER', baris header jadual, atau baris kosong
                                         if (!namaBahan || namaBahan === '-' || 
+                                            uppercaseNama === 'LECTURER' ||
                                             uppercaseNama.includes('CHEMICAL NAME') || 
                                             uppercaseNama.includes('NAMA BAHAN') || 
-                                            uppercaseNama.includes('FAKULTI') || 
-                                            uppercaseNama.includes('LECTURER') || 
-                                            uppercaseNama === 'NAME') {
+                                            uppercaseNama === 'NAME' ||
+                                            uppercaseNama === 'BIL') {
                                             continue;
                                         }
 
-                                        // SUSUNAN LAJUR GOOGLE SHEET PENSYARAH
+                                        // SUSUNAN LAJUR TEPAT MENGIKUT SHEET HAK MILIK PENSYARAH:
                                         casNo    = formatTeksBersamaKoma(row[2]); // Lajur C: CAS NUMBER
-                                        brand    = formatTeksBersamaKoma(row[3]); // Lajur D: OWNER (Pensyarah)
-                                        form     = formatTeksBersamaKoma(row[4]); // Lajur E: FORM (Liquid/Solid/Powder)
+                                        brand    = formatTeksBersamaKoma(row[3]); // Lajur D: OWNER (Nama Pensyarah)
+                                        form     = formatTeksBersamaKoma(row[4]); // Lajur E: FORM
                                         kuantiti = formatTeksBersamaKoma(row[6]); // Lajur G: Quantity (Stock Balance)
-                                        lokasi   = formatTeksBersamaKoma(row[8]); // Lajur I: LOCATION (Lokasi Makmal)
+                                        lokasi   = formatTeksBersamaKoma(row[8]); // Lajur I: LOCATION
 
                                     } else {
                                         const rawNama = (row[1] || '').trim();
